@@ -3,1551 +3,1629 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IEMQS — Inspection & Quality Management System</title>
+<title>TQIMS — Quality Inspection Management System</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
-
-  :root {
-    --bg: #0a0e17;
-    --surface: #111827;
-    --surface2: #1a2235;
-    --border: #1e3050;
-    --accent: #00c9a7;
-    --accent2: #0ea5e9;
-    --warn: #f59e0b;
-    --danger: #ef4444;
-    --success: #22c55e;
-    --text: #e2e8f0;
-    --text2: #94a3b8;
-    --text3: #475569;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'IBM Plex Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* GRID BG */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: 
-      linear-gradient(rgba(0,201,167,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,201,167,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ===== LOGIN ===== */
-  #login-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    position: relative;
-    z-index: 1;
-  }
-
-  .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--accent);
-    width: 420px;
-    padding: 40px;
-    position: relative;
-    box-shadow: 0 0 60px rgba(0,201,167,0.08);
-  }
-
-  .login-logo {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .login-sub {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 32px;
-  }
-
-  .role-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .role-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text2);
-    padding: 16px 12px;
-    cursor: pointer;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    transition: all 0.2s;
-    text-align: center;
-  }
-
-  .role-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .role-btn.active {
-    background: rgba(0,201,167,0.1);
-    border-color: var(--accent);
-    color: var(--accent);
-    box-shadow: inset 0 0 20px rgba(0,201,167,0.05);
-  }
-
-  .role-icon { font-size: 24px; display: block; margin-bottom: 6px; }
-
-  .input-group { margin-bottom: 16px; }
-  .input-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    display: block;
-  }
-
-  .input-field {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 14px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .input-field:focus { border-color: var(--accent); }
-
-  .btn-primary {
-    width: 100%;
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    padding: 14px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
-  }
-  .btn-primary:hover { background: #00e6bf; box-shadow: 0 0 20px rgba(0,201,167,0.3); }
-
-  .project-badge {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--accent2);
-    background: rgba(14,165,233,0.1);
-    border: 1px solid rgba(14,165,233,0.2);
-    padding: 4px 10px;
-    margin-top: 16px;
-    display: inline-block;
-  }
-
-  /* ===== MAIN APP ===== */
-  #app { display: none; min-height: 100vh; position: relative; z-index: 1; }
-
-  /* HEADER */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 58px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-logo {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 3px;
-  }
-
-  .header-right { display: flex; align-items: center; gap: 16px; }
-
-  .role-badge {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    padding: 4px 12px;
-    border: 1px solid;
-    text-transform: uppercase;
-  }
-
-  .role-badge.admin { color: var(--warn); border-color: var(--warn); background: rgba(245,158,11,0.08); }
-  .role-badge.production { color: var(--accent2); border-color: var(--accent2); background: rgba(14,165,233,0.08); }
-  .role-badge.quality { color: var(--accent); border-color: var(--accent); background: rgba(0,201,167,0.08); }
-  .role-badge.manager { color: #a78bfa; border-color: #a78bfa; background: rgba(167,139,250,0.08); }
-
-  .logout-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text2);
-    padding: 6px 14px;
-    cursor: pointer;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-  }
-  .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
-
-  /* LAYOUT */
-  .layout { display: flex; height: calc(100vh - 58px); }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: 260px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 20px 0;
-    overflow-y: auto;
-    flex-shrink: 0;
-  }
-
-  .sidebar-section { margin-bottom: 8px; }
-
-  .sidebar-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: var(--text3);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 0 20px;
-    margin-bottom: 4px;
-    display: block;
-  }
-
-  .sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 20px;
-    cursor: pointer;
-    color: var(--text2);
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.15s;
-    border-left: 3px solid transparent;
-  }
-  .sidebar-item:hover { background: var(--surface2); color: var(--text); }
-  .sidebar-item.active { background: rgba(0,201,167,0.07); color: var(--accent); border-left-color: var(--accent); }
-
-  .sidebar-item .icon { font-size: 16px; width: 20px; text-align: center; }
-
-  /* MAIN CONTENT */
-  .main-content { flex: 1; overflow-y: auto; padding: 28px; }
-
-  .page { display: none; }
-  .page.active { display: block; }
-
-  .page-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-    color: var(--text);
-  }
-
-  .page-sub {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 1px;
-    margin-bottom: 28px;
-  }
-
-  /* PROJECT INFO BAR */
-  .project-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }
-
-  .project-field { display: flex; flex-direction: column; gap: 2px; }
-  .project-field-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: var(--text3);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .project-field-value {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--accent2);
-    letter-spacing: 1px;
-  }
-
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-
-  .card-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--text2);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .card-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  /* SECTION TABS */
-  .section-tabs {
-    display: flex;
-    gap: 0;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-
-  .section-tab {
-    padding: 10px 20px;
-    cursor: pointer;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text3);
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    margin-bottom: -1px;
-  }
-
-  .section-tab:hover { color: var(--text2); }
-  .section-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-  /* SEAM TABLE */
-  .seam-table-wrap { overflow-x: auto; }
-
-  .seam-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  .seam-table th {
-    background: var(--surface2);
-    padding: 10px 14px;
-    text-align: left;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--text3);
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-
-  .seam-table td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-
-  .seam-table tr:hover td { background: rgba(255,255,255,0.02); }
-
-  .seam-name {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    color: var(--accent2);
-    font-weight: 500;
-  }
-
-  /* STAGE PILLS */
-  .stages-row { display: flex; gap: 4px; flex-wrap: wrap; }
-
-  .stage-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 10px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.5px;
-    border: 1px solid;
-    white-space: nowrap;
-    cursor: default;
-    position: relative;
-  }
-
-  .stage-pill.pending { color: var(--text3); border-color: var(--border); background: transparent; }
-  .stage-pill.offered { color: var(--warn); border-color: var(--warn); background: rgba(245,158,11,0.08); }
-  .stage-pill.accepted { color: var(--success); border-color: var(--success); background: rgba(34,197,94,0.08); }
-  .stage-pill.rejected { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.08); }
-  .stage-pill.locked { color: var(--text3); border-color: var(--text3); background: rgba(71,85,105,0.15); cursor: not-allowed; }
-
-  /* OFFER BTN */
-  .offer-btn {
-    background: none;
-    border: 1px solid var(--accent2);
-    color: var(--accent2);
-    padding: 4px 12px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-  .offer-btn:hover { background: rgba(14,165,233,0.1); }
-  .offer-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-  .inspect-btn {
-    background: none;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 4px 12px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-  .inspect-btn:hover { background: rgba(0,201,167,0.1); }
-
-  /* OVERALL STATUS */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 18px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-
-  .stat-card.total::before { background: var(--accent2); }
-  .stat-card.offered::before { background: var(--warn); }
-  .stat-card.accepted::before { background: var(--success); }
-  .stat-card.rejected::before { background: var(--danger); }
-  .stat-card.pending::before { background: var(--text3); }
-
-  .stat-number {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 38px;
-    font-weight: 700;
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .stat-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: var(--text3);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-
-  /* MODAL */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--accent);
-    width: 560px;
-    max-width: 95vw;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 28px;
-    box-shadow: 0 0 80px rgba(0,0,0,0.5);
-  }
-
-  .modal-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    color: var(--accent);
-  }
-
-  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
-
-  .btn-accept {
-    background: var(--success);
-    color: var(--bg);
-    border: none;
-    padding: 10px 24px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-accept:hover { box-shadow: 0 0 20px rgba(34,197,94,0.3); }
-
-  .btn-reject {
-    background: var(--danger);
-    color: white;
-    border: none;
-    padding: 10px 24px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-
-  .btn-cancel {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text2);
-    padding: 10px 24px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    cursor: pointer;
-  }
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-
-  .info-row:last-child { border-bottom: none; }
-  .info-row span:first-child { color: var(--text3); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
-  .info-row span:last-child { color: var(--text); font-weight: 500; }
-
-  .remarks-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 14px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 13px;
-    outline: none;
-    resize: vertical;
-    min-height: 80px;
-    margin-top: 16px;
-  }
-  .remarks-input:focus { border-color: var(--accent); }
-
-  /* ADD SEAM FORM */
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .form-full { grid-column: 1 / -1; }
-
-  .btn-add {
-    background: rgba(0,201,167,0.1);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 10px 20px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .btn-add:hover { background: rgba(0,201,167,0.2); }
-
-  /* PROGRESS BAR */
-  .progress-bar {
-    width: 100%;
-    height: 4px;
-    background: var(--border);
-    margin-top: 4px;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    transition: width 0.5s ease;
-    border-radius: 2px;
-  }
-
-  /* NCR BADGE */
-  .ncr-badge {
-    display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    color: var(--danger);
-    border: 1px solid var(--danger);
-    padding: 2px 6px;
-    letter-spacing: 1px;
-    margin-left: 6px;
-  }
-
-  /* NOTIFICATION */
-  .notif {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    padding: 14px 20px;
-    font-size: 13px;
-    z-index: 2000;
-    transform: translateX(120%);
-    transition: transform 0.3s ease;
-    max-width: 320px;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .notif.show { transform: translateX(0); }
-
-  /* HISTORY LOG */
-  .log-entry {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-  }
-
-  .log-time {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--text3);
-    margin-bottom: 3px;
-  }
-
-  .log-text { color: var(--text2); line-height: 1.5; }
-
-  .log-text strong { color: var(--text); }
-
-  /* SECTION OVERVIEW */
-  .section-overview {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .section-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 18px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-  }
-
-  .section-card:hover { border-color: var(--accent2); }
-  .section-card.selected { border-color: var(--accent); background: rgba(0,201,167,0.04); }
-
-  .section-card-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-
-  .section-card-meta {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--text3);
-    display: flex;
-    justify-content: space-between;
-  }
-
-  select.input-field option { background: var(--surface2); }
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text3);
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-  }
-
-  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.3; }
-
-  .stage-detail-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .stage-name-cell {
-    flex: 1;
-    font-size: 13px;
-    font-family: 'IBM Plex Sans', sans-serif;
-  }
-
-  .stage-status-cell { width: 130px; }
-  .stage-action-cell { width: 110px; text-align: right; }
-
-  .stage-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: var(--text3);
-    width: 24px;
-    flex-shrink: 0;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
-
-  .tag {
-    display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 9px;
-    padding: 2px 6px;
-    border: 1px solid;
-    letter-spacing: 1px;
-  }
-
-  .tag.ncr { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.08); }
-  .tag.hold { color: var(--warn); border-color: var(--warn); background: rgba(245,158,11,0.08); }
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap');
+
+:root{
+  --bg:#07090f; --surf:#0d1117; --surf2:#161b22; --surf3:#1c2333;
+  --border:#21262d; --border2:#30363d;
+  --blue:#1f6feb; --blue2:#388bfd; --cyan:#39d353;
+  --green:#3fb950; --amber:#d29922; --red:#f85149; --purple:#bc8cff;
+  --text:#e6edf3; --text2:#8b949e; --text3:#484f58;
+  --accent:#1f6feb;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
+
+/* ─── SCREENS ─── */
+.scr{display:none;}
+.scr.on{display:block;}
+
+/* ─── AUTH ─── */
+#scr-auth{min-height:100vh;display:none;align-items:flex-start;justify-content:center;padding:24px 16px;background:var(--bg);}
+#scr-auth.on{display:flex;}
+.acard{background:var(--surf);border:1px solid var(--border2);width:100%;max-width:460px;padding:32px 28px;position:relative;margin:auto;}
+.acard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));}
+.logo-big{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;letter-spacing:5px;color:var(--blue2);margin-bottom:2px;}
+.logo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:26px;}
+.atabs{display:flex;border:1px solid var(--border2);margin-bottom:22px;}
+.atab{flex:1;padding:10px;text-align:center;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);transition:all .2s;border:none;background:none;}
+.atab.on{background:var(--blue);color:#fff;}
+.aform{display:none;flex-direction:column;gap:13px;}
+.aform.on{display:flex;}
+.lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px;}
+input,select,textarea{width:100%;background:var(--surf2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s;border-radius:2px;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);}
+select option{background:var(--surf2);}
+textarea{resize:vertical;min-height:60px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.span2{grid-column:1/-1;}
+.rchips{display:flex;gap:6px;flex-wrap:wrap;}
+.rchip{flex:1;padding:7px 10px;text-align:center;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;border-radius:2px;}
+.rchip.on{border-color:var(--blue);background:rgba(31,111,235,.15);color:var(--blue2);}
+.btn{padding:11px 20px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;border-radius:2px;display:inline-block;}
+.btn-w{width:100%;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:var(--blue2);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-amber{background:var(--amber);color:#000;}
+.btn-ghost{background:none;border:1px solid var(--border2);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue2);}
+.alink{text-align:center;font-size:11px;color:var(--text3);margin-top:4px;}
+.alink a{color:var(--blue2);cursor:pointer;text-decoration:none;}
+.alink a:hover{text-decoration:underline;}
+.msg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border:1px solid;border-radius:2px;}
+.msg-err{color:var(--red);border-color:rgba(248,81,73,.3);background:rgba(248,81,73,.07);}
+.msg-ok{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.07);}
+.msg-warn{color:var(--amber);border-color:rgba(210,153,34,.3);background:rgba(210,153,34,.07);}
+.credit{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-align:center;margin-top:20px;letter-spacing:1px;}
+
+/* ─── APP SHELL ─── */
+#scr-app{display:none;min-height:100vh;flex-direction:column;}
+#scr-app.on{display:flex;}
+.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--surf);border-bottom:1px solid var(--border2);padding:0 16px;height:52px;position:sticky;top:0;z-index:300;flex-shrink:0;}
+.tb-left{display:flex;align-items:center;gap:12px;}
+.tb-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:3px;color:var(--blue2);}
+.ham{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:4px;display:none;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.rpill{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border:1px solid;letter-spacing:1px;text-transform:uppercase;border-radius:2px;}
+.rp-admin{color:var(--amber);border-color:var(--amber);background:rgba(210,153,34,.1);}
+.rp-production{color:#79c0ff;border-color:#79c0ff;background:rgba(121,192,255,.1);}
+.rp-quality{color:var(--green);border-color:var(--green);background:rgba(63,185,80,.1);}
+.rp-manager{color:var(--purple);border-color:var(--purple);background:rgba(188,140,255,.1);}
+.tb-user{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);}
+.tb-logout{background:none;border:1px solid var(--border2);color:var(--text3);padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;border-radius:2px;}
+.tb-logout:hover{border-color:var(--red);color:var(--red);}
+
+/* ─── BODY LAYOUT ─── */
+.app-body{display:flex;flex:1;}
+.sidebar{width:220px;background:var(--surf);border-right:1px solid var(--border2);padding:12px 0;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;transition:transform .3s;}
+.sg-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;padding:10px 16px 4px;}
+.nitem{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;border-left:3px solid transparent;}
+.nitem:hover{background:var(--surf2);color:var(--text);}
+.nitem.on{background:rgba(31,111,235,.12);color:var(--blue2);border-left-color:var(--blue);}
+.nitem .ni{font-size:15px;width:18px;text-align:center;}
+.nbadge{margin-left:auto;background:var(--amber);color:#000;font-family:'JetBrains Mono',monospace;font-size:8px;padding:1px 5px;font-weight:700;border-radius:2px;}
+.sov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:299;}
+
+/* ─── MAIN ─── */
+.main{flex:1;padding:24px;min-width:0;overflow-x:hidden;}
+
+/* ─── PAGES ─── */
+.pg{display:none;}
+.pg.on{display:block;}
+.pgh{margin-bottom:20px;}
+.pgt{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+.pgs{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;margin-top:2px;}
+
+/* ─── CARDS ─── */
+.card{background:var(--surf);border:1px solid var(--border2);padding:16px;margin-bottom:14px;border-radius:3px;}
+.chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.ctitle{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);}
+
+/* ─── STATS ─── */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:18px;}
+.sbox{background:var(--surf);border:1px solid var(--border2);padding:14px;position:relative;border-radius:3px;overflow:hidden;}
+.sbox::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.sb-blue::after{background:var(--blue2);}
+.sb-green::after{background:var(--green);}
+.sb-amber::after{background:var(--amber);}
+.sb-red::after{background:var(--red);}
+.sb-grey::after{background:var(--text3);}
+.snum{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;line-height:1;margin-bottom:3px;}
+.slbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
+
+/* ─── PROGRESS ─── */
+.pbar{width:100%;height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .4s;}
+
+/* ─── PROJECT BAR ─── */
+.projbar{display:flex;flex-wrap:wrap;gap:16px;background:var(--surf);border:1px solid var(--border2);padding:12px 16px;margin-bottom:18px;border-radius:3px;}
+.pf-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
+.pf-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--blue2);letter-spacing:1px;}
+
+/* ─── SECTION TABS ─── */
+.stabs{display:flex;border-bottom:1px solid var(--border2);flex-wrap:wrap;margin-bottom:16px;gap:0;overflow-x:auto;}
+.stab{padding:8px 16px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .2s;}
+.stab:hover{color:var(--text2);}
+.stab.on{color:var(--blue2);border-bottom-color:var(--blue);}
+
+/* ─── DASHBOARD SEAM GRID ─── */
+.dash-section{margin-bottom:24px;}
+.dash-sec-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue2);padding:8px 0;border-bottom:1px solid var(--border2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.seam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
+.seam-tile{background:var(--surf2);border:1px solid var(--border2);padding:12px;cursor:pointer;transition:all .2s;border-radius:3px;position:relative;}
+.seam-tile:hover{border-color:var(--blue);background:var(--surf3);}
+.seam-tile.st-done{border-left:3px solid var(--green);}
+.seam-tile.st-active{border-left:3px solid var(--amber);}
+.seam-tile.st-rejected{border-left:3px solid var(--red);}
+.seam-tile.st-pending{border-left:3px solid var(--border2);}
+.st-seam-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--blue2);margin-bottom:3px;}
+.st-seam-desc{font-size:10px;color:var(--text2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.st-seam-pct{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+.st-seam-meta{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);margin-top:2px;}
+.ncr-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;}
+
+/* ─── INSPECTION / SEAM DETAIL ─── */
+.seam-detail-card{background:var(--surf);border:1px solid var(--border2);margin-bottom:12px;border-radius:3px;overflow:hidden;}
+.sdh{padding:12px 16px;background:var(--surf2);border-bottom:1px solid var(--border2);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.sd-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue2);font-weight:500;}
+.sd-desc{font-size:12px;color:var(--text2);margin-top:2px;}
+.sd-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+.stage-row{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(33,38,45,.7);}
+.stage-row:last-child{border-bottom:none;}
+.sr-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);width:18px;flex-shrink:0;padding-top:2px;}
+.sr-info{flex:1;min-width:0;}
+.sr-name{font-size:13px;font-weight:500;}
+.sr-detail{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;line-height:1.6;}
+.sr-remark{font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:3px;}
+.sr-actions{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+
+/* ─── CHIPS ─── */
+.chip{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.8px;border:1px solid;text-transform:uppercase;border-radius:2px;white-space:nowrap;}
+.ch-pend{color:var(--text3);border-color:var(--border2);}
+.ch-off{color:var(--amber);border-color:var(--amber);background:rgba(210,153,34,.08);}
+.ch-acc{color:var(--green);border-color:var(--green);background:rgba(63,185,80,.08);}
+.ch-rej{color:var(--red);border-color:var(--red);background:rgba(248,81,73,.08);}
+.ch-lock{color:var(--text3);border-color:var(--text3);background:rgba(72,79,88,.15);}
+
+/* ─── ACTION BTNS ─── */
+.abtn{padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;border:1px solid;background:none;cursor:pointer;transition:all .2s;white-space:nowrap;text-transform:uppercase;border-radius:2px;}
+.ab-blue{color:var(--blue2);border-color:var(--blue2);}
+.ab-blue:hover{background:rgba(56,139,253,.1);}
+.ab-green{color:var(--green);border-color:var(--green);}
+.ab-green:hover{background:rgba(63,185,80,.1);}
+.ab-red{color:var(--red);border-color:var(--red);}
+.ab-red:hover{background:rgba(248,81,73,.1);}
+.ab-amber{color:var(--amber);border-color:var(--amber);}
+.ab-amber:hover{background:rgba(210,153,34,.1);}
+.ab-ghost{color:var(--text3);border-color:var(--border2);}
+.ab-ghost:hover{color:var(--text);border-color:var(--text2);}
+
+/* ─── TABLES ─── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:400px;}
+th{background:var(--surf2);padding:8px 12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border2);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:1px solid rgba(33,38,45,.7);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,.015);}
+
+/* ─── MODAL ─── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;backdrop-filter:blur(3px);}
+.mbg.on{display:flex;}
+.modal{background:var(--surf);border:1px solid var(--border2);width:100%;max-width:520px;position:relative;border-radius:3px;margin:auto;}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:3px 3px 0 0;}
+.mhead{padding:16px 20px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;}
+.mtitle{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.mclose{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;padding:0 2px;}
+.mbody{padding:20px;}
+.mfoot{padding:12px 20px;border-top:1px solid var(--border2);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
+.ir{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(33,38,45,.7);gap:10px;}
+.ir:last-child{border-bottom:none;}
+.ir-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;flex-shrink:0;min-width:110px;}
+.ir-v{font-size:12px;font-weight:500;text-align:right;}
+
+/* ─── BACK BUTTON ─── */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);cursor:pointer;margin-bottom:16px;transition:color .2s;}
+.back-btn:hover{color:var(--blue2);}
+
+/* ─── LOG ─── */
+.log-row{padding:9px 0;border-bottom:1px solid rgba(33,38,45,.7);}
+.log-row:last-child{border-bottom:none;}
+.log-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);}
+.log-msg{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.5;}
+
+/* ─── STAGE MANAGER (ADMIN) ─── */
+.stage-list-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surf2);border:1px solid var(--border2);margin-bottom:6px;border-radius:2px;}
+.sli-handle{color:var(--text3);cursor:grab;font-size:14px;}
+.sli-name{flex:1;font-size:13px;}
+.sli-actions{display:flex;gap:4px;}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surf2);border:1px solid var(--border2);border-left:3px solid var(--blue);padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:10px;z-index:9999;transition:transform .3s;max-width:90vw;box-shadow:0 8px 24px rgba(0,0,0,.5);border-radius:2px;}
+.toast.on{transform:translateX(-50%) translateY(0);}
+
+/* ─── PROFILE ROWS ─── */
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:720px){
+  .ham{display:block;}
+  .sidebar{position:fixed;top:52px;left:0;height:calc(100vh - 52px);z-index:300;transform:translateX(-100%);width:240px;}
+  .sidebar.open{transform:translateX(0);}
+  .sov.on{display:block;}
+  .main{padding:12px;}
+  .grid2{grid-template-columns:1fr;}
+  .seam-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+  .tb-user{display:none;}
+  .profile-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
 
-<!-- ============ LOGIN SCREEN ============ -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo">IEMQS</div>
-    <div class="login-sub">Inspection & Examination Management Quality System</div>
+<!-- ════════════════════════════════════════
+     AUTH SCREEN
+════════════════════════════════════════ -->
+<div id="scr-auth">
+  <div class="acard">
+    <div class="logo-big">TQIMS</div>
+    <div class="logo-sub">Quality Inspection Management System</div>
 
-    <div style="margin-bottom:18px;">
-      <label class="input-label">Select Your Role</label>
-      <div class="role-grid">
-        <div class="role-btn" onclick="selectRole('admin')" id="role-admin">
-          <span class="role-icon">🔧</span>Admin
+    <div class="atabs">
+      <button class="atab on" id="tab-login" onclick="showTab('login')">LOGIN</button>
+      <button class="atab" id="tab-reg" onclick="showTab('reg')">REGISTER</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="aform on" id="form-login">
+      <div><label class="lbl">Mobile Number</label><input id="l-mob" type="tel" placeholder="e.g. 9876543210"></div>
+      <div><label class="lbl">Password</label><input id="l-pw" type="password" placeholder="Your password"></div>
+      <div id="l-err"></div>
+      <button class="btn btn-blue btn-w" onclick="doLogin()">LOGIN →</button>
+      <div class="alink"><a onclick="showTab('reg')">Create new account</a> &nbsp;|&nbsp; <a onclick="showTab('admin-reg')" style="color:var(--text3);font-size:10px;">Admin registration</a></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="aform" id="form-reg">
+      <div class="grid2">
+        <div><label class="lbl">Full Name</label><input id="r-name" placeholder="Your full name"></div>
+        <div><label class="lbl">Mobile</label><input id="r-mob" type="tel" placeholder="10-digit number"></div>
+        <div><label class="lbl">Company / Contractor</label><input id="r-co" placeholder="Company name"></div>
+        <div><label class="lbl">Designation</label><input id="r-desig" placeholder="e.g. QC Engineer"></div>
+        <div class="span2"><label class="lbl">Email (optional)</label><input id="r-email" type="email" placeholder="email@example.com"></div>
+        <div class="span2"><label class="lbl">Role</label>
+          <div class="rchips">
+            <div class="rchip" data-r="production" onclick="pickRole(this)">Production</div>
+            <div class="rchip" data-r="quality" onclick="pickRole(this)">Quality Eng.</div>
+            <div class="rchip" data-r="manager" onclick="pickRole(this)">Manager</div>
+          </div>
         </div>
-        <div class="role-btn" onclick="selectRole('production')" id="role-production">
-          <span class="role-icon">🏭</span>Production
-        </div>
-        <div class="role-btn" onclick="selectRole('quality')" id="role-quality">
-          <span class="role-icon">🔍</span>Quality Engineer
-        </div>
-        <div class="role-btn" onclick="selectRole('manager')" id="role-manager">
-          <span class="role-icon">📊</span>Manager
+        <div class="span2"><label class="lbl">Project</label><select id="r-proj"></select></div>
+        <div><label class="lbl">Password</label><input id="r-pw" type="password" placeholder="Min 6 characters"></div>
+        <div><label class="lbl">Confirm Password</label><input id="r-pw2" type="password" placeholder="Repeat password"></div>
+      </div>
+      <div id="r-err"></div>
+      <button class="btn btn-blue btn-w" onclick="doRegister()">CREATE ACCOUNT →</button>
+      <div class="alink"><a onclick="showTab('login')">← Back to login</a></div>
+    </div>
+
+    <!-- ADMIN REGISTER -->
+    <div class="aform" id="form-admin-reg">
+      <div class="msg msg-warn">🔐 Admin registration requires a secret authorization key. Only authorized personnel can create admin accounts.</div>
+      <div class="grid2">
+        <div><label class="lbl">Full Name</label><input id="ar-name" placeholder="Your full name"></div>
+        <div><label class="lbl">Mobile</label><input id="ar-mob" type="tel" placeholder="10-digit number"></div>
+        <div><label class="lbl">Company</label><input id="ar-co" placeholder="Company name"></div>
+        <div><label class="lbl">Designation</label><input id="ar-desig" placeholder="e.g. QA Manager"></div>
+        <div class="span2"><label class="lbl">Project</label><select id="ar-proj"></select></div>
+        <div><label class="lbl">Password</label><input id="ar-pw" type="password" placeholder="Min 6 characters"></div>
+        <div><label class="lbl">Confirm Password</label><input id="ar-pw2" type="password" placeholder="Repeat password"></div>
+        <div class="span2">
+          <label class="lbl">🔑 Admin Secret Key</label>
+          <input id="ar-key" type="password" placeholder="Enter admin secret key">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);margin-top:4px;">Default: TQIMS@Admin2024 (change after first login)</div>
         </div>
       </div>
+      <div id="ar-err"></div>
+      <button class="btn btn-amber btn-w" onclick="doAdminReg()">CREATE ADMIN ACCOUNT →</button>
+      <div class="alink"><a onclick="showTab('login')">← Back to login</a></div>
     </div>
 
-    <div class="input-group">
-      <label class="input-label">Name</label>
-      <input class="input-field" id="login-name" placeholder="Enter your name" />
-    </div>
-
-    <div class="input-group">
-      <label class="input-label">Password</label>
-      <input class="input-field" id="login-pass" type="password" placeholder="Enter password" />
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px;">
-        Admin: admin123 | Production: prod123 | Quality: qual123 | Manager: mgr123
-      </div>
-    </div>
-
-    <button class="btn-primary" onclick="doLogin()">ACCESS SYSTEM</button>
-    <div class="project-badge">▸ Project #1242 — Heat Exchanger Fabrication</div>
+    <div class="credit">© TQIMS · Designed by Ujval Dharawaparmar</div>
   </div>
 </div>
 
-<!-- ============ MAIN APP ============ -->
-<div id="app">
-  <div class="header">
-    <div class="header-logo">⬡ IEMQS</div>
-    <div class="header-right">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2);">
-        Project <span style="color:var(--accent2);">#1242</span> — Heat Exchanger
-      </div>
-      <div class="role-badge" id="header-role-badge"></div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);" id="header-user"></div>
-      <button class="logout-btn" onclick="logout()">LOGOUT</button>
+<!-- ════════════════════════════════════════
+     APP SCREEN
+════════════════════════════════════════ -->
+<div id="scr-app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <button class="ham" onclick="toggleSidebar()">☰</button>
+      <div class="tb-logo">TQIMS</div>
+    </div>
+    <div class="tb-right">
+      <span class="rpill" id="hdr-role"></span>
+      <span class="tb-user" id="hdr-name"></span>
+      <button class="tb-logout" onclick="doLogout()">LOGOUT</button>
     </div>
   </div>
 
-  <div class="layout">
+  <div class="app-body">
+    <div class="sov" id="sov" onclick="closeSidebar()"></div>
+
     <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="sidebar-section">
-        <span class="sidebar-label">Navigation</span>
-        <div class="sidebar-item active" onclick="showPage('dashboard')" id="nav-dashboard">
-          <span class="icon">📊</span> Dashboard
-        </div>
-        <div class="sidebar-item" onclick="showPage('inspection')" id="nav-inspection">
-          <span class="icon">🔬</span> Inspection Stages
-        </div>
-        <div class="sidebar-item admin-only" onclick="showPage('admin')" id="nav-admin" style="display:none;">
-          <span class="icon">⚙️</span> Admin / Setup
-        </div>
-        <div class="sidebar-item" onclick="showPage('log')" id="nav-log">
-          <span class="icon">📋</span> Activity Log
-        </div>
+    <div class="sidebar" id="sidebar">
+      <div>
+        <div class="sg-lbl">Navigation</div>
+        <div class="nitem on" id="ni-dashboard" onclick="goPage('dashboard')"><span class="ni">📊</span>Dashboard</div>
+        <div class="nitem" id="ni-inspection" onclick="goPage('inspection')"><span class="ni">🔬</span>Inspection<span class="nbadge" id="nb" style="display:none">0</span></div>
+        <div class="nitem" id="ni-log" onclick="goPage('log')"><span class="ni">📋</span>Activity Log</div>
       </div>
+      <div id="admin-nav" style="display:none">
+        <div class="sg-lbl">Admin</div>
+        <div class="nitem" id="ni-projects" onclick="goPage('projects')"><span class="ni">🗂️</span>Projects & Seams</div>
+        <div class="nitem" id="ni-stages" onclick="goPage('stages')"><span class="ni">🔧</span>Stage Templates</div>
+        <div class="nitem" id="ni-users" onclick="goPage('users')"><span class="ni">👥</span>Users</div>
+      </div>
+      <div id="manager-nav" style="display:none">
+        <div class="sg-lbl">Manager</div>
+        <div class="nitem" id="ni-approvals" onclick="goPage('approvals')"><span class="ni">✅</span>Approvals<span class="nbadge" id="nb-approvals" style="display:none">0</span></div>
+      </div>
+      <div>
+        <div class="sg-lbl">Reports</div>
+        <div class="nitem" id="ni-summary" onclick="goPage('summary')"><span class="ni">📄</span>Print Summary</div>
+        <div class="sg-lbl">Account</div>
+        <div class="nitem" id="ni-profile" onclick="goPage('profile')"><span class="ni">👤</span>My Profile</div>
+      </div>
+      <div class="credit" style="padding:12px 16px;margin-top:8px;">Designed by<br>Ujval Dharawaparmar</div>
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="main-content">
+    <div class="main">
 
-      <!-- ============ DASHBOARD PAGE ============ -->
-      <div class="page active" id="page-dashboard">
-        <div class="page-title">Dashboard</div>
-        <div class="page-sub">// Project #1242 — Heat Exchanger Fabrication — Overall Status</div>
+      <!-- ── DASHBOARD ── -->
+      <div class="pg on" id="pg-dashboard">
+        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs" id="dash-sub">// Project Overview</div></div>
+        <div class="projbar" id="projbar"></div>
+        <div class="sgrid" id="stat-grid"></div>
+        <div id="dash-sections"></div>
+      </div>
 
-        <div class="project-bar">
-          <div class="project-field">
-            <span class="project-field-label">Project No.</span>
-            <span class="project-field-value">1242</span>
-          </div>
-          <div class="project-field">
-            <span class="project-field-label">Equipment</span>
-            <span class="project-field-value">Heat Exchanger</span>
-          </div>
-          <div class="project-field">
-            <span class="project-field-label">Process</span>
-            <span class="project-field-value">Fabrication</span>
-          </div>
-          <div class="project-field">
-            <span class="project-field-label">Client</span>
-            <span class="project-field-value">IOCL</span>
-          </div>
-          <div class="project-field">
-            <span class="project-field-label">Status</span>
-            <span class="project-field-value" style="color:var(--warn);">IN PROGRESS</span>
-          </div>
-        </div>
+      <!-- ── SEAM DETAIL (from dashboard click) ── -->
+      <div class="pg" id="pg-seam">
+        <div class="back-btn" onclick="goPage('dashboard')">← Back to Dashboard</div>
+        <div class="pgh"><div class="pgt" id="seam-detail-title">Seam Detail</div><div class="pgs" id="seam-detail-sub"></div></div>
+        <div id="seam-detail-content"></div>
+      </div>
 
-        <div class="stat-grid" id="stat-grid"></div>
+      <!-- ── INSPECTION ── -->
+      <div class="pg" id="pg-inspection">
+        <div class="pgh"><div class="pgt">Inspection Stages</div><div class="pgs">// Select section then offer or inspect stages</div></div>
+        <div class="stabs" id="insp-tabs"></div>
+        <div id="insp-seams"></div>
+      </div>
 
-        <div class="card">
-          <div class="card-title">Section-wise Progress</div>
-          <div id="section-progress"></div>
+      <!-- ── ADMIN: PROJECTS & SEAMS ── -->
+      <div class="pg" id="pg-projects">
+        <div class="pgh"><div class="pgt">Projects & Seams</div><div class="pgs">// All changes require Manager approval before taking effect</div></div>
+        <div style="background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.2);padding:10px 14px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--amber);border-radius:2px;">
+          ⚠️ All add / edit / delete actions are sent to the Manager for approval. Changes will not apply until approved.
         </div>
 
         <div class="card">
-          <div class="card-title">Recent Activity</div>
-          <div id="recent-activity"></div>
+          <div class="chead">
+            <div class="ctitle">Projects</div>
+            <button class="abtn ab-blue" onclick="openModal('m-add-proj')">+ ADD PROJECT</button>
+          </div>
+          <div id="proj-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="chead"><div class="ctitle">Add Seam / Joint</div></div>
+          <div class="grid2">
+            <div><label class="lbl">Project</label><select id="ns-proj" onchange="refreshNsSections()"></select></div>
+            <div><label class="lbl">Section</label><select id="ns-sec"></select></div>
+            <div><label class="lbl">Seam / Joint Number</label><input id="ns-num" placeholder="Circ. Seam No: 101"></div>
+            <div><label class="lbl">Description</label><input id="ns-desc" placeholder="Nozzle Neck fit-up with Flange"></div>
+            <div><label class="lbl">Joint Type</label>
+              <select id="ns-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select>
+            </div>
+            <div><label class="lbl">Material</label><input id="ns-mat" placeholder="SA516 Gr.70"></div>
+            <div><label class="lbl">Thickness (mm)</label><input id="ns-thk" placeholder="20"></div>
+            <div><label class="lbl">WPS No.</label><input id="ns-wps" placeholder="WPS-001"></div>
+            <div><label class="lbl">Stage Template</label><select id="ns-tmpl"></select></div>
+            <div class="span2" style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">
+              <button class="abtn ab-blue" style="padding:8px 20px;font-size:11px;" onclick="addSeam()">+ ADD SEAM</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chead">
+            <div class="ctitle">All Seams</div>
+            <select id="fp" onchange="renderAdminSeams()" style="padding:5px 8px;font-size:11px;background:var(--surf2);border:1px solid var(--border2);color:var(--text);border-radius:2px;"></select>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Section</th><th>Seam #</th><th>Description</th><th>Type</th><th>Material</th><th>THK</th><th>WPS</th><th>Stages</th><th>Progress</th><th>Actions</th></tr></thead>
+            <tbody id="seam-tbody"></tbody></table>
+          </div>
         </div>
       </div>
 
-      <!-- ============ INSPECTION PAGE ============ -->
-      <div class="page" id="page-inspection">
-        <div class="page-title">Inspection Stages</div>
-        <div class="page-sub">// Offer and inspect seam stages section-by-section</div>
-
-        <div class="section-tabs" id="section-tabs"></div>
-
-        <div id="seam-content"></div>
-      </div>
-
-      <!-- ============ ADMIN PAGE ============ -->
-      <div class="page" id="page-admin">
-        <div class="page-title">Admin Setup</div>
-        <div class="page-sub">// Manage sections, seams, and stage configurations</div>
+      <!-- ── ADMIN: STAGE TEMPLATES ── -->
+      <div class="pg" id="pg-stages">
+        <div class="pgh"><div class="pgt">Stage Templates</div><div class="pgs">// Define, edit, add or remove inspection stages — apply to seams</div></div>
 
         <div class="card">
-          <div class="card-title">Add New Seam / Joint</div>
-          <div class="form-grid">
-            <div>
-              <label class="input-label">Section</label>
-              <select class="input-field" id="new-seam-section">
-                <option value="Pre-Fabrication">Pre-Fabrication</option>
-                <option value="Head Assembly">Head Assembly</option>
-                <option value="Channel Side">Channel Side</option>
-                <option value="Shell Side">Shell Side</option>
-                <option value="Tube Bundle Assembly">Tube Bundle Assembly</option>
-              </select>
+          <div class="chead">
+            <div class="ctitle">Templates</div>
+            <button class="abtn ab-blue" onclick="addTemplate()">+ NEW TEMPLATE</button>
+          </div>
+          <div id="tmpl-list"></div>
+        </div>
+
+        <div class="card" id="stage-editor-card" style="display:none;">
+          <div class="chead">
+            <div class="ctitle" id="stage-editor-title">Edit Stages</div>
+            <div style="display:flex;gap:6px;">
+              <button class="abtn ab-green" onclick="addStageLine()">+ ADD STAGE</button>
+              <button class="abtn ab-ghost" onclick="closeStageEditor()">CLOSE</button>
             </div>
-            <div>
-              <label class="input-label">Seam Description</label>
-              <input class="input-field" id="new-seam-desc" placeholder="e.g. Nozzle Neck fit-up with Flange" />
-            </div>
-            <div>
-              <label class="input-label">Seam / Joint Number</label>
-              <input class="input-field" id="new-seam-num" placeholder="e.g. Circ. Seam No: 101" />
-            </div>
-            <div>
-              <label class="input-label">Joint Type</label>
-              <select class="input-field" id="new-seam-type">
-                <option>Butt Joint</option>
-                <option>Fillet Joint</option>
-                <option>Nozzle Weld</option>
-                <option>Corner Joint</option>
-                <option>T-Joint</option>
-              </select>
-            </div>
-            <div>
-              <label class="input-label">Material</label>
-              <input class="input-field" id="new-seam-mat" placeholder="e.g. SA516 Gr.70" />
-            </div>
-            <div>
-              <label class="input-label">Thickness (mm)</label>
-              <input class="input-field" id="new-seam-thk" placeholder="e.g. 20" />
-            </div>
-            <div class="form-full" style="display:flex;justify-content:flex-end;">
-              <button class="btn-add" onclick="addSeam()">+ ADD SEAM</button>
+          </div>
+          <div id="stage-lines"></div>
+        </div>
+      </div>
+
+      <!-- ── ADMIN: USERS ── -->
+      <div class="pg" id="pg-users">
+        <div class="pgh"><div class="pgt">Users</div><div class="pgs">// Manage registered accounts and approvals</div></div>
+        <div class="card">
+          <div class="chead">
+            <div class="ctitle">All Users</div>
+            <button class="abtn ab-blue" onclick="openModal('m-add-user')">+ ADD USER</button>
+          </div>
+          <div class="tbl-wrap">
+            <table><thead><tr><th>Name</th><th>Mobile</th><th>Company</th><th>Designation</th><th>Role</th><th>Project</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="user-tbody"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── LOG ── -->
+      <div class="pg" id="pg-log">
+        <div class="pgh"><div class="pgt">Activity Log</div><div class="pgs">// Full inspection history and audit trail</div></div>
+        <div class="card"><div id="log-body"></div></div>
+      </div>
+
+      <!-- ── SUMMARY ── -->
+      <div class="pg" id="pg-summary">
+        <div class="pgh"><div class="pgt">Print Summary</div><div class="pgs">// Generate A4 inspection report with signature blocks</div></div>
+        <div class="card">
+          <div class="grid2" style="max-width:480px;">
+            <div><label class="lbl">Project</label><select id="print-proj" onchange="refreshPrintSecs()"></select></div>
+            <div><label class="lbl">Section Filter</label><select id="print-sec"><option value="">All Sections</option></select></div>
+            <div class="span2">
+              <button class="btn btn-blue" style="width:auto;padding:10px 24px;" onclick="doPrint()">🖨️ PRINT / SAVE AS PDF</button>
             </div>
           </div>
         </div>
+        <div class="card" id="print-preview"></div>
+      </div>
 
-        <div class="card">
-          <div class="card-title">Existing Seams</div>
-          <div id="admin-seam-list"></div>
+      <!-- ── PROFILE ── -->
+      <div class="pg" id="pg-profile">
+        <div class="pgh"><div class="pgt">My Profile</div><div class="pgs">// Account details and password management</div></div>
+        <div style="max-width:520px;">
+          <div class="card">
+            <div class="chead"><div class="ctitle">Account Details</div></div>
+            <div id="profile-rows"></div>
+          </div>
+          <div class="card">
+            <div class="chead"><div class="ctitle">Change Password</div></div>
+            <div class="fl" style="max-width:360px;gap:12px;display:flex;flex-direction:column;">
+              <div><label class="lbl">Current Password</label><input id="cp-cur" type="password" placeholder="Enter current password"></div>
+              <div><label class="lbl">New Password</label><input id="cp-new" type="password" placeholder="Min 6 characters"></div>
+              <div><label class="lbl">Confirm New Password</label><input id="cp-cnf" type="password" placeholder="Repeat new password"></div>
+              <div id="cp-msg"></div>
+              <button class="btn btn-blue" style="width:auto;padding:10px 22px;" onclick="changePassword()">UPDATE PASSWORD →</button>
+            </div>
+          </div>
+          <div class="card" id="secret-key-card" style="display:none;">
+            <div class="chead"><div class="ctitle">🔑 Admin Secret Key</div></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-bottom:12px;">Required for new admin registrations. Keep confidential.</div>
+            <div class="fl" style="max-width:360px;gap:12px;display:flex;flex-direction:column;">
+              <div><label class="lbl">Current Key</label><input id="sk-cur" type="password" placeholder="Current secret key"></div>
+              <div><label class="lbl">New Key (min 8 chars)</label><input id="sk-new" type="password" placeholder="New secret key"></div>
+              <div><label class="lbl">Confirm New Key</label><input id="sk-cnf" type="password" placeholder="Repeat new key"></div>
+              <div id="sk-msg"></div>
+              <button class="btn btn-amber" style="width:auto;padding:10px 22px;" onclick="changeSecretKey()">UPDATE SECRET KEY →</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- ============ LOG PAGE ============ -->
-      <div class="page" id="page-log">
-        <div class="page-title">Activity Log</div>
-        <div class="page-sub">// Full inspection offer and acceptance history</div>
-        <div class="card">
-          <div id="full-log"></div>
-        </div>
+      <!-- ── APPROVALS (Manager) ── -->
+      <div class="pg" id="pg-approvals">
+        <div class="pgh"><div class="pgt">Pending Approvals</div><div class="pgs">// Review and approve or reject Admin requests</div></div>
+        <div class="card" id="approvals-body"></div>
       </div>
 
-    </div><!-- end main-content -->
-  </div>
-</div>
+    </div><!-- /main -->
+  </div><!-- /app-body -->
+</div><!-- /scr-app -->
 
-<!-- ============ INSPECT MODAL ============ -->
-<div class="modal-overlay" id="inspect-modal">
+<!-- ════════ MODALS ════════ -->
+
+<!-- Offer Modal -->
+<div class="mbg" id="m-offer">
   <div class="modal">
-    <div class="modal-title">🔍 Quality Inspection</div>
-    <div id="inspect-modal-content"></div>
-    <textarea class="remarks-input" id="inspect-remarks" placeholder="Remarks / NCR Number / Hold notes (optional)..."></textarea>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-reject" onclick="submitInspection('rejected')">✗ REJECT</button>
-      <button class="btn-accept" onclick="submitInspection('accepted')">✓ ACCEPT</button>
+    <div class="mhead"><div class="mtitle">📤 Offer for Inspection</div><button class="mclose" onclick="closeModal('m-offer')">✕</button></div>
+    <div class="mbody">
+      <div id="offer-info"></div>
+      <div class="grid2" style="margin-top:14px;">
+        <div><label class="lbl">Location / Position</label><input id="of-loc" placeholder="Bay-3, Grid B-4, Bottom NW"></div>
+        <div><label class="lbl">Drawing / Ref. No.</label><input id="of-drw" placeholder="DRG-1242-001"></div>
+        <div class="span2"><label class="lbl">Production Remarks</label><textarea id="of-rem" placeholder="e.g. Pre-heat done, joint cleaned..."></textarea></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-offer')">Cancel</button>
+      <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="confirmOffer()">OFFER STAGE ↑</button>
     </div>
   </div>
 </div>
 
-<!-- NOTIFICATION -->
-<div class="notif" id="notif"></div>
+<!-- Inspect Modal -->
+<div class="mbg" id="m-inspect">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle">🔍 Quality Inspection</div><button class="mclose" onclick="closeModal('m-inspect')">✕</button></div>
+    <div class="mbody">
+      <div id="inspect-info"></div>
+      <div style="margin-top:14px;">
+        <label class="lbl">Quality Remarks / NCR Number / Hold</label>
+        <textarea id="ins-rem" placeholder="Enter remarks, NCR number, or HOLD reason (optional)..."></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-inspect')">Cancel</button>
+      <button class="btn btn-red" style="width:auto;padding:9px 16px;" onclick="submitInspect('rejected')">✗ REJECT</button>
+      <button class="btn btn-green" style="width:auto;padding:9px 16px;" onclick="submitInspect('accepted')">✓ ACCEPT</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Project Modal -->
+<div class="mbg" id="m-add-proj">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle">+ New Project</div><button class="mclose" onclick="closeModal('m-add-proj')">✕</button></div>
+    <div class="mbody">
+      <div class="grid2">
+        <div><label class="lbl">Project Number</label><input id="np-num" placeholder="1242"></div>
+        <div><label class="lbl">Equipment Name</label><input id="np-eq" placeholder="Heat Exchanger"></div>
+        <div><label class="lbl">Client</label><input id="np-cl" placeholder="IOCL"></div>
+        <div><label class="lbl">Process</label><input id="np-pr" placeholder="Fabrication"></div>
+        <div class="span2"><label class="lbl">Sections (comma separated)</label><input id="np-secs" placeholder="Pre-Fabrication, Head Assembly, Shell Side, Channel Side, Tube Bundle Assembly"></div>
+        <div class="span2"><label class="lbl">Code / Standard</label><input id="np-code" placeholder="ASME Sec VIII Div.1"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-add-proj')">Cancel</button>
+      <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="confirmAddProj()">CREATE PROJECT</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Seam Modal -->
+<div class="mbg" id="m-edit-seam">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle">✏️ Edit Seam</div><button class="mclose" onclick="closeModal('m-edit-seam')">✕</button></div>
+    <div class="mbody">
+      <input type="hidden" id="es-id">
+      <div class="grid2">
+        <div><label class="lbl">Section</label><select id="es-sec"></select></div>
+        <div><label class="lbl">Seam Number</label><input id="es-num"></div>
+        <div class="span2"><label class="lbl">Description</label><input id="es-desc"></div>
+        <div><label class="lbl">Joint Type</label><select id="es-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select></div>
+        <div><label class="lbl">Material</label><input id="es-mat"></div>
+        <div><label class="lbl">Thickness (mm)</label><input id="es-thk"></div>
+        <div><label class="lbl">WPS No.</label><input id="es-wps"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-edit-seam')">Cancel</button>
+      <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="saveSeamEdit()">SAVE CHANGES</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="mbg" id="m-add-user">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle">+ Add User</div><button class="mclose" onclick="closeModal('m-add-user')">✕</button></div>
+    <div class="mbody">
+      <div class="grid2">
+        <div><label class="lbl">Full Name</label><input id="au-name" placeholder="Full name"></div>
+        <div><label class="lbl">Mobile</label><input id="au-mob" type="tel" placeholder="Mobile number"></div>
+        <div><label class="lbl">Company</label><input id="au-co" placeholder="Company name"></div>
+        <div><label class="lbl">Designation</label><input id="au-desig" placeholder="e.g. QC Engineer"></div>
+        <div><label class="lbl">Role</label>
+          <select id="au-role"><option value="production">Production</option><option value="quality">Quality Engineer</option><option value="manager">Manager</option><option value="admin">Admin</option></select>
+        </div>
+        <div><label class="lbl">Project</label><select id="au-proj"></select></div>
+        <div class="span2"><label class="lbl">Password</label><input id="au-pw" type="password" placeholder="Set password"></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-add-user')">Cancel</button>
+      <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="adminAddUser()">CREATE USER</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// ============================================================
-// DATA STORE (in-memory — replace with localStorage or backend)
-// ============================================================
+// ══════════════════════════════════════════════════════════════
+// DATABASE
+// ══════════════════════════════════════════════════════════════
+const DEFAULT_STAGES = ['WEP PT/MT','Fit-up Inspection','Root Run / Back Chip PT/MT','Complete Weld Dimension Inspection','Complete Weld PT/MT','Hardness Test','RT (Radiographic Test)','UT (Ultrasonic Test)'];
 
-const PASSWORDS = { admin: 'admin123', production: 'prod123', quality: 'qual123', manager: 'mgr123' };
-
-const INSPECTION_STAGES = [
-  'WEP PT/MT',
-  'Fit-up Inspection',
-  'Root Run / Back Chip PT/MT',
-  'Complete Weld Dimension Inspection',
-  'Complete Weld PT/MT',
-  'Hardness Test',
-  'RT (Radiographic Test)',
-  'UT (Ultrasonic Test)'
-];
-
-// Load from localStorage if exists
-function loadData() {
-  try {
-    const saved = localStorage.getItem('iemqs_data');
-    if (saved) return JSON.parse(saved);
-  } catch(e) {}
-  return getDefaultData();
+function mkStages(names) {
+  return (names||DEFAULT_STAGES).map(n=>({name:n,status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',location:'',drawing:'',prodRem:'',inspectedBy:'',inspectedAt:'',qeRem:''}));
 }
 
-function saveData() {
-  try {
-    localStorage.setItem('iemqs_data', JSON.stringify(DB));
-  } catch(e) {}
-}
-
-function getDefaultData() {
+function defaultDB() {
   return {
-    seams: [
-      { id: 's1', section: 'Pre-Fabrication', number: 'Circ. Seam No: 101', desc: 'Nozzle Neck fit-up with Flange', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '20', stages: buildStages() },
-      { id: 's2', section: 'Pre-Fabrication', number: 'Circ. Seam No: 102', desc: 'Shell Plate to End Plate', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '25', stages: buildStages() },
-      { id: 's3', section: 'Head Assembly', number: 'Circ. Seam No: 201', desc: 'Ellipsoidal Head to Shell', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '22', stages: buildStages() },
-      { id: 's4', section: 'Shell Side', number: 'Circ. Seam No: 301', desc: 'Shell Longitudinal Seam', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '18', stages: buildStages() },
-      { id: 's5', section: 'Channel Side', number: 'Circ. Seam No: 401', desc: 'Channel Cover to Flange', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '30', stages: buildStages() },
-      { id: 's6', section: 'Tube Bundle Assembly', number: 'Circ. Seam No: 501', desc: 'Tube to Tubesheet Welding', type: 'Fillet Joint', material: 'SA179', thickness: '3', stages: buildStages() },
+    projects:[{id:'p1',number:'1242',equipment:'Heat Exchanger',client:'IOCL',process:'Fabrication',code:'ASME Sec VIII Div.1',sections:['Pre-Fabrication','Head Assembly','Shell Side','Channel Side','Tube Bundle Assembly']}],
+    seams:[
+      {id:'s1',pid:'p1',sec:'Pre-Fabrication',num:'Circ. Seam No: 101',desc:'Nozzle Neck fit-up with Flange',type:'Butt Joint',mat:'SA516 Gr.70',thk:'20',wps:'WPS-001',stages:mkStages()},
+      {id:'s2',pid:'p1',sec:'Pre-Fabrication',num:'Circ. Seam No: 102',desc:'Shell Plate to End Plate',type:'Butt Joint',mat:'SA516 Gr.70',thk:'25',wps:'WPS-001',stages:mkStages()},
+      {id:'s3',pid:'p1',sec:'Head Assembly',num:'Circ. Seam No: 201',desc:'Ellipsoidal Head to Shell',type:'Butt Joint',mat:'SA516 Gr.70',thk:'22',wps:'WPS-002',stages:mkStages()},
+      {id:'s4',pid:'p1',sec:'Shell Side',num:'Circ. Seam No: 301',desc:'Shell Longitudinal Seam',type:'Butt Joint',mat:'SA516 Gr.70',thk:'18',wps:'WPS-001',stages:mkStages()},
+      {id:'s5',pid:'p1',sec:'Channel Side',num:'Circ. Seam No: 401',desc:'Channel Cover to Flange',type:'Butt Joint',mat:'SA516 Gr.70',thk:'30',wps:'WPS-003',stages:mkStages()},
+      {id:'s6',pid:'p1',sec:'Tube Bundle Assembly',num:'Circ. Seam No: 501',desc:'Tube to Tubesheet Welding',type:'Fillet Joint',mat:'SA179',thk:'3',wps:'WPS-004',stages:mkStages()}
     ],
-    log: []
+    users:[{id:'u0',name:'Admin User',mob:'0000000000',email:'',co:'TQIMS',desig:'System Admin',role:'admin',pid:'p1',pw:'admin123',approved:true}],
+    templates:[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}],
+    log:[],
+    pendingActions:[],
+    secretKey:'TQIMS@Admin2024'
   };
 }
 
-function buildStages() {
-  return INSPECTION_STAGES.map((name, i) => ({
-    name,
-    status: 'pending', // pending | offered | accepted | rejected
-    offeredBy: null,
-    offeredAt: null,
-    inspectedBy: null,
-    inspectedAt: null,
-    remarks: ''
-  }));
-}
+let DB = (()=>{try{const d=localStorage.getItem('tqims3');if(d){const p=JSON.parse(d);if(!p.templates)p.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];if(!p.secretKey)p.secretKey='TQIMS@Admin2024';if(!p.pendingActions)p.pendingActions=[];return p;}}catch(e){}return defaultDB();})();
+function save(){try{localStorage.setItem('tqims3',JSON.stringify(DB));}catch(e){}}
 
-let DB = loadData();
-let currentUser = null;
-let currentRole = null;
-let selectedRole = null;
-let activeSection = null;
-let inspectTarget = null; // { seamId, stageIdx }
+let CU = null; // current user
+let activeSeamId = null; // for seam detail view
+let inspTarget = null;
+let offerTarget = null;
+let editTmplId = null;
 
-// ============================================================
-// LOGIN
-// ============================================================
-function selectRole(role) {
-  selectedRole = role;
-  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('role-' + role).classList.add('active');
-}
-
-function doLogin() {
-  if (!selectedRole) { notify('Please select a role'); return; }
-  const name = document.getElementById('login-name').value.trim();
-  const pass = document.getElementById('login-pass').value.trim();
-  if (!name) { notify('Please enter your name'); return; }
-  if (pass !== PASSWORDS[selectedRole]) { notify('Incorrect password'); return; }
-
-  currentUser = name;
-  currentRole = selectedRole;
-
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-
-  // Set role badge
-  const badge = document.getElementById('header-role-badge');
-  badge.className = 'role-badge ' + currentRole;
-  badge.textContent = currentRole.toUpperCase();
-  document.getElementById('header-user').textContent = currentUser;
-
-  // Show admin nav only for admin
-  if (currentRole === 'admin') {
-    document.getElementById('nav-admin').style.display = 'flex';
-  }
-
-  // Init active section
-  const sections = getSections();
-  if (sections.length > 0) activeSection = sections[0];
-
-  renderAll();
-  showPage('dashboard');
-}
-
-function logout() {
-  currentUser = null;
-  currentRole = null;
-  selectedRole = null;
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('login-name').value = '';
-  document.getElementById('login-pass').value = '';
-}
-
-// ============================================================
-// NAVIGATION
-// ============================================================
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('nav-' + page)?.classList.add('active');
-  if (page === 'dashboard') renderDashboard();
-  if (page === 'inspection') renderInspection();
-  if (page === 'admin') renderAdmin();
-  if (page === 'log') renderLog();
-}
-
-// ============================================================
+// ══════════════════════════════════════════════════════════════
 // HELPERS
-// ============================================================
-function getSections() {
-  return [...new Set(DB.seams.map(s => s.section))];
+// ══════════════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const now = () => new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+function log(msg){DB.log.unshift({t:now(),user:CU?CU.name:'System',role:CU?CU.role:'system',co:CU?CU.co:'',msg});save();}
+function getProj(id){return DB.projects.find(p=>p.id===id);}
+function getSeam(id){return DB.seams.find(s=>s.id===id);}
+function getSections(pid){const p=getProj(pid);return p?p.sections:[];}
+function getSeams(pid,sec){return DB.seams.filter(s=>s.pid===pid&&(!sec||s.sec===sec));}
+function stageStats(seam){const t=seam.stages.length,a=seam.stages.filter(s=>s.status==='accepted').length,o=seam.stages.filter(s=>s.status==='offered').length,r=seam.stages.filter(s=>s.status==='rejected').length;return{t,a,o,r,pct:t?Math.round(a/t*100):0};}
+function hasNCR(seam){return seam.stages.some(s=>s.qeRem&&s.qeRem.toLowerCase().includes('ncr'));}
+function overallStats(pid){let t=0,a=0,o=0,r=0;getSeams(pid).forEach(s=>s.stages.forEach(st=>{t++;if(st.status==='accepted')a++;else if(st.status==='offered')o++;else if(st.status==='rejected')r++;}));return{t,a,o,r,p:t?Math.round(a/t*100):0,seams:getSeams(pid).length};}
+function updateBadge(){const seams=getSeams(CU?CU.pid:'');let o=0;seams.forEach(s=>s.stages.forEach(st=>{if(st.status==='offered')o++;}));const nb=$('nb');if(nb){nb.style.display=o>0?'inline':'none';nb.textContent=o;}}
+function empty(t){return`<div style="text-align:center;padding:36px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);">${t}</div>`;}
+
+function toast(msg,type){
+  const el=$('toast');
+  el.textContent=msg;
+  el.style.borderLeftColor=type==='err'?'var(--red)':type==='ok'?'var(--green)':'var(--blue)';
+  el.classList.add('on');
+  setTimeout(()=>el.classList.remove('on'),3000);
 }
 
-function getSeamsForSection(section) {
-  return DB.seams.filter(s => s.section === section);
+function openModal(id){$(id).classList.add('on');}
+function closeModal(id){$(id).classList.remove('on');}
+document.querySelectorAll('.mbg').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('on');}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mbg.on').forEach(m=>m.classList.remove('on'));});
+
+// ══════════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════════
+function showTab(t){
+  ['login','reg','admin-reg'].forEach(id=>{
+    $('tab-'+id)&&$('tab-'+id).classList.toggle('on',id===t);
+    $('form-'+id).classList.toggle('on',id===t);
+  });
+  // populate project dropdowns
+  const opts=DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('');
+  ['r-proj','ar-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
 }
 
-function getSeamById(id) {
-  return DB.seams.find(s => s.id === id);
+function pickRole(el){document.querySelectorAll('.rchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+
+function doLogin(){
+  const mob=$('l-mob').value.trim();
+  const pw=$('l-pw').value;
+  const u=DB.users.find(u=>u.mob===mob&&u.pw===pw);
+  if(!u){$('l-err').innerHTML='<div class="msg msg-err">Invalid mobile or password.</div>';return;}
+  if(!u.approved){$('l-err').innerHTML='<div class="msg msg-err">Account pending admin approval.</div>';return;}
+  loginAs(u);
 }
 
-function now() {
-  return new Date().toLocaleString('en-IN', { hour12: false });
+function doRegister(){
+  const name=$('r-name').value.trim();
+  const mob=$('r-mob').value.trim();
+  const co=$('r-co').value.trim();
+  const desig=$('r-desig').value.trim();
+  const email=$('r-email').value.trim();
+  const pw=$('r-pw').value;
+  const pw2=$('r-pw2').value;
+  const pid=$('r-proj').value;
+  const roleEl=document.querySelector('.rchip.on');
+  const role=roleEl?roleEl.dataset.r:'';
+  const err=$('r-err');
+  if(!name||!mob||!co||!pw||!pid||!role){err.innerHTML='<div class="msg msg-err">Please fill all required fields and select a role.</div>';return;}
+  if(pw!==pw2){err.innerHTML='<div class="msg msg-err">Passwords do not match.</div>';return;}
+  if(pw.length<6){err.innerHTML='<div class="msg msg-err">Password must be at least 6 characters.</div>';return;}
+  if(DB.users.find(u=>u.mob===mob)){err.innerHTML='<div class="msg msg-err">Mobile number already registered.</div>';return;}
+  DB.users.push({id:'u'+Date.now(),name,mob,email,co,desig,role,pid,pw,approved:false});
+  save();
+  err.innerHTML='<div class="msg msg-ok">✓ Account created! Awaiting admin approval.</div>';
+  toast('Registration submitted');
 }
 
-function addLog(msg) {
-  DB.log.unshift({ time: now(), user: currentUser, role: currentRole, msg });
-  saveData();
+function doAdminReg(){
+  const name=$('ar-name').value.trim();
+  const mob=$('ar-mob').value.trim();
+  const co=$('ar-co').value.trim();
+  const desig=$('ar-desig').value.trim();
+  const pid=$('ar-proj').value;
+  const pw=$('ar-pw').value;
+  const pw2=$('ar-pw2').value;
+  const key=$('ar-key').value;
+  const err=$('ar-err');
+  if(!name||!mob||!pw||!pid||!key){err.innerHTML='<div class="msg msg-err">Please fill all required fields.</div>';return;}
+  if(key!==DB.secretKey){err.innerHTML='<div class="msg msg-err">❌ Invalid admin secret key. Access denied.</div>';$('ar-key').value='';return;}
+  if(pw!==pw2){err.innerHTML='<div class="msg msg-err">Passwords do not match.</div>';return;}
+  if(pw.length<6){err.innerHTML='<div class="msg msg-err">Password must be at least 6 characters.</div>';return;}
+  if(DB.users.find(u=>u.mob===mob)){err.innerHTML='<div class="msg msg-err">Mobile already registered.</div>';return;}
+  DB.users.push({id:'u'+Date.now(),name,mob,email:'',co:co||'TQIMS',desig:desig||'Admin',role:'admin',pid,pw,approved:true});
+  save();
+  err.innerHTML='<div class="msg msg-ok">✓ Admin account created! You can now login.</div>';
+  $('ar-pw').value='';$('ar-pw2').value='';$('ar-key').value='';
+  setTimeout(()=>showTab('login'),2000);
 }
 
-function stageProgress(seam) {
-  const total = seam.stages.length;
-  const done = seam.stages.filter(s => s.status === 'accepted').length;
-  return { total, done, pct: Math.round((done / total) * 100) };
+function loginAs(u){
+  CU=u;
+  $('scr-auth').classList.remove('on');
+  $('scr-app').classList.add('on');
+  $('hdr-role').className='rpill rp-'+u.role;
+  $('hdr-role').textContent=u.role.toUpperCase();
+  $('hdr-name').textContent=u.name;
+  $('admin-nav').style.display=u.role==='admin'?'block':'none';
+  $('manager-nav').style.display=u.role==='manager'?'block':'none';
+  populateSelects();
+  updateApprovalBadge();
+  goPage('dashboard');
 }
 
-function getOverallStageCount(status) {
-  let count = 0;
-  DB.seams.forEach(seam => {
-    seam.stages.forEach(stage => {
-      if (stage.status === status) count++;
+function doLogout(){
+  CU=null;
+  $('scr-app').classList.remove('on');
+  $('scr-auth').classList.add('on');
+  $('l-mob').value='';$('l-pw').value='';$('l-err').innerHTML='';
+  $('hdr-role').className='rpill';
+  $('admin-nav').style.display='none';
+}
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function goPage(pg){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nitem').forEach(n=>n.classList.remove('on'));
+  $('pg-'+pg).classList.add('on');
+  const ni=$('ni-'+pg);if(ni)ni.classList.add('on');
+  closeSidebar();
+  if(pg==='dashboard')renderDashboard();
+  else if(pg==='inspection'){renderInspection();updateBadge();}
+  else if(pg==='log')renderLog();
+  else if(pg==='projects')renderProjectsPage();
+  else if(pg==='stages')renderStagesPage();
+  else if(pg==='users')renderUsers();
+  else if(pg==='summary')renderSummaryPage();
+  else if(pg==='profile')renderProfile();
+  else if(pg==='approvals')renderApprovals();
+}
+
+function toggleSidebar(){$('sidebar').classList.toggle('open');$('sov').classList.toggle('on');}
+function closeSidebar(){$('sidebar').classList.remove('open');$('sov').classList.remove('on');}
+
+// ══════════════════════════════════════════════════════════════
+// POPULATE SELECTS
+// ══════════════════════════════════════════════════════════════
+function populateSelects(){
+  const opts=DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('');
+  ['fp','print-proj','au-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
+  refreshNsSections();
+  refreshPrintSecs();
+  refreshTmplSelect();
+}
+
+function refreshNsSections(){
+  const pid=$('ns-proj')&&$('ns-proj').value;
+  const secs=getSections(pid);
+  const el=$('ns-sec');if(el)el.innerHTML=secs.map(s=>`<option>${s}</option>`).join('');
+}
+
+function refreshPrintSecs(){
+  const pid=$('print-proj')&&$('print-proj').value||DB.projects[0]&&DB.projects[0].id;
+  const secs=getSections(pid);
+  const el=$('print-sec');if(el)el.innerHTML='<option value="">All Sections</option>'+secs.map(s=>`<option>${s}</option>`).join('');
+}
+
+function refreshTmplSelect(){
+  const el=$('ns-tmpl');if(!el)return;
+  el.innerHTML=DB.templates.map(t=>`<option value="${t.id}">${t.name}</option>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════
+function renderDashboard(){
+  if(!CU)return;
+  const pid=CU.pid;
+  const p=getProj(pid);
+  if(!p){$('dash-sections').innerHTML=empty('No project assigned. Contact admin.');return;}
+
+  $('dash-sub').textContent=`// Project #${p.number} — ${p.equipment}`;
+  $('projbar').innerHTML=`
+    <div><div class="pf-lbl">Project No.</div><div class="pf-val">${p.number}</div></div>
+    <div><div class="pf-lbl">Equipment</div><div class="pf-val">${p.equipment}</div></div>
+    <div><div class="pf-lbl">Client</div><div class="pf-val">${p.client||'—'}</div></div>
+    <div><div class="pf-lbl">Process</div><div class="pf-val">${p.process||'—'}</div></div>
+    <div><div class="pf-lbl">Code</div><div class="pf-val">${p.code||'—'}</div></div>
+  `;
+
+  const st=overallStats(pid);
+  $('stat-grid').innerHTML=`
+    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Total Seams</div></div>
+    <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Accepted</div></div>
+    <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${st.o}</div><div class="slbl">Awaiting QC</div></div>
+    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">Rejected</div></div>
+    <div class="sbox sb-green"><div class="snum" style="color:var(--cyan)">${st.p}%</div><div class="slbl">Completion</div></div>
+  `;
+
+  // Seam tiles per section
+  const sections=getSections(pid);
+  let html='';
+  sections.forEach(sec=>{
+    const seams=getSeams(pid,sec);
+    if(!seams.length)return;
+    const secTotal=seams.reduce((a,s)=>a+s.stages.length,0);
+    const secDone=seams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
+    const secPct=secTotal?Math.round(secDone/secTotal*100):0;
+    html+=`<div class="dash-section">
+      <div class="dash-sec-title">
+        <span>${sec}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);">${secDone}/${secTotal} stages · ${secPct}%</span>
+      </div>
+      <div class="seam-grid">`;
+    seams.forEach(seam=>{
+      const ss=stageStats(seam);
+      const ncr=hasNCR(seam);
+      const hasOff=seam.stages.some(s=>s.status==='offered');
+      const hasRej=seam.stages.some(s=>s.status==='rejected');
+      const tileClass=ss.pct===100?'st-done':hasOff?'st-active':hasRej?'st-rejected':'st-pending';
+      html+=`<div class="seam-tile ${tileClass}" onclick="openSeamDetail('${seam.id}')">
+        ${ncr?'<div class="ncr-dot" title="NCR Raised"></div>':''}
+        <div class="st-seam-num">${seam.num}</div>
+        <div class="st-seam-desc" title="${seam.desc}">${seam.desc}</div>
+        <div class="st-seam-pct">${ss.pct}%</div>
+        <div class="st-seam-meta">${ss.a}/${ss.t} stages</div>
+        <div class="pbar" style="margin-top:5px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
+        ${hasOff?'<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--amber);margin-top:4px;">● AWAITING QC</div>':''}
+      </div>`;
     });
+    html+='</div></div>';
   });
-  return count;
+  $('dash-sections').innerHTML=html||empty('No seams added yet. Admin can add from Projects & Seams.');
+  updateBadge();
 }
 
-function getTotalStages() {
-  return DB.seams.reduce((a, s) => a + s.stages.length, 0);
+// ══════════════════════════════════════════════════════════════
+// SEAM DETAIL VIEW (click from dashboard)
+// ══════════════════════════════════════════════════════════════
+function openSeamDetail(seamId){
+  activeSeamId=seamId;
+  const seam=getSeam(seamId);
+  $('seam-detail-title').textContent=seam.num;
+  $('seam-detail-sub').textContent=`// ${seam.sec} · ${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}`;
+  renderSeamDetailContent(seamId);
+  goPage('seam');
+  $('ni-dashboard').classList.add('on');
 }
 
-// ============================================================
-// OFFER STAGE (Production)
-// ============================================================
-function offerStage(seamId, stageIdx) {
-  const seam = getSeamById(seamId);
-  if (!seam) return;
-
-  // Check previous stage is accepted (except first)
-  if (stageIdx > 0 && seam.stages[stageIdx - 1].status !== 'accepted') {
-    notify('⚠ Previous stage must be accepted before offering this stage');
-    return;
-  }
-
-  const stage = seam.stages[stageIdx];
-  if (stage.status !== 'pending' && stage.status !== 'rejected') {
-    notify('Stage already offered or accepted');
-    return;
-  }
-
-  stage.status = 'offered';
-  stage.offeredBy = currentUser;
-  stage.offeredAt = now();
-  stage.inspectedBy = null;
-  stage.inspectedAt = null;
-  stage.remarks = '';
-
-  addLog(`🔵 OFFERED — <strong>${seam.number}</strong> · Stage: <strong>${stage.name}</strong> by Production (${currentUser})`);
-  saveData();
-  renderInspection();
-  notify(`Stage "${stage.name}" offered for inspection`);
+function renderSeamDetailContent(seamId){
+  const seam=getSeam(seamId);
+  $('seam-detail-content').innerHTML=renderSeamCard(seam,true);
 }
 
-// ============================================================
-// INSPECT STAGE (Quality)
-// ============================================================
-function openInspectModal(seamId, stageIdx) {
-  const seam = getSeamById(seamId);
-  const stage = seam.stages[stageIdx];
-
-  inspectTarget = { seamId, stageIdx };
-
-  document.getElementById('inspect-modal-content').innerHTML = `
-    <div class="info-row"><span>Seam / Joint</span><span>${seam.number}</span></div>
-    <div class="info-row"><span>Description</span><span>${seam.desc}</span></div>
-    <div class="info-row"><span>Section</span><span>${seam.section}</span></div>
-    <div class="info-row"><span>Stage</span><span style="color:var(--warn);">${stage.name}</span></div>
-    <div class="info-row"><span>Offered By</span><span>${stage.offeredBy} at ${stage.offeredAt}</span></div>
-    <div class="info-row"><span>Material</span><span>${seam.material} · ${seam.thickness}mm</span></div>
-    <div class="info-row"><span>Joint Type</span><span>${seam.type}</span></div>
-  `;
-
-  document.getElementById('inspect-remarks').value = '';
-  document.getElementById('inspect-modal').classList.add('open');
+// ══════════════════════════════════════════════════════════════
+// INSPECTION PAGE
+// ══════════════════════════════════════════════════════════════
+let activeSec=null;
+function renderInspection(){
+  if(!CU)return;
+  const pid=CU.pid;
+  const secs=getSections(pid);
+  if(!activeSec||!secs.includes(activeSec))activeSec=secs[0]||null;
+  // Role hint
+  const hint = CU.role==='production' ? '// You can offer stages for inspection'
+    : CU.role==='quality' ? '// You can accept or reject offered stages'
+    : '// View-only — inspection actions are role-restricted';
+  document.querySelector('#pg-inspection .pgs').textContent=hint;
+  $('insp-tabs').innerHTML=secs.map(s=>`<div class="stab ${s===activeSec?'on':''}" onclick="switchSec('${s}')">${s}</div>`).join('');
+  renderInspSeams();
+}
+function switchSec(s){activeSec=s;renderInspection();}
+function renderInspSeams(){
+  const seams=getSeams(CU.pid,activeSec);
+  $('insp-seams').innerHTML=seams.length?seams.map(s=>renderSeamCard(s,false)).join(''):empty('No seams in this section.');
 }
 
-function closeModal() {
-  document.getElementById('inspect-modal').classList.remove('open');
-  inspectTarget = null;
-}
-
-function submitInspection(result) {
-  if (!inspectTarget) return;
-  const { seamId, stageIdx } = inspectTarget;
-  const seam = getSeamById(seamId);
-  const stage = seam.stages[stageIdx];
-  const remarks = document.getElementById('inspect-remarks').value.trim();
-
-  stage.status = result;
-  stage.inspectedBy = currentUser;
-  stage.inspectedAt = now();
-  stage.remarks = remarks;
-
-  const icon = result === 'accepted' ? '✅' : '❌';
-  const hasNCR = remarks.toLowerCase().includes('ncr');
-  addLog(`${icon} ${result.toUpperCase()} — <strong>${seam.number}</strong> · Stage: <strong>${stage.name}</strong> by QE (${currentUser})${remarks ? ` — Remarks: ${remarks}` : ''}`);
-
-  closeModal();
-  saveData();
-  renderInspection();
-  renderDashboard();
-  notify(`Stage "${stage.name}" ${result}`);
-}
-
-// ============================================================
-// RENDER DASHBOARD
-// ============================================================
-function renderDashboard() {
-  // Stat grid
-  const total = getTotalStages();
-  const accepted = getOverallStageCount('accepted');
-  const offered = getOverallStageCount('offered');
-  const rejected = getOverallStageCount('rejected');
-  const pending = total - accepted - offered - rejected;
-
-  document.getElementById('stat-grid').innerHTML = `
-    <div class="stat-card total">
-      <div class="stat-number" style="color:var(--accent2);">${total}</div>
-      <div class="stat-label">Total Stages</div>
-    </div>
-    <div class="stat-card accepted">
-      <div class="stat-number" style="color:var(--success);">${accepted}</div>
-      <div class="stat-label">Accepted</div>
-    </div>
-    <div class="stat-card offered">
-      <div class="stat-number" style="color:var(--warn);">${offered}</div>
-      <div class="stat-label">Awaiting Inspection</div>
-    </div>
-    <div class="stat-card rejected">
-      <div class="stat-number" style="color:var(--danger);">${rejected}</div>
-      <div class="stat-label">Rejected / Rework</div>
-    </div>
-    <div class="stat-card pending">
-      <div class="stat-number" style="color:var(--text3);">${pending}</div>
-      <div class="stat-label">Not Started</div>
-    </div>
-    <div class="stat-card total">
-      <div class="stat-number" style="color:var(--accent);">${total > 0 ? Math.round((accepted/total)*100) : 0}%</div>
-      <div class="stat-label">Overall Completion</div>
-    </div>
-  `;
-
-  // Section progress
-  const sections = getSections();
-  let secHtml = '';
-  sections.forEach(sec => {
-    const seams = getSeamsForSection(sec);
-    const secTotal = seams.reduce((a, s) => a + s.stages.length, 0);
-    const secDone = seams.reduce((a, s) => a + s.stages.filter(st => st.status === 'accepted').length, 0);
-    const pct = secTotal > 0 ? Math.round((secDone / secTotal) * 100) : 0;
-
-    secHtml += `
-      <div style="margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-          <span style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;">${sec}</span>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);">${secDone}/${secTotal} stages · <span style="color:var(--accent)">${pct}%</span></span>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+// ══════════════════════════════════════════════════════════════
+// SEAM CARD RENDERER (shared by inspection page and seam detail)
+// ══════════════════════════════════════════════════════════════
+function renderSeamCard(seam,standalone){
+  const ss=stageStats(seam);
+  const ncr=hasNCR(seam);
+  let html=`<div class="seam-detail-card">
+    <div class="sdh">
+      <div>
+        <div class="sd-num">${seam.num}${ncr?' <span class="chip ch-rej" style="font-size:8px;">NCR</span>':''}</div>
+        <div class="sd-desc">${seam.desc}</div>
+        <div class="sd-meta">${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}</div>
       </div>
-    `;
+      <div style="text-align:right;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--cyan);">${ss.pct}%</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);">${ss.a}/${ss.t} stages</div>
+        <div class="pbar" style="width:100px;margin-top:4px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
+      </div>
+    </div>`;
+
+  seam.stages.forEach((st,i)=>{
+    const prev=i===0||seam.stages[i-1].status==='accepted';
+    const locked=!prev&&st.status==='pending';
+    // STRICT ROLE PERMISSIONS
+    const canOffer = CU.role==='production';           // ONLY production can offer
+    const canInspect = CU.role==='quality';            // ONLY quality can inspect/accept/reject
+
+    let chip='',action='';
+    if(locked)chip='<span class="chip ch-lock">🔒 LOCKED</span>';
+    else if(st.status==='pending')chip='<span class="chip ch-pend">○ PENDING</span>';
+    else if(st.status==='offered')chip='<span class="chip ch-off">⬆ OFFERED</span>';
+    else if(st.status==='accepted')chip='<span class="chip ch-acc">✓ ACCEPTED</span>';
+    else if(st.status==='rejected')chip='<span class="chip ch-rej">✗ REJECTED</span>';
+
+    if(canOffer&&!locked&&(st.status==='pending'||st.status==='rejected'))
+      action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">OFFER ↑</button>`;
+    if(canInspect&&st.status==='offered')
+      action=`<button class="abtn ab-green" onclick="openInspectModal('${seam.id}',${i})">INSPECT ▸</button>`;
+
+    let detail='';
+    if(st.offeredAt)detail+=`Offered: ${st.offeredBy} (${st.offeredByCo}) @ ${st.offeredAt}`;
+    if(st.location)detail+=` | 📍 ${st.location}`;
+    if(st.drawing)detail+=` | DRG: ${st.drawing}`;
+    if(st.inspectedAt)detail+=`\nInspected: ${st.inspectedBy} @ ${st.inspectedAt}`;
+
+    html+=`<div class="stage-row">
+      <div class="sr-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="sr-info">
+        <div class="sr-name">${st.name}</div>
+        ${detail?`<div class="sr-detail">${detail.replace(/\n/g,'<br>')}</div>`:''}
+        ${st.prodRem?`<div class="sr-remark" style="color:var(--blue2)">🔵 Prod: ${st.prodRem}</div>`:''}
+        ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':'var(--amber)'}">🔍 QE: ${st.qeRem}</div>`:''}
+      </div>
+      <div class="sr-actions">${chip}${action}</div>
+    </div>`;
   });
 
-  document.getElementById('section-progress').innerHTML = secHtml || '<div class="empty-state"><div class="empty-icon">📊</div>No data yet</div>';
-
-  // Recent activity
-  const recent = DB.log.slice(0, 8);
-  document.getElementById('recent-activity').innerHTML = recent.length ? recent.map(l => `
-    <div class="log-entry">
-      <div class="log-time">${l.time} · ${l.role?.toUpperCase()}</div>
-      <div class="log-text">${l.msg}</div>
-    </div>
-  `).join('') : '<div class="empty-state"><div class="empty-icon">📋</div>No activity yet</div>';
+  html+='</div>';
+  return html;
 }
 
-// ============================================================
-// RENDER INSPECTION PAGE
-// ============================================================
-function renderInspection() {
-  const sections = getSections();
-
-  // Tabs
-  document.getElementById('section-tabs').innerHTML = sections.map(s => `
-    <div class="section-tab ${s === activeSection ? 'active' : ''}" onclick="switchSection('${s}')">${s}</div>
-  `).join('');
-
-  if (!activeSection && sections.length > 0) activeSection = sections[0];
-
-  renderSeamContent();
+// ══════════════════════════════════════════════════════════════
+// OFFER FLOW
+// ══════════════════════════════════════════════════════════════
+function openOfferModal(seamId,idx){
+  const seam=getSeam(seamId);const st=seam.stages[idx];
+  offerTarget={seamId,idx};
+  $('of-loc').value='';$('of-drw').value='';$('of-rem').value='';
+  $('offer-info').innerHTML=`
+    <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v">${seam.num}</span></div>
+    <div class="ir"><span class="ir-k">Description</span><span class="ir-v">${seam.desc}</span></div>
+    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber)">${st.name}</span></div>
+    <div class="ir"><span class="ir-k">Section</span><span class="ir-v">${seam.sec}</span></div>
+    <div class="ir"><span class="ir-k">Offered By</span><span class="ir-v">${CU.name} · ${CU.co}</span></div>
+  `;
+  openModal('m-offer');
 }
 
-function switchSection(sec) {
-  activeSection = sec;
-  renderInspection();
+function confirmOffer(){
+  if(!offerTarget)return;
+  const{seamId,idx}=offerTarget;
+  const seam=getSeam(seamId);const st=seam.stages[idx];
+  st.status='offered';st.offeredBy=CU.name;st.offeredByMob=CU.mob;st.offeredByCo=CU.co;
+  st.offeredAt=now();st.location=$('of-loc').value.trim();st.drawing=$('of-drw').value.trim();
+  st.prodRem=$('of-rem').value.trim();st.inspectedBy='';st.inspectedAt='';st.qeRem='';
+  log(`🔵 OFFERED — ${seam.num} · ${st.name}${st.location?' 📍'+st.location:''} by ${CU.name} (${CU.co})`);
+  save();closeModal('m-offer');
+  refreshCurrentView();
+  toast('Stage offered for inspection','ok');
+  sendWA(seamId,idx);
 }
 
-function renderSeamContent() {
-  const seams = getSeamsForSection(activeSection);
-  const wrap = document.getElementById('seam-content');
+function sendWA(seamId,idx){
+  const seam=getSeam(seamId);const st=seam.stages[idx];
+  const qcList=DB.users.filter(u=>u.role==='quality'&&u.pid===CU.pid&&u.approved);
+  if(!qcList.length)return;
+  const p=getProj(CU.pid);
+  const msg=encodeURIComponent(`🔔 *TQIMS Inspection Offer*\nProject: #${p.number} — ${p.equipment}\nSection: ${seam.sec}\nSeam: ${seam.num}\nStage: ${st.name}\nLocation: ${st.location||'—'}\nOffered By: ${CU.name} (${CU.co})\nTime: ${st.offeredAt}\n\nPlease inspect and update TQIMS.`);
+  const mob=qcList[0].mob.replace(/\D/g,'');
+  if(confirm(`Send WhatsApp notification to QC: ${qcList[0].name} (${qcList[0].mob})?`))
+    window.open(`https://wa.me/${mob}?text=${msg}`,'_blank');
+}
 
-  if (!seams.length) {
-    wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">🔩</div>No seams in this section.<br>Admin can add seams from the Admin Setup page.</div>`;
-    return;
-  }
+// ══════════════════════════════════════════════════════════════
+// INSPECT FLOW
+// ══════════════════════════════════════════════════════════════
+function openInspectModal(seamId,idx){
+  const seam=getSeam(seamId);const st=seam.stages[idx];
+  inspTarget={seamId,idx};$('ins-rem').value='';
+  $('inspect-info').innerHTML=`
+    <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v">${seam.num}</span></div>
+    <div class="ir"><span class="ir-k">Description</span><span class="ir-v">${seam.desc}</span></div>
+    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber)">${st.name}</span></div>
+    <div class="ir"><span class="ir-k">Section</span><span class="ir-v">${seam.sec}</span></div>
+    <div class="ir"><span class="ir-k">Offered By</span><span class="ir-v">${st.offeredBy} (${st.offeredByCo})</span></div>
+    <div class="ir"><span class="ir-k">Offered At</span><span class="ir-v">${st.offeredAt}</span></div>
+    ${st.location?`<div class="ir"><span class="ir-k">Location</span><span class="ir-v">📍 ${st.location}</span></div>`:''}
+    ${st.drawing?`<div class="ir"><span class="ir-k">Drawing Ref.</span><span class="ir-v">${st.drawing}</span></div>`:''}
+    ${st.prodRem?`<div class="ir"><span class="ir-k">Prod. Remarks</span><span class="ir-v">${st.prodRem}</span></div>`:''}
+    <div class="ir"><span class="ir-k">Material</span><span class="ir-v">${seam.mat} · ${seam.thk}mm · ${seam.type}</span></div>
+  `;
+  openModal('m-inspect');
+}
 
-  let html = '';
+function submitInspect(result){
+  if(!inspTarget)return;
+  const{seamId,idx}=inspTarget;
+  const seam=getSeam(seamId);const st=seam.stages[idx];
+  st.status=result;st.inspectedBy=CU.name;st.inspectedAt=now();st.qeRem=$('ins-rem').value.trim();
+  log(`${result==='accepted'?'✅':'❌'} ${result.toUpperCase()} — ${seam.num} · ${st.name} by ${CU.name}${st.qeRem?' — '+st.qeRem:''}`);
+  save();closeModal('m-inspect');
+  refreshCurrentView();
+  toast(`Stage ${result}`,'ok');
+}
 
-  seams.forEach(seam => {
-    const { done, total, pct } = stageProgress(seam);
-    const hasNCR = seam.stages.some(s => s.remarks && s.remarks.toLowerCase().includes('ncr'));
+function refreshCurrentView(){
+  const activePg=document.querySelector('.pg.on');
+  if(!activePg)return;
+  const id=activePg.id;
+  if(id==='pg-dashboard')renderDashboard();
+  else if(id==='pg-inspection')renderInspection();
+  else if(id==='pg-seam')renderSeamDetailContent(activeSeamId);
+  updateBadge();
+}
 
-    html += `
-      <div class="card" style="margin-bottom:20px;">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+// ══════════════════════════════════════════════════════════════
+// ADMIN — PROJECTS
+// ══════════════════════════════════════════════════════════════
+function renderProjectsPage(){
+  $('proj-list').innerHTML=DB.projects.map(p=>`
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(33,38,45,.7);flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--blue2);">Project #${p.number} — ${p.equipment}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;">${p.client||'—'} · ${p.process||'—'} · ${p.code||'—'}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;">${p.sections.join(' | ')}</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="abtn ab-amber" onclick="editProj('${p.id}')">EDIT</button>
+        <button class="abtn ab-red" onclick="delProj('${p.id}')">DEL</button>
+      </div>
+    </div>`).join('')||empty('No projects yet.');
+  populateSelects();
+  renderAdminSeams();
+}
+
+function confirmAddProj(){
+  const num=$('np-num').value.trim(),eq=$('np-eq').value.trim();
+  if(!num||!eq){toast('Project number and equipment required','err');return;}
+  const secs=$('np-secs').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const newProj={id:'p'+Date.now(),number:num,equipment:eq,client:$('np-cl').value.trim(),process:$('np-pr').value.trim(),sections:secs.length?secs:['General'],code:$('np-code').value.trim()};
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_proj',data:newProj,requestedBy:CU.name,requestedAt:now(),desc:`Add Project: #${num} — ${eq}`});
+  log(`📋 PENDING APPROVAL — Add Project #${num} requested by ${CU.name}`);save();
+  closeModal('m-add-proj');renderProjectsPage();
+  toast('✓ Project add request sent to Manager for approval','ok');
+}
+
+function editProj(id){
+  const p=getProj(id);
+  const num=prompt('Project Number:',p.number);if(!num)return;
+  const eq=prompt('Equipment Name:',p.equipment)||p.equipment;
+  const cl=prompt('Client:',p.client)||p.client;
+  const secs=prompt('Sections (comma separated):',p.sections.join(', '));
+  const updated={id,number:num,equipment:eq,client:cl,sections:secs?secs.split(',').map(s=>s.trim()).filter(Boolean):p.sections,code:p.code,process:p.process};
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'edit_proj',data:updated,requestedBy:CU.name,requestedAt:now(),desc:`Edit Project: #${p.number} → #${num} ${eq}`});
+  log(`📋 PENDING APPROVAL — Edit Project #${p.number} requested by ${CU.name}`);save();
+  renderProjectsPage();toast('✓ Project edit request sent to Manager for approval','ok');
+}
+
+function delProj(id){
+  if(!confirm('Request deletion of this project? Manager must approve.'))return;
+  const p=getProj(id);
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'del_proj',data:{id},requestedBy:CU.name,requestedAt:now(),desc:`Delete Project: #${p.number} — ${p.equipment}`});
+  log(`📋 PENDING APPROVAL — Delete Project #${p.number} requested by ${CU.name}`);save();
+  renderProjectsPage();toast('✓ Deletion request sent to Manager for approval','ok');
+}
+
+function renderAdminSeams(){
+  const pid=$('fp')&&$('fp').value||DB.projects[0]&&DB.projects[0].id;
+  const seams=DB.seams.filter(s=>s.pid===pid);
+  $('seam-tbody').innerHTML=seams.map(s=>{
+    const ss=stageStats(s);
+    return`<tr>
+      <td>${s.sec}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue2);">${s.num}</td>
+      <td>${s.desc}</td>
+      <td style="font-size:11px;">${s.type}</td>
+      <td style="font-size:11px;">${s.mat}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${s.thk}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${s.wps||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${s.stages.length} stages</td>
+      <td style="min-width:80px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--cyan);">${ss.a}/${ss.t}</div>
+        <div class="pbar"><div class="pfill" style="width:${ss.pct}%"></div></div>
+      </td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="abtn ab-amber" onclick="openEditSeam('${s.id}')">EDIT</button>
+          <button class="abtn ab-blue" onclick="dupeSeam('${s.id}')" title="Duplicate seam">DUPE</button>
+          <button class="abtn ab-red" onclick="delSeam('${s.id}')">DEL</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text3);">No seams</td></tr>`;
+}
+
+function addSeam(){
+  const pid=$('ns-proj').value,sec=$('ns-sec').value,num=$('ns-num').value.trim(),desc=$('ns-desc').value.trim();
+  if(!num||!desc){toast('Seam number and description required','err');return;}
+  const tmplId=$('ns-tmpl').value;
+  const tmpl=DB.templates.find(t=>t.id===tmplId);
+  const stages=mkStages(tmpl?tmpl.stages.slice():DEFAULT_STAGES.slice());
+  const newSeam={id:'s'+Date.now(),pid,sec,num,desc,type:$('ns-type').value,mat:$('ns-mat').value.trim()||'N/A',thk:$('ns-thk').value.trim()||'N/A',wps:$('ns-wps').value.trim()||'—',stages};
+  // Submit for Manager approval
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),desc:`Add Seam: ${num} — ${desc} in ${sec}`});
+  log(`📋 PENDING APPROVAL — Add Seam: ${num} requested by ${CU.name}`);save();
+  ['ns-num','ns-desc','ns-mat','ns-thk','ns-wps'].forEach(id=>$(id).value='');
+  renderAdminSeams();
+  toast('✓ Seam add request sent to Manager for approval','ok');
+}
+
+function openEditSeam(id){
+  const s=getSeam(id);
+  $('es-id').value=id;$('es-num').value=s.num;$('es-desc').value=s.desc;
+  $('es-mat').value=s.mat;$('es-thk').value=s.thk;$('es-wps').value=s.wps||'';
+  const pid=s.pid;const secs=getSections(pid);
+  $('es-sec').innerHTML=secs.map(sec=>`<option ${sec===s.sec?'selected':''}>${sec}</option>`).join('');
+  $('es-type').value=s.type;
+  openModal('m-edit-seam');
+}
+
+function saveSeamEdit(){
+  const id=$('es-id').value;const s=getSeam(id);
+  const updatedData={id,sec:$('es-sec').value,num:$('es-num').value.trim(),desc:$('es-desc').value.trim(),type:$('es-type').value,mat:$('es-mat').value.trim(),thk:$('es-thk').value.trim(),wps:$('es-wps').value.trim()};
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'edit_seam',data:updatedData,requestedBy:CU.name,requestedAt:now(),desc:`Edit Seam: ${s.num} → ${updatedData.num}`});
+  log(`📋 PENDING APPROVAL — Edit Seam: ${s.num} requested by ${CU.name}`);save();
+  closeModal('m-edit-seam');renderAdminSeams();
+  toast('✓ Seam edit request sent to Manager for approval','ok');
+}
+
+function dupeSeam(id){
+  const s=getSeam(id);
+  const newNum=prompt('New Seam Number for duplicate:',s.num+' (Copy)');
+  if(!newNum)return;
+  const newSeam={id:'s'+Date.now(),pid:s.pid,sec:s.sec,num:newNum,desc:s.desc,type:s.type,mat:s.mat,thk:s.thk,wps:s.wps,stages:mkStages(s.stages.map(st=>st.name))};
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),desc:`Duplicate Seam: ${s.num} → ${newNum}`});
+  log(`📋 PENDING APPROVAL — Duplicate Seam: ${newNum} from ${s.num} requested by ${CU.name}`);save();
+  renderAdminSeams();toast('✓ Duplication request sent to Manager for approval','ok');
+}
+
+function delSeam(id){
+  if(!confirm('Request deletion of this seam? Manager must approve.'))return;
+  const s=getSeam(id);
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'del_seam',data:{id},requestedBy:CU.name,requestedAt:now(),desc:`Delete Seam: ${s.num} — ${s.desc}`});
+  log(`📋 PENDING APPROVAL — Delete Seam: ${s.num} requested by ${CU.name}`);save();
+  renderAdminSeams();toast('✓ Deletion request sent to Manager for approval','ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN — STAGE TEMPLATES
+// ══════════════════════════════════════════════════════════════
+function renderStagesPage(){
+  $('stage-editor-card').style.display='none';
+  $('tmpl-list').innerHTML=DB.templates.map(t=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(33,38,45,.7);flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-weight:600;font-size:14px;">${t.name}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px;">${t.stages.length} stages</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="abtn ab-blue" onclick="openTmplEditor('${t.id}')">EDIT STAGES</button>
+        <button class="abtn ab-amber" onclick="renameTmpl('${t.id}')">RENAME</button>
+        <button class="abtn ab-blue" onclick="dupeTmpl('${t.id}')">DUPE</button>
+        ${DB.templates.length>1?`<button class="abtn ab-red" onclick="delTmpl('${t.id}')">DEL</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function addTemplate(){
+  const name=prompt('Template name:','New Inspection Template');
+  if(!name)return;
+  DB.templates.push({id:'t'+Date.now(),name,stages:DEFAULT_STAGES.slice()});
+  save();renderStagesPage();refreshTmplSelect();toast('Template created','ok');
+}
+
+function renameTmpl(id){
+  const t=DB.templates.find(t=>t.id===id);
+  const name=prompt('New name:',t.name);
+  if(!name)return;
+  t.name=name;save();renderStagesPage();refreshTmplSelect();toast('Renamed','ok');
+}
+
+function dupeTmpl(id){
+  const t=DB.templates.find(t=>t.id===id);
+  const name=prompt('Name for duplicate:',t.name+' (Copy)');
+  if(!name)return;
+  DB.templates.push({id:'t'+Date.now(),name,stages:t.stages.slice()});
+  save();renderStagesPage();refreshTmplSelect();toast('Duplicated','ok');
+}
+
+function delTmpl(id){
+  if(!confirm('Delete this template?'))return;
+  DB.templates=DB.templates.filter(t=>t.id!==id);
+  save();renderStagesPage();refreshTmplSelect();toast('Template removed');
+}
+
+function openTmplEditor(id){
+  editTmplId=id;
+  const t=DB.templates.find(t=>t.id===id);
+  $('stage-editor-title').textContent=`Editing: ${t.name}`;
+  $('stage-editor-card').style.display='block';
+  renderStageLines();
+}
+
+function closeStageEditor(){
+  $('stage-editor-card').style.display='none';editTmplId=null;
+}
+
+function renderStageLines(){
+  if(!editTmplId)return;
+  const t=DB.templates.find(t=>t.id===editTmplId);
+  $('stage-lines').innerHTML=t.stages.map((s,i)=>`
+    <div class="stage-list-item">
+      <span class="sli-handle">⠿</span>
+      <input style="flex:1;background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);padding:4px 6px;font-family:'Barlow',sans-serif;font-size:13px;" value="${s}" onchange="updateStageName('${t.id}',${i},this.value)">
+      <div class="sli-actions">
+        ${i>0?`<button class="abtn ab-ghost" style="padding:2px 6px;" onclick="moveStage('${t.id}',${i},-1)">↑</button>`:'<span style="width:28px;"></span>'}
+        ${i<t.stages.length-1?`<button class="abtn ab-ghost" style="padding:2px 6px;" onclick="moveStage('${t.id}',${i},1)">↓</button>`:'<span style="width:28px;"></span>'}
+        <button class="abtn ab-red" style="padding:2px 8px;" onclick="removeStage('${t.id}',${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function updateStageName(tid,i,val){
+  const t=DB.templates.find(t=>t.id===tid);t.stages[i]=val;save();
+}
+
+function addStageLine(){
+  const t=DB.templates.find(t=>t.id===editTmplId);
+  const name=prompt('New stage name:','');
+  if(!name)return;
+  t.stages.push(name);save();renderStageLines();toast('Stage added','ok');
+}
+
+function moveStage(tid,i,dir){
+  const t=DB.templates.find(t=>t.id===tid);
+  const j=i+dir;if(j<0||j>=t.stages.length)return;
+  [t.stages[i],t.stages[j]]=[t.stages[j],t.stages[i]];save();renderStageLines();
+}
+
+function removeStage(tid,i){
+  const t=DB.templates.find(t=>t.id===tid);
+  if(!confirm(`Remove stage "${t.stages[i]}"?`))return;
+  t.stages.splice(i,1);save();renderStageLines();toast('Stage removed');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN — USERS
+// ══════════════════════════════════════════════════════════════
+function renderUsers(){
+  $('user-tbody').innerHTML=DB.users.map(u=>`<tr>
+    <td><strong>${u.name}</strong></td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${u.mob}</td>
+    <td>${u.co||'—'}</td>
+    <td style="font-size:11px;">${u.desig||'—'}</td>
+    <td><span class="rpill rp-${u.role}" style="font-size:8px;">${u.role}</span></td>
+    <td style="font-size:11px;">${getProj(u.pid)?.number||'—'}</td>
+    <td>${u.approved?'<span style="color:var(--green);font-size:11px;">✓ Active</span>':'<span style="color:var(--amber);font-size:11px;">⏳ Pending</span>'}</td>
+    <td>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;">
+        ${!u.approved?`<button class="abtn ab-green" onclick="approveUser('${u.id}')">APPROVE</button>`:''}
+        <button class="abtn ab-amber" onclick="changeRole('${u.id}')">ROLE</button>
+        ${u.id!=='u0'?`<button class="abtn ab-red" onclick="delUser('${u.id}')">DEL</button>`:''}
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function adminAddUser(){
+  const name=$('au-name').value.trim(),mob=$('au-mob').value.trim(),pw=$('au-pw').value;
+  if(!name||!mob||!pw){toast('Name, mobile and password required','err');return;}
+  if(DB.users.find(u=>u.mob===mob)){toast('Mobile already registered','err');return;}
+  DB.users.push({id:'u'+Date.now(),name,mob,email:'',co:$('au-co').value.trim(),desig:$('au-desig').value.trim(),role:$('au-role').value,pid:$('au-proj').value,pw,approved:true});
+  log(`👤 USER ADDED — ${name}`);save();closeModal('m-add-user');renderUsers();toast('User added','ok');
+}
+
+function approveUser(id){
+  const u=DB.users.find(u=>u.id===id);u.approved=true;
+  log(`✅ APPROVED — ${u.name}`);save();renderUsers();toast(`${u.name} approved`,'ok');
+}
+
+function changeRole(id){
+  const u=DB.users.find(u=>u.id===id);
+  const r=prompt('New role (admin/production/quality/manager):',u.role);
+  if(!r||!['admin','production','quality','manager'].includes(r)){toast('Invalid role','err');return;}
+  u.role=r;log(`🔄 ROLE CHANGED — ${u.name} → ${r}`);save();renderUsers();toast('Role updated','ok');
+}
+
+function delUser(id){
+  if(!confirm('Delete this user?'))return;
+  const u=DB.users.find(u=>u.id===id);DB.users=DB.users.filter(us=>us.id!==id);
+  log(`🗑️ USER DELETED — ${u.name}`);save();renderUsers();toast('User removed');
+}
+
+// ══════════════════════════════════════════════════════════════
+// LOG
+// ══════════════════════════════════════════════════════════════
+function renderLog(){
+  $('log-body').innerHTML=DB.log.length?DB.log.map(l=>`
+    <div class="log-row">
+      <div class="log-time">${l.t} · ${(l.role||'').toUpperCase()} · ${l.user}${l.co?' ('+l.co+')':''}</div>
+      <div class="log-msg">${l.msg}</div>
+    </div>`).join(''):empty('No activity yet.');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PRINT SUMMARY
+// ══════════════════════════════════════════════════════════════
+function renderSummaryPage(){
+  const opts=DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('');
+  $('print-proj').innerHTML=opts;
+  refreshPrintSecs();
+  buildPrintPreview();
+}
+
+function buildPrintPreview(){
+  const pid=$('print-proj')&&$('print-proj').value||DB.projects[0]?.id;
+  const filterSec=$('print-sec')&&$('print-sec').value||'';
+  const p=getProj(pid);if(!p){$('print-preview').innerHTML=empty('Select a project');return;}
+  const st=overallStats(pid);
+  const today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  const sections=filterSec?[filterSec]:getSections(pid);
+
+  let html=`<div id="printable">
+  <div style="text-align:center;padding-bottom:14px;margin-bottom:16px;border-bottom:2px solid var(--blue);">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;letter-spacing:5px;color:var(--blue2);">TQIMS</div>
+    <div style="font-size:11px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;">Quality Inspection Management System</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px;">Inspection Summary Report</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:14px;">
+    <div><b>Project No.:</b> ${p.number}</div><div><b>Equipment:</b> ${p.equipment}</div>
+    <div><b>Client:</b> ${p.client||'—'}</div><div><b>Process:</b> ${p.process||'—'}</div>
+    <div><b>Code/Standard:</b> ${p.code||'—'}</div><div><b>Report Date:</b> ${today}</div>
+    <div><b>Total Seams:</b> ${st.seams}</div><div><b>Completion:</b> ${st.p}%</div>
+  </div>
+  <div style="font-size:12px;margin-bottom:16px;display:flex;gap:16px;flex-wrap:wrap;">
+    <span style="color:var(--green)">✓ Accepted: ${st.a}</span>
+    <span style="color:var(--amber)">⬆ Awaiting QC: ${st.o}</span>
+    <span style="color:var(--red)">✗ Rejected: ${st.r}</span>
+    <span style="color:var(--text3)">○ Pending: ${st.t-st.a-st.o-st.r}</span>
+  </div>`;
+
+  sections.forEach(sec=>{
+    const seams=getSeams(pid,sec);if(!seams.length)return;
+    html+=`<div style="margin-bottom:18px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue2);border-bottom:1px solid var(--border2);padding-bottom:5px;margin-bottom:10px;">SECTION: ${sec}</div>`;
+    seams.forEach(seam=>{
+      const ss=stageStats(seam);const ncr=hasNCR(seam);
+      html+=`<div style="margin-bottom:12px;border:1px solid var(--border2);overflow:hidden;border-radius:2px;">
+        <div style="background:var(--surf2);padding:8px 12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;">
           <div>
-            <div class="seam-name" style="font-size:15px;">${seam.number} ${hasNCR ? '<span class="tag ncr">NCR</span>' : ''}</div>
-            <div style="font-size:13px;color:var(--text2);margin-top:3px;">${seam.desc}</div>
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:4px;">${seam.type} · ${seam.material} · ${seam.thickness}mm</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--blue2);">${seam.num}${ncr?' <span style="color:var(--red);border:1px solid var(--red);padding:1px 4px;font-size:8px;">NCR</span>':''}</div>
+            <div style="font-size:11px;color:var(--text2);">${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}</div>
           </div>
-          <div style="text-align:right;">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);">${done}/${total} stages</div>
-            <div class="progress-bar" style="width:120px;margin-top:6px;"><div class="progress-fill" style="width:${pct}%"></div></div>
-          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);">${ss.a}/${ss.t} · ${ss.pct}%</div>
         </div>
-
-        <div>
-          ${seam.stages.map((stage, i) => renderStageRow(seam, stage, i)).join('')}
-        </div>
-      </div>
-    `;
-  });
-
-  wrap.innerHTML = html;
-}
-
-function renderStageRow(seam, stage, i) {
-  const canOffer = currentRole === 'production';
-  const canInspect = currentRole === 'quality';
-  const prevAccepted = i === 0 || seam.stages[i - 1].status === 'accepted';
-  const isLocked = !prevAccepted && stage.status === 'pending';
-
-  let statusPill = '';
-  let actionBtn = '';
-
-  if (stage.status === 'pending') {
-    statusPill = `<span class="stage-pill ${isLocked ? 'locked' : 'pending'}">${isLocked ? '🔒 LOCKED' : '○ PENDING'}</span>`;
-    if (canOffer && !isLocked) {
-      actionBtn = `<button class="offer-btn" onclick="offerStage('${seam.id}', ${i})">OFFER ↑</button>`;
-    }
-  } else if (stage.status === 'offered') {
-    statusPill = `<span class="stage-pill offered">⬆ OFFERED</span>`;
-    if (canInspect) {
-      actionBtn = `<button class="inspect-btn" onclick="openInspectModal('${seam.id}', ${i})">INSPECT ▸</button>`;
-    }
-  } else if (stage.status === 'accepted') {
-    statusPill = `<span class="stage-pill accepted">✓ ACCEPTED</span>`;
-  } else if (stage.status === 'rejected') {
-    statusPill = `<span class="stage-pill rejected">✗ REJECTED</span>`;
-    if (canOffer) {
-      actionBtn = `<button class="offer-btn" onclick="offerStage('${seam.id}', ${i})">RE-OFFER ↑</button>`;
-    }
-  }
-
-  const hasRemarks = stage.remarks;
-
-  return `
-    <div class="stage-detail-row">
-      <div class="stage-num">${String(i + 1).padStart(2, '0')}</div>
-      <div class="stage-name-cell">
-        <div style="font-size:13px;">${stage.name}</div>
-        ${stage.offeredAt ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px;">Offered: ${stage.offeredBy} @ ${stage.offeredAt}</div>` : ''}
-        ${stage.inspectedAt ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);">Inspected: ${stage.inspectedBy} @ ${stage.inspectedAt}</div>` : ''}
-        ${hasRemarks ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--warn);margin-top:3px;">📝 ${stage.remarks}</div>` : ''}
-      </div>
-      <div class="stage-status-cell">${statusPill}</div>
-      <div class="stage-action-cell">${actionBtn}</div>
-    </div>
-  `;
-}
-
-// ============================================================
-// RENDER ADMIN
-// ============================================================
-function renderAdmin() {
-  const seams = DB.seams;
-  const grouped = {};
-
-  seams.forEach(s => {
-    if (!grouped[s.section]) grouped[s.section] = [];
-    grouped[s.section].push(s);
-  });
-
-  let html = '';
-  Object.keys(grouped).forEach(sec => {
-    html += `<div style="margin-bottom:20px;">
-      <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">${sec}</div>`;
-
-    grouped[sec].forEach(seam => {
-      html += `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(30,48,80,0.5);">
-          <div>
-            <div class="seam-name">${seam.number}</div>
-            <div style="font-size:12px;color:var(--text2);">${seam.desc} · ${seam.material} · ${seam.thickness}mm</div>
-          </div>
-          <button onclick="removeSeam('${seam.id}')" style="background:none;border:1px solid var(--danger);color:var(--danger);padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;">REMOVE</button>
-        </div>
-      `;
+        <table style="width:100%;border-collapse:collapse;font-size:10px;">
+          <thead><tr>
+            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">#</th>
+            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Stage</th>
+            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Status</th>
+            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Offered By / Company</th>
+            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Location</th>
+            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Inspected By</th>
+            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">QE Remarks</th>
+          </tr></thead>
+          <tbody>${seam.stages.map((st,i)=>{
+            const sc=st.status==='accepted'?'var(--green)':st.status==='rejected'?'var(--red)':st.status==='offered'?'var(--amber)':'var(--text3)';
+            return`<tr><td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-family:'JetBrains Mono',monospace;">${i+1}</td>
+              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.name}</td>
+              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);color:${sc};font-weight:600;text-transform:uppercase;font-size:9px;">${st.status}</td>
+              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-size:10px;">${st.offeredBy?st.offeredBy+'<br><span style="color:var(--text3);font-size:9px;">'+st.offeredByCo+'</span><br><span style="color:var(--text3);font-size:9px;">'+st.offeredAt+'</span>':'—'}</td>
+              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.location||'—'}</td>
+              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-size:10px;">${st.inspectedBy?st.inspectedBy+'<br><span style="color:var(--text3);font-size:9px;">'+st.inspectedAt+'</span>':'—'}</td>
+              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.qeRem||'—'}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table></div>`;
     });
-
-    html += '</div>';
+    html+='</div>';
   });
 
-  document.getElementById('admin-seam-list').innerHTML = html || '<div class="empty-state"><div class="empty-icon">🔩</div>No seams added yet</div>';
-}
-
-function addSeam() {
-  const section = document.getElementById('new-seam-section').value;
-  const desc = document.getElementById('new-seam-desc').value.trim();
-  const num = document.getElementById('new-seam-num').value.trim();
-  const type = document.getElementById('new-seam-type').value;
-  const mat = document.getElementById('new-seam-mat').value.trim();
-  const thk = document.getElementById('new-seam-thk').value.trim();
-
-  if (!desc || !num) { notify('Please fill Seam Number and Description'); return; }
-
-  const newSeam = {
-    id: 's' + Date.now(),
-    section, number: num, desc, type,
-    material: mat || 'N/A',
-    thickness: thk || 'N/A',
-    stages: buildStages()
-  };
-
-  DB.seams.push(newSeam);
-  addLog(`🔩 ADDED SEAM — <strong>${num}</strong> in ${section} by Admin (${currentUser})`);
-  saveData();
-
-  // Clear fields
-  document.getElementById('new-seam-desc').value = '';
-  document.getElementById('new-seam-num').value = '';
-  document.getElementById('new-seam-mat').value = '';
-  document.getElementById('new-seam-thk').value = '';
-
-  renderAdmin();
-  notify('Seam added successfully');
-}
-
-function removeSeam(id) {
-  if (!confirm('Remove this seam? This will delete all inspection data for it.')) return;
-  const seam = getSeamById(id);
-  DB.seams = DB.seams.filter(s => s.id !== id);
-  addLog(`🗑 REMOVED SEAM — <strong>${seam.number}</strong> by Admin (${currentUser})`);
-  saveData();
-  renderAdmin();
-  notify('Seam removed');
-}
-
-// ============================================================
-// RENDER LOG
-// ============================================================
-function renderLog() {
-  document.getElementById('full-log').innerHTML = DB.log.length ? DB.log.map(l => `
-    <div class="log-entry">
-      <div class="log-time">${l.time} · ${l.role?.toUpperCase()} · ${l.user}</div>
-      <div class="log-text">${l.msg}</div>
+  // Signature block
+  html+=`<div style="margin-top:28px;border-top:1px solid var(--border2);padding-top:18px;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:18px;">AUTHORIZATIONS & SIGNATURES</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+      ${['Quality Engineer (QE)','CTR Representative','CPY (Company)'].map(r=>`
+      <div style="border:1px solid var(--border2);padding:14px;">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:36px;">${r}</div>
+        <div style="border-top:1px solid var(--text3);margin-bottom:6px;"></div>
+        <div style="font-size:10px;color:var(--text3);">Name: ________________________</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Date: _________________________</div>
+      </div>`).join('')}
     </div>
-  `).join('') : '<div class="empty-state"><div class="empty-icon">📋</div>No activity recorded yet</div>';
+  </div>
+  <div style="margin-top:16px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);border-top:1px solid var(--border2);padding-top:10px;">
+    TQIMS · Quality Inspection Management System · Designed by Ujval Dharawaparmar · Generated: ${today}
+  </div></div>`;
+
+  $('print-preview').innerHTML=html;
 }
 
-// ============================================================
-// RENDER ALL
-// ============================================================
-function renderAll() {
-  renderDashboard();
-  renderInspection();
-  if (currentRole === 'admin') renderAdmin();
+function doPrint(){
+  buildPrintPreview();
+  setTimeout(()=>{
+    const c=$('printable');if(!c)return;
+    const w=window.open('','_blank');
+    w.document.write(`<!DOCTYPE html><html><head><title>TQIMS Report</title>
+    <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#fff;color:#111;padding:12mm;font-size:10pt;}@media print{@page{size:A4;margin:10mm;}body{padding:0;}}</style>
+    </head><body>`);
+    // Write a clean light-theme version
+    const clone=c.innerHTML
+      .replace(/var\(--blue2\)/g,'#1f6feb').replace(/var\(--blue\)/g,'#1f6feb')
+      .replace(/var\(--cyan\)/g,'#0891b2').replace(/var\(--green\)/g,'#059669')
+      .replace(/var\(--red\)/g,'#dc2626').replace(/var\(--amber\)/g,'#d97706')
+      .replace(/var\(--text\)/g,'#111').replace(/var\(--text2\)/g,'#374151')
+      .replace(/var\(--text3\)/g,'#6b7280').replace(/var\(--border2\)/g,'#d1d5db')
+      .replace(/var\(--border\)/g,'#e5e7eb').replace(/var\(--surf2\)/g,'#f3f4f6')
+      .replace(/var\(--surf\)/g,'#fff').replace(/rgba\(22,27,34,\.8\)/g,'#f3f4f6')
+      .replace(/rgba\(33,38,45,.*/g,'#e5e7eb)').replace(/rgba\(22,27,34.*?\)/g,'#f3f4f6');
+    w.document.write(clone);
+    w.document.write('</body></html>');w.document.close();w.focus();
+    setTimeout(()=>w.print(),600);
+  },200);
 }
 
-// ============================================================
-// NOTIFY
-// ============================================================
-function notify(msg) {
-  const el = document.getElementById('notif');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
+// ══════════════════════════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════════════════════════
+function renderProfile(){
+  if(!CU)return;
+  const p=getProj(CU.pid);
+  $('profile-rows').innerHTML=`
+    <div class="ir"><span class="ir-k">Full Name</span><span class="ir-v">${CU.name}</span></div>
+    <div class="ir"><span class="ir-k">Mobile</span><span class="ir-v">${CU.mob}</span></div>
+    <div class="ir"><span class="ir-k">Email</span><span class="ir-v">${CU.email||'—'}</span></div>
+    <div class="ir"><span class="ir-k">Company</span><span class="ir-v">${CU.co||'—'}</span></div>
+    <div class="ir"><span class="ir-k">Designation</span><span class="ir-v">${CU.desig||'—'}</span></div>
+    <div class="ir"><span class="ir-k">Role</span><span class="ir-v"><span class="rpill rp-${CU.role}">${CU.role.toUpperCase()}</span></span></div>
+    <div class="ir"><span class="ir-k">Project</span><span class="ir-v">${p?`#${p.number} — ${p.equipment}`:'—'}</span></div>
+  `;
+  $('cp-cur').value='';$('cp-new').value='';$('cp-cnf').value='';$('cp-msg').innerHTML='';
+  $('secret-key-card').style.display=CU.role==='admin'?'block':'none';
+  if(CU.role==='admin'){$('sk-cur').value='';$('sk-new').value='';$('sk-cnf').value='';$('sk-msg').innerHTML='';}
 }
+
+function changePassword(){
+  const cur=$('cp-cur').value,nw=$('cp-new').value,cnf=$('cp-cnf').value;
+  if(!cur||!nw||!cnf){$('cp-msg').innerHTML='<div class="msg msg-err">Fill all fields.</div>';return;}
+  if(cur!==CU.pw){$('cp-msg').innerHTML='<div class="msg msg-err">Current password incorrect.</div>';return;}
+  if(nw.length<6){$('cp-msg').innerHTML='<div class="msg msg-err">Min 6 characters.</div>';return;}
+  if(nw!==cnf){$('cp-msg').innerHTML='<div class="msg msg-err">New passwords do not match.</div>';return;}
+  const u=DB.users.find(u=>u.id===CU.id);u.pw=nw;CU.pw=nw;
+  log(`🔒 PASSWORD CHANGED — ${CU.name}`);save();
+  $('cp-msg').innerHTML='<div class="msg msg-ok">✓ Password updated!</div>';
+  $('cp-cur').value='';$('cp-new').value='';$('cp-cnf').value='';
+  toast('Password changed','ok');
+}
+
+function changeSecretKey(){
+  const cur=$('sk-cur').value,nw=$('sk-new').value,cnf=$('sk-cnf').value;
+  if(!cur||!nw||!cnf){$('sk-msg').innerHTML='<div class="msg msg-err">Fill all fields.</div>';return;}
+  if(cur!==DB.secretKey){$('sk-msg').innerHTML='<div class="msg msg-err">Current key incorrect.</div>';return;}
+  if(nw.length<8){$('sk-msg').innerHTML='<div class="msg msg-err">Min 8 characters.</div>';return;}
+  if(nw!==cnf){$('sk-msg').innerHTML='<div class="msg msg-err">Keys do not match.</div>';return;}
+  DB.secretKey=nw;log(`🔑 SECRET KEY CHANGED by ${CU.name}`);save();
+  $('sk-msg').innerHTML='<div class="msg msg-ok">✓ Secret key updated!</div>';
+  $('sk-cur').value='';$('sk-new').value='';$('sk-cnf').value='';
+  toast('Secret key updated','ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// MANAGER APPROVALS
+// ══════════════════════════════════════════════════════════════
+function updateApprovalBadge(){
+  const count=DB.pendingActions.length;
+  const nb=$('nb-approvals');
+  if(nb){nb.style.display=count>0?'inline':'none';nb.textContent=count;}
+}
+
+function renderApprovals(){
+  updateApprovalBadge();
+  if(!DB.pendingActions.length){
+    $('approvals-body').innerHTML=`<div style="text-align:center;padding:40px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">✓ No pending approvals. All up to date.</div>`;
+    return;
+  }
+  $('approvals-body').innerHTML=`
+    <div class="chead"><div class="ctitle">Pending Requests (${DB.pendingActions.length})</div></div>
+    ${DB.pendingActions.map(a=>`
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(33,38,45,.7);flex-wrap:wrap;gap:10px;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-weight:600;font-size:13px;margin-bottom:3px;">${a.desc}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);">Requested by: ${a.requestedBy} · ${a.requestedAt}</div>
+          <div style="margin-top:5px;">
+            ${a.type==='add_seam'||a.type==='edit_seam'?`<span class="chip ch-off" style="font-size:8px;">SEAM CHANGE</span>`:
+              a.type==='del_seam'?`<span class="chip ch-rej" style="font-size:8px;">DELETE SEAM</span>`:
+              a.type==='add_proj'?`<span class="chip ch-off" style="font-size:8px;">NEW PROJECT</span>`:
+              a.type==='edit_proj'?`<span class="chip ch-off" style="font-size:8px;">EDIT PROJECT</span>`:
+              `<span class="chip ch-rej" style="font-size:8px;">DELETE PROJECT</span>`}
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="abtn ab-red" onclick="rejectAction('${a.id}')">✗ REJECT</button>
+          <button class="abtn ab-green" onclick="approveAction('${a.id}')">✓ APPROVE</button>
+        </div>
+      </div>`).join('')}
+  `;
+}
+
+function approveAction(id){
+  const a=DB.pendingActions.find(x=>x.id===id);
+  if(!a)return;
+  if(a.type==='add_seam'){DB.seams.push(a.data);log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='edit_seam'){const s=getSeam(a.data.id);if(s){Object.assign(s,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='del_seam'){DB.seams=DB.seams.filter(s=>s.id!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='add_proj'){DB.projects.push(a.data);log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='edit_proj'){const p=getProj(a.data.id);if(p){Object.assign(p,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='del_proj'){DB.projects=DB.projects.filter(p=>p.id!==a.data.id);DB.seams=DB.seams.filter(s=>s.pid!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
+  DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+  save();populateSelects();renderApprovals();updateApprovalBadge();
+  toast('Approved & applied','ok');
+}
+
+function rejectAction(id){
+  const a=DB.pendingActions.find(x=>x.id===id);if(!a)return;
+  log(`❌ REJECTED — ${a.desc} (rejected by ${CU.name})`);
+  DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+  save();renderApprovals();updateApprovalBadge();
+  toast('Request rejected');
+}
+(function init(){
+  $('scr-auth').classList.add('on');
+  showTab('login');
+})();
 </script>
 </body>
 </html>
