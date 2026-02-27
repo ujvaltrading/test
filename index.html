@@ -5,240 +5,284 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TQIMS — Quality Inspection Management System</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Barlow:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root{
-  --bg:#07090f; --surf:#0d1117; --surf2:#161b22; --surf3:#1c2333;
-  --border:#21262d; --border2:#30363d;
-  --blue:#1f6feb; --blue2:#388bfd; --cyan:#39d353;
-  --green:#3fb950; --amber:#d29922; --red:#f85149; --purple:#bc8cff;
-  --text:#e6edf3; --text2:#8b949e; --text3:#484f58;
-  --accent:#1f6feb;
+  /* ── Core Palette ── */
+  --bg:#f0f2f5;
+  --surf:#ffffff;
+  --surf2:#f7f8fa;
+  --surf3:#eef0f4;
+  --border:#dde1e8;
+  --border2:#c8cdd8;
+
+  /* ── Brand Blue ── */
+  --blue:#1a56db;
+  --blue2:#2563eb;
+  --blue-lt:#dbeafe;
+  --blue-mid:#93c5fd;
+
+  /* ── Status Colors ── */
+  --green:#16a34a;
+  --green-lt:#dcfce7;
+  --amber:#b45309;
+  --amber-lt:#fef3c7;
+  --red:#dc2626;
+  --red-lt:#fee2e2;
+  --purple:#7c3aed;
+  --purple-lt:#ede9fe;
+  --cyan:#0891b2;
+  --cyan-lt:#cffafe;
+  --sky:#0284c7;
+
+  /* ── Text ── */
+  --text:#111827;
+  --text2:#374151;
+  --text3:#6b7280;
+  --text4:#9ca3af;
+  --textinv:#ffffff;
+
+  /* ── Shadows ── */
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.05);
+  --shadow-lg:0 10px 25px rgba(0,0,0,.1),0 4px 10px rgba(0,0,0,.06);
 }
+
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;}
 
-/* ─── SCREENS ─── */
+/* ── SCREENS ── */
 .scr{display:none;}
 .scr.on{display:block;}
 
-/* ─── AUTH ─── */
-#scr-auth{min-height:100vh;display:none;align-items:flex-start;justify-content:center;padding:24px 16px;background:var(--bg);}
+/* ── AUTH ── */
+#scr-auth{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px 16px;background:linear-gradient(135deg,#1e3a5f 0%,#1a56db 50%,#0891b2 100%);}
 #scr-auth.on{display:flex;}
-.acard{background:var(--surf);border:1px solid var(--border2);width:100%;max-width:460px;padding:32px 28px;position:relative;margin:auto;}
-.acard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));}
-.logo-big{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;letter-spacing:5px;color:var(--blue2);margin-bottom:2px;}
-.logo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:26px;}
-.atabs{display:flex;border:1px solid var(--border2);margin-bottom:22px;}
-.atab{flex:1;padding:10px;text-align:center;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);transition:all .2s;border:none;background:none;}
-.atab.on{background:var(--blue);color:#fff;}
-.aform{display:none;flex-direction:column;gap:13px;}
+.acard{background:var(--surf);border:none;width:100%;max-width:460px;padding:36px 32px;position:relative;margin:auto;border-radius:12px;box-shadow:var(--shadow-lg);}
+.acard::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:12px 12px 0 0;}
+.logo-big{font-family:'Inter',sans-serif;font-size:32px;font-weight:700;letter-spacing:3px;color:var(--blue2);margin-bottom:2px;}
+.logo-sub{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;}
+.atabs{display:flex;background:var(--surf2);border-radius:8px;padding:3px;margin-bottom:24px;gap:2px;}
+.atab{flex:1;padding:9px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);transition:all .2s;border:none;background:none;border-radius:6px;}
+.atab.on{background:var(--surf);color:var(--blue2);box-shadow:var(--shadow-sm);}
+.aform{display:none;flex-direction:column;gap:14px;}
 .aform.on{display:flex;}
-.lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px;}
-input,select,textarea{width:100%;background:var(--surf2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .2s;border-radius:2px;}
-input:focus,select:focus,textarea:focus{border-color:var(--blue);}
-select option{background:var(--surf2);}
-textarea{resize:vertical;min-height:60px;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.lbl{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.3px;display:block;margin-bottom:5px;}
+input,select,textarea{width:100%;background:var(--surf2);border:1.5px solid var(--border);color:var(--text);padding:10px 12px;font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:all .2s;border-radius:7px;}
+input:focus,select:focus,textarea:focus{border-color:var(--blue2);background:var(--surf);box-shadow:0 0 0 3px rgba(37,99,235,.12);}
+select option{background:var(--surf);}
+textarea{resize:vertical;min-height:64px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .span2{grid-column:1/-1;}
-.rchips{display:flex;gap:6px;flex-wrap:wrap;}
-.rchip{flex:1;padding:7px 10px;text-align:center;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;border-radius:2px;}
-.rchip.on{border-color:var(--blue);background:rgba(31,111,235,.15);color:var(--blue2);}
-.btn{padding:11px 20px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:none;transition:all .2s;border-radius:2px;display:inline-block;}
+.rchips{display:flex;gap:8px;flex-wrap:wrap;}
+.rchip{flex:1;padding:9px 10px;text-align:center;border:1.5px solid var(--border);color:var(--text3);background:var(--surf2);cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;transition:all .2s;border-radius:7px;}
+.rchip.on{border-color:var(--blue2);background:var(--blue-lt);color:var(--blue2);}
+.btn{padding:11px 22px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;letter-spacing:.3px;cursor:pointer;border:none;transition:all .2s;border-radius:8px;display:inline-block;}
 .btn-w{width:100%;}
-.btn-blue{background:var(--blue);color:#fff;}
-.btn-blue:hover{background:var(--blue2);}
+.btn-blue{background:var(--blue2);color:#fff;box-shadow:0 2px 6px rgba(37,99,235,.3);}
+.btn-blue:hover{background:var(--blue);box-shadow:0 4px 12px rgba(37,99,235,.4);}
 .btn-green{background:var(--green);color:#fff;}
 .btn-red{background:var(--red);color:#fff;}
-.btn-amber{background:var(--amber);color:#000;}
-.btn-ghost{background:none;border:1px solid var(--border2);color:var(--text2);}
-.btn-ghost:hover{border-color:var(--blue);color:var(--blue2);}
-.alink{text-align:center;font-size:11px;color:var(--text3);margin-top:4px;}
-.alink a{color:var(--blue2);cursor:pointer;text-decoration:none;}
+.btn-amber{background:var(--amber);color:#fff;}
+.btn-ghost{background:none;border:1.5px solid var(--border2);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--blue2);color:var(--blue2);background:var(--blue-lt);}
+.alink{text-align:center;font-size:12px;color:var(--text3);margin-top:4px;}
+.alink a{color:var(--blue2);cursor:pointer;text-decoration:none;font-weight:500;}
 .alink a:hover{text-decoration:underline;}
-.msg{font-family:'JetBrains Mono',monospace;font-size:10px;padding:8px 10px;border:1px solid;border-radius:2px;}
-.msg-err{color:var(--red);border-color:rgba(248,81,73,.3);background:rgba(248,81,73,.07);}
-.msg-ok{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.07);}
-.msg-warn{color:var(--amber);border-color:rgba(210,153,34,.3);background:rgba(210,153,34,.07);}
-.credit{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);text-align:center;margin-top:20px;letter-spacing:1px;}
+.msg{font-size:12px;padding:10px 14px;border:1.5px solid;border-radius:7px;font-weight:500;}
+.msg-err{color:#991b1b;border-color:#fca5a5;background:#fee2e2;}
+.msg-ok{color:#166534;border-color:#86efac;background:#dcfce7;}
+.msg-warn{color:#92400e;border-color:#fcd34d;background:#fef3c7;}
+.credit{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text4);text-align:center;margin-top:20px;letter-spacing:1px;}
 
-/* ─── APP SHELL ─── */
+/* ── APP SHELL ── */
 #scr-app{display:none;min-height:100vh;flex-direction:column;}
 #scr-app.on{display:flex;}
-.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--surf);border-bottom:1px solid var(--border2);padding:0 16px;height:52px;position:sticky;top:0;z-index:300;flex-shrink:0;}
-.tb-left{display:flex;align-items:center;gap:12px;}
-.tb-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:3px;color:var(--blue2);}
-.ham{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:4px;display:none;}
-.tb-right{display:flex;align-items:center;gap:8px;}
-.rpill{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 8px;border:1px solid;letter-spacing:1px;text-transform:uppercase;border-radius:2px;}
-.rp-admin{color:var(--amber);border-color:var(--amber);background:rgba(210,153,34,.1);}
-.rp-production{color:#79c0ff;border-color:#79c0ff;background:rgba(121,192,255,.1);}
-.rp-quality{color:var(--green);border-color:var(--green);background:rgba(63,185,80,.1);}
-.rp-manager{color:var(--purple);border-color:var(--purple);background:rgba(188,140,255,.1);}
-.tb-user{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);}
-.tb-logout{background:none;border:1px solid var(--border2);color:var(--text3);padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;border-radius:2px;}
-.tb-logout:hover{border-color:var(--red);color:var(--red);}
+.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--surf);border-bottom:1px solid var(--border);padding:0 20px;height:56px;position:sticky;top:0;z-index:300;flex-shrink:0;box-shadow:var(--shadow-sm);}
+.tb-left{display:flex;align-items:center;gap:14px;}
+.tb-logo{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;color:var(--blue2);}
+.tb-logo span{color:var(--text3);font-weight:400;font-size:11px;letter-spacing:1px;margin-left:4px;vertical-align:middle;}
+.ham{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:6px;display:none;border-radius:6px;}
+.ham:hover{background:var(--surf2);}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.rpill{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;padding:4px 10px;border:1.5px solid;letter-spacing:.5px;text-transform:uppercase;border-radius:20px;}
+.rp-admin{color:#92400e;border-color:#f59e0b;background:#fef3c7;}
+.rp-production{color:#1e40af;border-color:#60a5fa;background:#dbeafe;}
+.rp-quality{color:#166534;border-color:#4ade80;background:#dcfce7;}
+.rp-manager{color:#5b21b6;border-color:#a78bfa;background:#ede9fe;}
+.tb-user{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--text2);}
+.tb-logout{background:none;border:1.5px solid var(--border);color:var(--text3);padding:6px 14px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.3px;cursor:pointer;border-radius:7px;transition:all .2s;}
+.tb-logout:hover{border-color:var(--red);color:var(--red);background:var(--red-lt);}
 
-/* ─── BODY LAYOUT ─── */
+/* ── BODY LAYOUT ── */
 .app-body{display:flex;flex:1;}
-.sidebar{width:220px;background:var(--surf);border-right:1px solid var(--border2);padding:12px 0;flex-shrink:0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;transition:transform .3s;}
-.sg-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;padding:10px 16px 4px;}
-.nitem{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;border-left:3px solid transparent;}
-.nitem:hover{background:var(--surf2);color:var(--text);}
-.nitem.on{background:rgba(31,111,235,.12);color:var(--blue2);border-left-color:var(--blue);}
-.nitem .ni{font-size:15px;width:18px;text-align:center;}
-.nbadge{margin-left:auto;background:var(--amber);color:#000;font-family:'JetBrains Mono',monospace;font-size:8px;padding:1px 5px;font-weight:700;border-radius:2px;}
-.sov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:299;}
+.sidebar{width:230px;background:var(--surf);border-right:1px solid var(--border);padding:16px 8px;flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;transition:transform .3s;box-shadow:none;}
+.sg-lbl{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:var(--text4);letter-spacing:1px;text-transform:uppercase;padding:12px 12px 6px;}
+.nitem{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;color:var(--text3);font-size:13px;font-weight:500;transition:all .15s;border-radius:8px;margin:1px 0;}
+.nitem:hover{background:var(--surf2);color:var(--text2);}
+.nitem.on{background:var(--blue-lt);color:var(--blue2);font-weight:600;}
+.nitem .ni{font-size:16px;width:20px;text-align:center;}
+.nbadge{margin-left:auto;background:var(--amber);color:#fff;font-family:'Inter',sans-serif;font-size:9px;padding:2px 6px;font-weight:700;border-radius:10px;min-width:18px;text-align:center;}
+.sov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;}
 
-/* ─── MAIN ─── */
+/* ── MAIN ── */
 .main{flex:1;padding:24px;min-width:0;overflow-x:hidden;}
 
-/* ─── PAGES ─── */
+/* ── PAGES ── */
 .pg{display:none;}
 .pg.on{display:block;}
-.pgh{margin-bottom:20px;}
-.pgt{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
-.pgs{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;margin-top:2px;}
+.pgh{margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.pgt{font-family:'Inter',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.pgs{font-size:12px;color:var(--text3);margin-top:3px;}
 
-/* ─── CARDS ─── */
-.card{background:var(--surf);border:1px solid var(--border2);padding:16px;margin-bottom:14px;border-radius:3px;}
-.chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
-.ctitle{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);}
+/* ── CARDS ── */
+.card{background:var(--surf);border:1px solid var(--border);padding:18px;margin-bottom:16px;border-radius:10px;box-shadow:var(--shadow-sm);}
+.chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.ctitle{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--text2);}
 
-/* ─── STATS ─── */
-.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:18px;}
-.sbox{background:var(--surf);border:1px solid var(--border2);padding:14px;position:relative;border-radius:3px;overflow:hidden;}
-.sbox::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.sb-blue::after{background:var(--blue2);}
-.sb-green::after{background:var(--green);}
-.sb-amber::after{background:var(--amber);}
-.sb-red::after{background:var(--red);}
-.sb-grey::after{background:var(--text3);}
-.snum{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;line-height:1;margin-bottom:3px;}
-.slbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
+/* ── STATS ── */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
+.sbox{background:var(--surf);border:1px solid var(--border);padding:16px;position:relative;border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm);}
+.sbox::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:10px 0 0 10px;}
+.sb-blue::before{background:var(--blue2);}
+.sb-green::before{background:var(--green);}
+.sb-amber::before{background:var(--amber);}
+.sb-red::before{background:var(--red);}
+.sb-grey::before{background:var(--text4);}
+.sbox::after{display:none;}
+.snum{font-family:'Inter',sans-serif;font-size:30px;font-weight:700;line-height:1;margin-bottom:4px;padding-left:6px;}
+.slbl{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding-left:6px;}
 
-/* ─── PROGRESS ─── */
-.pbar{width:100%;height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
-.pfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .4s;}
+/* ── PROGRESS ── */
+.pbar{width:100%;height:5px;background:var(--surf3);border-radius:4px;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--cyan));transition:width .4s;border-radius:4px;}
 
-/* ─── PROJECT BAR ─── */
-.projbar{display:flex;flex-wrap:wrap;gap:16px;background:var(--surf);border:1px solid var(--border2);padding:12px 16px;margin-bottom:18px;border-radius:3px;}
-.pf-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;}
-.pf-val{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--blue2);letter-spacing:1px;}
+/* ── PROJECT BAR ── */
+.projbar{display:flex;flex-wrap:wrap;gap:20px;background:var(--surf);border:1px solid var(--border);padding:14px 18px;margin-bottom:20px;border-radius:10px;box-shadow:var(--shadow-sm);}
+.pf-lbl{font-size:10px;font-weight:600;color:var(--text4);letter-spacing:.5px;text-transform:uppercase;}
+.pf-val{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--blue2);margin-top:1px;}
 
-/* ─── SECTION TABS ─── */
-.stabs{display:flex;border-bottom:1px solid var(--border2);flex-wrap:wrap;margin-bottom:16px;gap:0;overflow-x:auto;}
-.stab{padding:8px 16px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .2s;}
+/* ── SECTION TABS ── */
+.stabs{display:flex;border-bottom:2px solid var(--border);flex-wrap:wrap;margin-bottom:18px;gap:0;overflow-x:auto;}
+.stab{padding:9px 18px;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s;}
 .stab:hover{color:var(--text2);}
-.stab.on{color:var(--blue2);border-bottom-color:var(--blue);}
+.stab.on{color:var(--blue2);border-bottom-color:var(--blue2);}
 
-/* ─── DASHBOARD SEAM GRID ─── */
-.dash-section{margin-bottom:24px;}
-.dash-sec-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue2);padding:8px 0;border-bottom:1px solid var(--border2);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
-.seam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
-.seam-tile{background:var(--surf2);border:1px solid var(--border2);padding:12px;cursor:pointer;transition:all .2s;border-radius:3px;position:relative;}
-.seam-tile:hover{border-color:var(--blue);background:var(--surf3);}
-.seam-tile.st-done{border-left:3px solid var(--green);}
-.seam-tile.st-active{border-left:3px solid var(--amber);}
-.seam-tile.st-rejected{border-left:3px solid var(--red);}
-.seam-tile.st-pending{border-left:3px solid var(--border2);}
-.st-seam-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--blue2);margin-bottom:3px;}
-.st-seam-desc{font-size:10px;color:var(--text2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.st-seam-pct{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
-.st-seam-meta{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--text3);margin-top:2px;}
-.ncr-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--red);border-radius:50%;}
+/* ── DASHBOARD SEAM GRID ── */
+.dash-section{margin-bottom:26px;}
+.dash-sec-title{font-family:'Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);padding:8px 0;border-bottom:2px solid var(--border);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.seam-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;}
+.seam-tile{background:var(--surf);border:1.5px solid var(--border);padding:14px;cursor:pointer;transition:all .2s;border-radius:10px;position:relative;box-shadow:var(--shadow-sm);}
+.seam-tile:hover{border-color:var(--blue2);box-shadow:var(--shadow);transform:translateY(-1px);}
+.seam-tile.st-done{border-left:4px solid var(--green);}
+.seam-tile.st-active{border-left:4px solid var(--amber);}
+.seam-tile.st-rejected{border-left:4px solid var(--red);}
+.seam-tile.st-pending{border-left:4px solid var(--border2);}
+.st-seam-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:var(--blue2);margin-bottom:4px;}
+.st-seam-desc{font-size:11px;color:var(--text3);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.st-seam-pct{font-family:'Inter',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.st-seam-meta{font-size:10px;color:var(--text4);margin-top:2px;}
+.ncr-dot{position:absolute;top:8px;right:8px;width:8px;height:8px;background:var(--red);border-radius:50%;box-shadow:0 0 0 2px var(--red-lt);}
 
-/* ─── INSPECTION / SEAM DETAIL ─── */
-.seam-detail-card{background:var(--surf);border:1px solid var(--border2);margin-bottom:12px;border-radius:3px;overflow:hidden;}
-.sdh{padding:12px 16px;background:var(--surf2);border-bottom:1px solid var(--border2);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.sd-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue2);font-weight:500;}
+/* ── INSPECTION / SEAM DETAIL ── */
+.seam-detail-card{background:var(--surf);border:1px solid var(--border);margin-bottom:14px;border-radius:10px;overflow:hidden;box-shadow:var(--shadow-sm);}
+.sdh{padding:14px 18px;background:var(--surf2);border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.sd-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue2);font-weight:600;}
 .sd-desc{font-size:12px;color:var(--text2);margin-top:2px;}
-.sd-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;}
-.stage-row{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(33,38,45,.7);}
+.sd-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px;}
+.stage-row{display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);}
 .stage-row:last-child{border-bottom:none;}
-.sr-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);width:18px;flex-shrink:0;padding-top:2px;}
+.sr-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text4);width:20px;flex-shrink:0;padding-top:2px;font-weight:600;}
 .sr-info{flex:1;min-width:0;}
-.sr-name{font-size:13px;font-weight:500;}
-.sr-detail{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;line-height:1.6;}
-.sr-remark{font-family:'JetBrains Mono',monospace;font-size:9px;margin-top:3px;}
-.sr-actions{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.sr-name{font-size:13px;font-weight:600;color:var(--text);}
+.sr-detail{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px;line-height:1.7;}
+.sr-remark{font-size:11px;margin-top:4px;padding:4px 8px;border-radius:4px;}
+.sr-actions{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
 
-/* ─── CHIPS ─── */
-.chip{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.8px;border:1px solid;text-transform:uppercase;border-radius:2px;white-space:nowrap;}
-.ch-pend{color:var(--text3);border-color:var(--border2);}
-.ch-off{color:var(--amber);border-color:var(--amber);background:rgba(210,153,34,.08);}
-.ch-acc{color:var(--green);border-color:var(--green);background:rgba(63,185,80,.08);}
-.ch-rej{color:var(--red);border-color:var(--red);background:rgba(248,81,73,.08);}
-.ch-lock{color:var(--text3);border-color:var(--text3);background:rgba(72,79,88,.15);}
+/* ── CHIPS ── */
+.chip{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.3px;border:1.5px solid;text-transform:uppercase;border-radius:20px;white-space:nowrap;}
+.ch-pend{color:var(--text3);border-color:var(--border2);background:var(--surf3);}
+.ch-off{color:var(--amber);border-color:#f59e0b;background:var(--amber-lt);}
+.ch-acc{color:var(--green);border-color:#4ade80;background:var(--green-lt);}
+.ch-rej{color:var(--red);border-color:#f87171;background:var(--red-lt);}
+.ch-lock{color:var(--text3);border-color:var(--border2);background:var(--surf3);}
+.ch-ret{color:var(--sky);border-color:#7dd3fc;background:var(--cyan-lt);}
+.ch-ncr{color:var(--purple);border-color:#a78bfa;background:var(--purple-lt);}
 
-/* ─── ACTION BTNS ─── */
-.abtn{padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;border:1px solid;background:none;cursor:pointer;transition:all .2s;white-space:nowrap;text-transform:uppercase;border-radius:2px;}
+/* ── ACTION BTNS ── */
+.abtn{padding:5px 12px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.3px;border:1.5px solid;background:none;cursor:pointer;transition:all .2s;white-space:nowrap;text-transform:uppercase;border-radius:6px;}
 .ab-blue{color:var(--blue2);border-color:var(--blue2);}
-.ab-blue:hover{background:rgba(56,139,253,.1);}
+.ab-blue:hover{background:var(--blue-lt);}
 .ab-green{color:var(--green);border-color:var(--green);}
-.ab-green:hover{background:rgba(63,185,80,.1);}
+.ab-green:hover{background:var(--green-lt);}
 .ab-red{color:var(--red);border-color:var(--red);}
-.ab-red:hover{background:rgba(248,81,73,.1);}
+.ab-red:hover{background:var(--red-lt);}
 .ab-amber{color:var(--amber);border-color:var(--amber);}
-.ab-amber:hover{background:rgba(210,153,34,.1);}
-.ab-ghost{color:var(--text3);border-color:var(--border2);}
-.ab-ghost:hover{color:var(--text);border-color:var(--text2);}
+.ab-amber:hover{background:var(--amber-lt);}
+.ab-ghost{color:var(--text3);border-color:var(--border);}
+.ab-ghost:hover{color:var(--text2);border-color:var(--border2);background:var(--surf2);}
 
-/* ─── TABLES ─── */
+/* ── TABLES ── */
 .tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:400px;}
-th{background:var(--surf2);padding:8px 12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border2);white-space:nowrap;}
-td{padding:9px 12px;border-bottom:1px solid rgba(33,38,45,.7);vertical-align:middle;}
-tr:hover td{background:rgba(255,255,255,.015);}
+th{background:var(--surf2);padding:10px 14px;text-align:left;font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);border-bottom:2px solid var(--border);white-space:nowrap;}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px;}
+tr:hover td{background:var(--surf2);}
 
-/* ─── MODAL ─── */
-.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;backdrop-filter:blur(3px);}
+/* ── MODAL ── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px);}
 .mbg.on{display:flex;}
-.modal{background:var(--surf);border:1px solid var(--border2);width:100%;max-width:520px;position:relative;border-radius:3px;margin:auto;}
-.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:3px 3px 0 0;}
-.mhead{padding:16px 20px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center;}
-.mtitle{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
-.mclose{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;line-height:1;padding:0 2px;}
-.mbody{padding:20px;}
-.mfoot{padding:12px 20px;border-top:1px solid var(--border2);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
-.ir{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(33,38,45,.7);gap:10px;}
+.modal{background:var(--surf);border:1px solid var(--border);width:100%;max-width:520px;position:relative;border-radius:12px;margin:auto;box-shadow:var(--shadow-lg);}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--blue2),var(--cyan));border-radius:12px 12px 0 0;}
+.mhead{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.mtitle{font-family:'Inter',sans-serif;font-size:16px;font-weight:700;letter-spacing:.3px;}
+.mclose{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;padding:2px 6px;border-radius:5px;transition:all .2s;}
+.mclose:hover{background:var(--surf2);color:var(--red);}
+.mbody{padding:22px;}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;background:var(--surf2);border-radius:0 0 12px 12px;}
+.ir{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);gap:10px;}
 .ir:last-child{border-bottom:none;}
-.ir-k{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;flex-shrink:0;min-width:110px;}
-.ir-v{font-size:12px;font-weight:500;text-align:right;}
+.ir-k{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.3px;flex-shrink:0;min-width:110px;}
+.ir-v{font-size:13px;font-weight:500;text-align:right;color:var(--text);}
 
-/* ─── BACK BUTTON ─── */
-.back-btn{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);cursor:pointer;margin-bottom:16px;transition:color .2s;}
-.back-btn:hover{color:var(--blue2);}
+/* ── FILTER CHIPS ── */
+.fchip{padding:5px 14px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.3px;border:1.5px solid var(--border);background:var(--surf);color:var(--text3);cursor:pointer;transition:all .2s;border-radius:20px;white-space:nowrap;}
+.fchip:hover{border-color:var(--blue2);color:var(--blue2);background:var(--blue-lt);}
+.fchip.on{background:var(--blue-lt);border-color:var(--blue2);color:var(--blue2);}
 
-/* ─── LOG ─── */
-.log-row{padding:9px 0;border-bottom:1px solid rgba(33,38,45,.7);}
+/* ── BACK BUTTON ── */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;margin-bottom:18px;transition:color .2s;padding:6px 12px;border-radius:6px;background:var(--surf);border:1px solid var(--border);}
+.back-btn:hover{color:var(--blue2);border-color:var(--blue2);background:var(--blue-lt);}
+
+/* ── LOG ── */
+.log-row{padding:10px 0;border-bottom:1px solid var(--border);}
 .log-row:last-child{border-bottom:none;}
-.log-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);}
-.log-msg{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.5;}
+.log-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text4);}
+.log-msg{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5;}
 
-/* ─── STAGE MANAGER (ADMIN) ─── */
-.stage-list-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surf2);border:1px solid var(--border2);margin-bottom:6px;border-radius:2px;}
-.sli-handle{color:var(--text3);cursor:grab;font-size:14px;}
+/* ── STAGE MANAGER (ADMIN) ── */
+.stage-list-item{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--surf2);border:1px solid var(--border);margin-bottom:6px;border-radius:8px;}
+.sli-handle{color:var(--text4);cursor:grab;font-size:16px;}
 .sli-name{flex:1;font-size:13px;}
 .sli-actions{display:flex;gap:4px;}
 
-/* ─── TOAST ─── */
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surf2);border:1px solid var(--border2);border-left:3px solid var(--blue);padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:10px;z-index:9999;transition:transform .3s;max-width:90vw;box-shadow:0 8px 24px rgba(0,0,0,.5);border-radius:2px;}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--text);color:#fff;border-left:4px solid var(--blue2);padding:12px 20px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;z-index:9999;transition:transform .3s;max-width:90vw;box-shadow:var(--shadow-lg);border-radius:8px;}
 .toast.on{transform:translateX(-50%) translateY(0);}
 
-/* ─── PROFILE ROWS ─── */
-.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+/* ── PROFILE ROWS ── */
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 
-/* ─── RESPONSIVE ─── */
+/* ── RESPONSIVE ── */
 @media(max-width:720px){
   .ham{display:block;}
-  .sidebar{position:fixed;top:52px;left:0;height:calc(100vh - 52px);z-index:300;transform:translateX(-100%);width:240px;}
+  .sidebar{position:fixed;top:56px;left:0;height:calc(100vh - 56px);z-index:300;transform:translateX(-100%);width:250px;box-shadow:var(--shadow-lg);}
   .sidebar.open{transform:translateX(0);}
   .sov.on{display:block;}
-  .main{padding:12px;}
+  .main{padding:14px;}
   .grid2{grid-template-columns:1fr;}
-  .seam-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));}
+  .seam-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
   .tb-user{display:none;}
   .profile-grid{grid-template-columns:1fr;}
 }
@@ -326,7 +370,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
   <div class="topbar">
     <div class="tb-left">
       <button class="ham" onclick="toggleSidebar()">☰</button>
-      <div class="tb-logo">TQIMS</div>
+      <div class="tb-logo">TQIMS <span>Quality Inspection</span></div>
     </div>
     <div class="tb-right">
       <span class="rpill" id="hdr-role"></span>
@@ -341,16 +385,17 @@ tr:hover td{background:rgba(255,255,255,.015);}
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
       <div>
-        <div class="sg-lbl">Navigation</div>
-        <div class="nitem on" id="ni-dashboard" onclick="goPage('dashboard')"><span class="ni">📊</span>Dashboard</div>
+        <div class="sg-lbl">Main</div>
+        <div class="nitem on" id="ni-dashboard" onclick="goPage('dashboard')"><span class="ni">🏠</span>Dashboard</div>
         <div class="nitem" id="ni-inspection" onclick="goPage('inspection')"><span class="ni">🔬</span>Inspection<span class="nbadge" id="nb" style="display:none">0</span></div>
         <div class="nitem" id="ni-log" onclick="goPage('log')"><span class="ni">📋</span>Activity Log</div>
       </div>
       <div id="admin-nav" style="display:none">
-        <div class="sg-lbl">Admin</div>
-        <div class="nitem" id="ni-projects" onclick="goPage('projects')"><span class="ni">🗂️</span>Projects & Seams</div>
-        <div class="nitem" id="ni-stages" onclick="goPage('stages')"><span class="ni">🔧</span>Stage Templates</div>
+        <div class="sg-lbl">Admin Tools</div>
+        <div class="nitem" id="ni-projects" onclick="goPage('projects')"><span class="ni">📁</span>Projects & Seams</div>
+        <div class="nitem" id="ni-stages" onclick="goPage('stages')"><span class="ni">⚙️</span>Stage Templates</div>
         <div class="nitem" id="ni-users" onclick="goPage('users')"><span class="ni">👥</span>Users</div>
+        <div class="nitem" id="ni-backup" onclick="goPage('backup')"><span class="ni">💾</span>Backup & Restore</div>
       </div>
       <div id="manager-nav" style="display:none">
         <div class="sg-lbl">Manager</div>
@@ -370,7 +415,59 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
       <!-- ── DASHBOARD ── -->
       <div class="pg on" id="pg-dashboard">
-        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs" id="dash-sub">// Project Overview</div></div>
+        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs" id="dash-sub">Project Overview</div></div>
+
+        <!-- DATA INTEGRITY WARNING -->
+        <div id="storage-warning" style="margin-bottom:20px;border-radius:10px;overflow:hidden;border:1.5px solid #f87171;box-shadow:0 2px 8px rgba(220,38,38,.1);">
+          <!-- Header -->
+          <div style="background:#dc2626;padding:11px 18px;display:flex;align-items:center;gap:10px;">
+            <span style="font-size:18px;line-height:1;">⚠️</span>
+            <div style="font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:#fff;letter-spacing:.3px;">IMPORTANT — DATA INTEGRITY &amp; USER RESPONSIBILITY NOTICE</div>
+          </div>
+          <!-- Body -->
+          <div style="background:#fff5f5;padding:14px 18px;display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:260px;">
+              <p style="font-size:13px;color:#1f2937;line-height:1.75;margin-bottom:10px;">
+                All data entered in this system is <strong style="color:#1a56db;">shared across all devices and visible to all team members in real time.</strong>
+                Any addition, edit, or deletion made by one user will immediately reflect for everyone on the project.
+              </p>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;">
+                <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:7px;padding:9px 12px;display:flex;gap:9px;align-items:flex-start;">
+                  <span style="font-size:16px;line-height:1.2;">🚫</span>
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;">Strict Data Accuracy Required</div>
+                    <div style="font-size:12px;color:#7f1d1d;line-height:1.5;">Entering false, incorrect, or fabricated inspection data is a serious violation of quality standards and project integrity.</div>
+                  </div>
+                </div>
+                <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:7px;padding:9px 12px;display:flex;gap:9px;align-items:flex-start;">
+                  <span style="font-size:16px;line-height:1.2;">🔒</span>
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;">Access Revocation Policy</div>
+                    <div style="font-size:12px;color:#7f1d1d;line-height:1.5;">Any user found submitting false data, making unauthorized edits, or attempting to delete records without approval <strong>will have their read and write access permanently revoked</strong> from this system.</div>
+                  </div>
+                </div>
+                <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:7px;padding:9px 12px;display:flex;gap:9px;align-items:flex-start;">
+                  <span style="font-size:16px;line-height:1.2;">📌</span>
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;">All Actions Are Logged</div>
+                    <div style="font-size:12px;color:#78350f;line-height:1.5;">Every action — offer, inspect, edit, delete — is recorded with your name, role, company, and timestamp. There is a complete audit trail.</div>
+                  </div>
+                </div>
+                <div style="background:#dbeafe;border:1px solid #93c5fd;border-radius:7px;padding:9px 12px;display:flex;gap:9px;align-items:flex-start;">
+                  <span style="font-size:16px;line-height:1.2;">💾</span>
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;">Regular Backup Required</div>
+                    <div style="font-size:12px;color:#1e3a8a;line-height:1.5;">Admin must regularly export and share the backup file. Data is stored locally — clearing browser cache will erase all records permanently.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="storage-warn-admin" style="display:none;flex-shrink:0;display:flex;flex-direction:column;gap:8px;align-items:stretch;">
+              <button class="btn btn-red" style="width:auto;padding:9px 18px;font-size:12px;" onclick="goPage('backup')">💾 Export Backup Now</button>
+            </div>
+          </div>
+        </div>
+
         <div class="projbar" id="projbar"></div>
         <div class="sgrid" id="stat-grid"></div>
         <div id="dash-sections"></div>
@@ -385,16 +482,33 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
       <!-- ── INSPECTION ── -->
       <div class="pg" id="pg-inspection">
-        <div class="pgh"><div class="pgt">Inspection Stages</div><div class="pgs">// Select section then offer or inspect stages</div></div>
+        <div class="pgh"><div class="pgt">Inspection Stages</div><div class="pgs" id="insp-hint">Select a section, then offer or inspect stages</div></div>
+
+        <!-- FILTER BAR -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:10px 14px;background:var(--surf);border:1px solid var(--border2);border-radius:3px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;flex-shrink:0;">Filter:</span>
+          <div id="stage-filter-chips" style="display:flex;flex-wrap:wrap;gap:6px;flex:1;">
+            <button class="fchip on" data-f="all" onclick="setStageFilter('all',this)">All Stages</button>
+            <button class="fchip" data-f="pending" onclick="setStageFilter('pending',this)">○ Pending</button>
+            <button class="fchip" data-f="offered" onclick="setStageFilter('offered',this)">⬆ Offered / Awaiting QC</button>
+            <button class="fchip" data-f="accepted" onclick="setStageFilter('accepted',this)">✓ Accepted</button>
+            <button class="fchip" data-f="rejected" onclick="setStageFilter('rejected',this)">✗ Rejected / NCR</button>
+            <button class="fchip" data-f="returned" onclick="setStageFilter('returned',this)">↩ Returned</button>
+          </div>
+          <select id="stage-name-filter" onchange="renderInspSeams()" style="padding:5px 9px;font-size:11px;background:var(--surf2);border:1px solid var(--border2);color:var(--text);border-radius:2px;max-width:220px;">
+            <option value="">All Stage Types</option>
+          </select>
+        </div>
+
         <div class="stabs" id="insp-tabs"></div>
         <div id="insp-seams"></div>
       </div>
 
       <!-- ── ADMIN: PROJECTS & SEAMS ── -->
       <div class="pg" id="pg-projects">
-        <div class="pgh"><div class="pgt">Projects & Seams</div><div class="pgs">// All changes require Manager approval before taking effect</div></div>
-        <div style="background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.2);padding:10px 14px;margin-bottom:14px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--amber);border-radius:2px;">
-          ⚠️ All add / edit / delete actions are sent to the Manager for approval. Changes will not apply until approved.
+        <div class="pgh"><div class="pgt">Projects & Seams</div><div class="pgs">All changes require Manager approval before taking effect</div></div>
+        <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:11px 16px;margin-bottom:16px;font-size:12px;color:#92400e;border-radius:8px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:16px;">⚠️</span> <strong>Note:</strong> All add, edit, and delete actions are submitted to the Manager for approval. No changes take effect until the Manager approves.
         </div>
 
         <div class="card">
@@ -439,7 +553,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
       <!-- ── ADMIN: STAGE TEMPLATES ── -->
       <div class="pg" id="pg-stages">
-        <div class="pgh"><div class="pgt">Stage Templates</div><div class="pgs">// Define, edit, add or remove inspection stages — apply to seams</div></div>
+        <div class="pgh"><div class="pgt">Stage Templates</div><div class="pgs">Define, edit and manage inspection stage templates for seams</div></div>
 
         <div class="card">
           <div class="chead">
@@ -463,7 +577,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
       <!-- ── ADMIN: USERS ── -->
       <div class="pg" id="pg-users">
-        <div class="pgh"><div class="pgt">Users</div><div class="pgs">// Manage registered accounts and approvals</div></div>
+        <div class="pgh"><div class="pgt">Users</div><div class="pgs">Manage registered accounts, roles and permissions</div></div>
         <div class="card">
           <div class="chead">
             <div class="ctitle">All Users</div>
@@ -478,13 +592,31 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
       <!-- ── LOG ── -->
       <div class="pg" id="pg-log">
-        <div class="pgh"><div class="pgt">Activity Log</div><div class="pgs">// Full inspection history and audit trail</div></div>
+        <div class="pgh"><div class="pgt">Activity Log</div><div class="pgs">Full inspection history and complete audit trail</div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:10px 14px;background:var(--surf);border:1px solid var(--border2);border-radius:3px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;flex-shrink:0;">Filter by:</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;flex:1;">
+            <button class="fchip on" data-lf="all" onclick="setLogFilter('all',this)">All Activity</button>
+            <button class="fchip" data-lf="offered" onclick="setLogFilter('offered',this)">⬆ Offers</button>
+            <button class="fchip" data-lf="accepted" onclick="setLogFilter('accepted',this)">✓ Accepted</button>
+            <button class="fchip" data-lf="rejected" onclick="setLogFilter('rejected',this)">✗ Rejected</button>
+            <button class="fchip" data-lf="pending" onclick="setLogFilter('pending',this)">📋 Approvals</button>
+            <button class="fchip" data-lf="user" onclick="setLogFilter('user',this)">👤 Users</button>
+          </div>
+          <select id="log-role-filter" onchange="renderLog()" style="padding:5px 9px;font-size:11px;background:var(--surf2);border:1px solid var(--border2);color:var(--text);border-radius:2px;">
+            <option value="">All Roles</option>
+            <option value="production">Production</option>
+            <option value="quality">Quality</option>
+            <option value="manager">Manager</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
         <div class="card"><div id="log-body"></div></div>
       </div>
 
       <!-- ── SUMMARY ── -->
       <div class="pg" id="pg-summary">
-        <div class="pgh"><div class="pgt">Print Summary</div><div class="pgs">// Generate A4 inspection report with signature blocks</div></div>
+        <div class="pgh"><div class="pgt">Print Summary</div><div class="pgs">Generate printable inspection report with signature blocks</div></div>
         <div class="card">
           <div class="grid2" style="max-width:480px;">
             <div><label class="lbl">Project</label><select id="print-proj" onchange="refreshPrintSecs()"></select></div>
@@ -499,7 +631,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
       <!-- ── PROFILE ── -->
       <div class="pg" id="pg-profile">
-        <div class="pgh"><div class="pgt">My Profile</div><div class="pgs">// Account details and password management</div></div>
+        <div class="pgh"><div class="pgt">My Profile</div><div class="pgs">View your account details and change your password</div></div>
         <div style="max-width:520px;">
           <div class="card">
             <div class="chead"><div class="ctitle">Account Details</div></div>
@@ -529,9 +661,73 @@ tr:hover td{background:rgba(255,255,255,.015);}
         </div>
       </div>
 
+      <!-- ── BACKUP & RESTORE ── -->
+      <div class="pg" id="pg-backup">
+        <div class="pgh"><div class="pgt">Backup & Restore</div><div class="pgs">Export your data regularly — required for multi-device sync</div></div>
+
+        <!-- STORAGE EXPLAINER -->
+        <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:16px 18px;margin-bottom:18px;border-radius:10px;">
+          <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:700;color:#92400e;margin-bottom:8px;">⚠️ Important — Read Before Proceeding</div>
+          <div style="font-size:13px;color:#78350f;line-height:1.8;">
+            <strong>Why data must be exported regularly:</strong> This system stores all data in your browser's local storage — it only exists on the device and browser you are currently using.<br>
+            <strong>Risk:</strong> Clearing browser cache, reinstalling the browser, or switching devices will <strong>permanently erase all data</strong>.<br>
+            <strong>Solution:</strong> Export a backup after every significant update and share it with the team via WhatsApp, Email or Google Drive.
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <!-- EXPORT -->
+          <div class="card" style="border-top:4px solid var(--green);">
+            <div class="chead"><div class="ctitle" style="color:var(--green);">📤 Export Backup</div></div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Download all project data, seams, inspection records, users and logs as a <strong>.json</strong> file. Save it somewhere safe — Google Drive, email, or WhatsApp to the team.</div>
+            <div id="backup-stats" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:14px;line-height:1.8;"></div>
+            <button class="btn btn-green btn-w" onclick="exportBackup()">⬇ Download Backup File</button>
+            <div style="font-size:10px;color:var(--text4);margin-top:8px;text-align:center;" id="last-backup-time"></div>
+          </div>
+
+          <!-- IMPORT -->
+          <div class="card" style="border-top:4px solid var(--blue2);">
+            <div class="chead"><div class="ctitle" style="color:var(--blue2);">📥 Import / Restore</div></div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Load a previously exported <strong>.json</strong> backup file to restore data on this device. <strong style="color:var(--red);">This will replace all current data on this device.</strong></div>
+            <div style="background:var(--red-lt);border:1.5px solid #fca5a5;padding:9px 12px;font-size:12px;color:#991b1b;margin-bottom:14px;border-radius:7px;">
+              ⚠️ Current unsaved data will be overwritten. Export first if needed.
+            </div>
+            <label style="display:block;background:var(--blue2);color:#fff;padding:11px 20px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
+              ⬆ Select Backup File
+              <input type="file" id="import-file" accept=".json" onchange="importBackup(this)" style="display:none;">
+            </label>
+            <div id="import-msg" style="margin-top:10px;"></div>
+          </div>
+        </div>
+
+        <!-- DEVICE SYNC INSTRUCTIONS -->
+        <div class="card" style="margin-top:4px;">
+          <div class="chead"><div class="ctitle">📱 How to Sync Across Devices</div></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+            ${[
+              ['1️⃣','Export Backup','Admin opens TQIMS → Backup & Restore → Download Backup File'],
+              ['2️⃣','Share the File','Send the .json file via WhatsApp, Email, or Google Drive to team members'],
+              ['3️⃣','Others Import','Each member opens TQIMS → Backup & Restore → Select Backup File → Import'],
+              ['4️⃣','Repeat Regularly','After every update (new seams, inspections), Admin exports and re-shares'],
+            ].map(([n,t,d])=>`<div style="padding:12px;background:var(--surf2);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-size:22px;margin-bottom:6px;">${n}</div>
+              <div style="font-weight:600;font-size:13px;margin-bottom:4px;color:var(--text);">${t}</div>
+              <div style="font-size:12px;color:var(--text3);">${d}</div>
+            </div>`).join('')}
+          </div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="card" style="border:1.5px solid #fca5a5;margin-top:4px;">
+          <div class="chead"><div class="ctitle" style="color:var(--red);">🗑️ Danger Zone</div></div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Reset all data on this device back to demo defaults. This cannot be undone. Export a backup first.</div>
+          <button class="btn btn-red" style="width:auto;padding:9px 22px;" onclick="resetAllData()">Reset to Defaults (Danger)</button>
+        </div>
+      </div>
+
       <!-- ── APPROVALS (Manager) ── -->
       <div class="pg" id="pg-approvals">
-        <div class="pgh"><div class="pgt">Pending Approvals</div><div class="pgs">// Review and approve or reject Admin requests</div></div>
+        <div class="pgh"><div class="pgt">Pending Approvals</div><div class="pgs">Review and action pending Admin requests</div></div>
         <div class="card" id="approvals-body"></div>
       </div>
 
@@ -567,13 +763,19 @@ tr:hover td{background:rgba(255,255,255,.015);}
     <div class="mbody">
       <div id="inspect-info"></div>
       <div style="margin-top:14px;">
-        <label class="lbl">Quality Remarks / NCR Number / Hold</label>
-        <textarea id="ins-rem" placeholder="Enter remarks, NCR number, or HOLD reason (optional)..."></textarea>
+        <label class="lbl">Quality Remarks</label>
+        <textarea id="ins-rem" placeholder="Enter remarks or HOLD reason..."></textarea>
+      </div>
+      <div id="ncr-field" style="display:none;margin-top:10px;">
+        <label class="lbl" style="color:var(--red);">⚠ NCR Number <span style="color:var(--red);">*</span> (Required for Rejection)</label>
+        <input id="ins-ncr" placeholder="e.g. NCR-2024-001" style="border-color:var(--red);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px;">NCR number is mandatory. Re-offer will require Manager approval.</div>
       </div>
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-inspect')">Cancel</button>
-      <button class="btn btn-red" style="width:auto;padding:9px 16px;" onclick="submitInspect('rejected')">✗ REJECT</button>
+      <button class="btn btn-amber" style="width:auto;padding:9px 16px;" onclick="submitInspect('returned')" title="Return without NCR — Production can re-offer directly">↩ RETURN</button>
+      <button class="btn btn-red" style="width:auto;padding:9px 16px;" onclick="prepareReject()">✗ REJECT (NCR)</button>
       <button class="btn btn-green" style="width:auto;padding:9px 16px;" onclick="submitInspect('accepted')">✓ ACCEPT</button>
     </div>
   </div>
@@ -623,6 +825,52 @@ tr:hover td{background:rgba(255,255,255,.015);}
   </div>
 </div>
 
+<!-- NCR Re-Offer Modal (rejected seam — needs Manager approval) -->
+<div class="mbg" id="m-ncr-offer">
+  <div class="modal">
+    <div class="mhead"><div class="mtitle" style="color:var(--red);">🔴 NCR Re-Offer (Manager Approval Required)</div><button class="mclose" onclick="closeModal('m-ncr-offer')">✕</button></div>
+    <div class="mbody">
+      <div style="background:rgba(248,81,73,.07);border:1px solid rgba(248,81,73,.3);padding:10px 14px;border-radius:3px;margin-bottom:14px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--red);letter-spacing:1px;font-weight:700;margin-bottom:4px;">⚠ REJECTED / NCR STAGE — MANAGER APPROVAL REQUIRED</div>
+        <div style="font-size:12px;color:var(--text2);">This stage was previously rejected with an NCR. Re-offer will be sent to the Manager for approval before QC inspection can proceed.</div>
+      </div>
+      <div id="ncr-offer-info"></div>
+      <div class="grid2" style="margin-top:14px;">
+        <div><label class="lbl">Location / Position</label><input id="ncr-of-loc" placeholder="Bay-3, Grid B-4"></div>
+        <div><label class="lbl">Drawing / Ref. No.</label><input id="ncr-of-drw" placeholder="DRG-1242-001"></div>
+        <div class="span2">
+          <label class="lbl" style="color:var(--purple);">NCR Number <span style="color:var(--red);">*</span></label>
+          <input id="ncr-of-ncr" placeholder="e.g. NCR-2024-001 (must match original NCR)" style="border-color:var(--purple);">
+        </div>
+        <div class="span2"><label class="lbl">Corrective Action Taken / Production Remarks</label><textarea id="ncr-of-rem" placeholder="Describe corrective action taken to address NCR..."></textarea></div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-ncr-offer')">Cancel</button>
+      <button class="btn btn-amber" style="width:auto;padding:9px 16px;" onclick="confirmNcrOffer()">📋 SUBMIT FOR MANAGER APPROVAL</button>
+    </div>
+  </div>
+</div>
+
+<!-- Per-Seam Stage Editor Modal (Admin only) -->
+<div class="mbg" id="m-seam-stages">
+  <div class="modal" style="max-width:600px;">
+    <div class="mhead"><div class="mtitle">🔧 Edit Stages for Seam</div><button class="mclose" onclick="closeModal('m-seam-stages')">✕</button></div>
+    <div class="mbody">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:12px;">⚠ Only stages with PENDING status can be added/removed. Accepted/Offered stages are locked.</div>
+      <input type="hidden" id="ss-seam-id">
+      <div id="seam-stage-lines"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="ss-new-stage" placeholder="New stage name..." style="flex:1;min-width:160px;">
+        <button class="abtn ab-green" onclick="addSeamStageLine()">+ ADD STAGE</button>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-seam-stages')">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Add User Modal -->
 <div class="mbg" id="m-add-user">
   <div class="modal">
@@ -656,7 +904,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
 const DEFAULT_STAGES = ['WEP PT/MT','Fit-up Inspection','Root Run / Back Chip PT/MT','Complete Weld Dimension Inspection','Complete Weld PT/MT','Hardness Test','RT (Radiographic Test)','UT (Ultrasonic Test)'];
 
 function mkStages(names) {
-  return (names||DEFAULT_STAGES).map(n=>({name:n,status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',location:'',drawing:'',prodRem:'',inspectedBy:'',inspectedAt:'',qeRem:''}));
+  return (names||DEFAULT_STAGES).map(n=>({name:n,status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',location:'',drawing:'',prodRem:'',inspectedBy:'',inspectedAt:'',qeRem:'',ncrNumber:'',returnRem:''}));
 }
 
 function defaultDB() {
@@ -697,9 +945,9 @@ function getProj(id){return DB.projects.find(p=>p.id===id);}
 function getSeam(id){return DB.seams.find(s=>s.id===id);}
 function getSections(pid){const p=getProj(pid);return p?p.sections:[];}
 function getSeams(pid,sec){return DB.seams.filter(s=>s.pid===pid&&(!sec||s.sec===sec));}
-function stageStats(seam){const t=seam.stages.length,a=seam.stages.filter(s=>s.status==='accepted').length,o=seam.stages.filter(s=>s.status==='offered').length,r=seam.stages.filter(s=>s.status==='rejected').length;return{t,a,o,r,pct:t?Math.round(a/t*100):0};}
-function hasNCR(seam){return seam.stages.some(s=>s.qeRem&&s.qeRem.toLowerCase().includes('ncr'));}
-function overallStats(pid){let t=0,a=0,o=0,r=0;getSeams(pid).forEach(s=>s.stages.forEach(st=>{t++;if(st.status==='accepted')a++;else if(st.status==='offered')o++;else if(st.status==='rejected')r++;}));return{t,a,o,r,p:t?Math.round(a/t*100):0,seams:getSeams(pid).length};}
+function stageStats(seam){const t=seam.stages.length,a=seam.stages.filter(s=>s.status==='accepted').length,o=seam.stages.filter(s=>s.status==='offered').length,r=seam.stages.filter(s=>s.status==='rejected').length,ret=seam.stages.filter(s=>s.status==='returned').length;return{t,a,o,r,ret,pct:t?Math.round(a/t*100):0};}
+function hasNCR(seam){return seam.stages.some(s=>s.ncrNumber||(s.qeRem&&s.qeRem.toLowerCase().includes('ncr')));}
+function overallStats(pid){let t=0,a=0,o=0,r=0,ret=0;getSeams(pid).forEach(s=>s.stages.forEach(st=>{t++;if(st.status==='accepted')a++;else if(st.status==='offered')o++;else if(st.status==='rejected')r++;else if(st.status==='returned')ret++;}));return{t,a,o,r,ret,p:t?Math.round(a/t*100):0,seams:getSeams(pid).length};}
 function updateBadge(){const seams=getSeams(CU?CU.pid:'');let o=0;seams.forEach(s=>s.stages.forEach(st=>{if(st.status==='offered')o++;}));const nb=$('nb');if(nb){nb.style.display=o>0?'inline':'none';nb.textContent=o;}}
 function empty(t){return`<div style="text-align:center;padding:36px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);">${t}</div>`;}
 
@@ -793,6 +1041,9 @@ function loginAs(u){
   $('hdr-name').textContent=u.name;
   $('admin-nav').style.display=u.role==='admin'?'block':'none';
   $('manager-nav').style.display=u.role==='manager'?'block':'none';
+  // Show backup button on dashboard warning only for admin
+  const warnBtn=$('storage-warn-admin');
+  if(warnBtn) warnBtn.style.display=u.role==='admin'?'block':'none';
   populateSelects();
   updateApprovalBadge();
   goPage('dashboard');
@@ -825,6 +1076,7 @@ function goPage(pg){
   else if(pg==='summary')renderSummaryPage();
   else if(pg==='profile')renderProfile();
   else if(pg==='approvals')renderApprovals();
+  else if(pg==='backup'){renderBackupPage();}
 }
 
 function toggleSidebar(){$('sidebar').classList.toggle('open');$('sov').classList.toggle('on');}
@@ -867,7 +1119,7 @@ function renderDashboard(){
   const p=getProj(pid);
   if(!p){$('dash-sections').innerHTML=empty('No project assigned. Contact admin.');return;}
 
-  $('dash-sub').textContent=`// Project #${p.number} — ${p.equipment}`;
+  $('dash-sub').textContent=`Project #${p.number} — ${p.equipment}`;
   $('projbar').innerHTML=`
     <div><div class="pf-lbl">Project No.</div><div class="pf-val">${p.number}</div></div>
     <div><div class="pf-lbl">Equipment</div><div class="pf-val">${p.equipment}</div></div>
@@ -881,7 +1133,8 @@ function renderDashboard(){
     <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Total Seams</div></div>
     <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Accepted</div></div>
     <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${st.o}</div><div class="slbl">Awaiting QC</div></div>
-    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">Rejected</div></div>
+    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">Rejected/NCR</div></div>
+    <div class="sbox sb-grey"><div class="snum" style="color:#79c0ff">${st.ret||0}</div><div class="slbl">Returned</div></div>
     <div class="sbox sb-green"><div class="snum" style="color:var(--cyan)">${st.p}%</div><div class="slbl">Completion</div></div>
   `;
 
@@ -905,6 +1158,7 @@ function renderDashboard(){
       const ncr=hasNCR(seam);
       const hasOff=seam.stages.some(s=>s.status==='offered');
       const hasRej=seam.stages.some(s=>s.status==='rejected');
+      const hasRet=seam.stages.some(s=>s.status==='returned');
       const tileClass=ss.pct===100?'st-done':hasOff?'st-active':hasRej?'st-rejected':'st-pending';
       html+=`<div class="seam-tile ${tileClass}" onclick="openSeamDetail('${seam.id}')">
         ${ncr?'<div class="ncr-dot" title="NCR Raised"></div>':''}
@@ -914,6 +1168,8 @@ function renderDashboard(){
         <div class="st-seam-meta">${ss.a}/${ss.t} stages</div>
         <div class="pbar" style="margin-top:5px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
         ${hasOff?'<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--amber);margin-top:4px;">● AWAITING QC</div>':''}
+        ${!hasOff&&hasRet?'<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:#79c0ff;margin-top:4px;">↩ RETURNED</div>':''}
+        ${hasRej?'<div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;color:var(--red);margin-top:4px;">🔴 NCR</div>':''}
       </div>`;
     });
     html+='</div></div>';
@@ -929,7 +1185,7 @@ function openSeamDetail(seamId){
   activeSeamId=seamId;
   const seam=getSeam(seamId);
   $('seam-detail-title').textContent=seam.num;
-  $('seam-detail-sub').textContent=`// ${seam.sec} · ${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}`;
+  $('seam-detail-sub').textContent=`${seam.sec} · ${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}`;
   renderSeamDetailContent(seamId);
   goPage('seam');
   $('ni-dashboard').classList.add('on');
@@ -949,18 +1205,93 @@ function renderInspection(){
   const pid=CU.pid;
   const secs=getSections(pid);
   if(!activeSec||!secs.includes(activeSec))activeSec=secs[0]||null;
-  // Role hint
   const hint = CU.role==='production' ? '// You can offer stages for inspection'
     : CU.role==='quality' ? '// You can accept or reject offered stages'
-    : '// View-only — inspection actions are role-restricted';
-  document.querySelector('#pg-inspection .pgs').textContent=hint;
+    : 'View only — inspection actions are role-restricted';
+  const hintEl=$('insp-hint');if(hintEl)hintEl.textContent=hint;
   $('insp-tabs').innerHTML=secs.map(s=>`<div class="stab ${s===activeSec?'on':''}" onclick="switchSec('${s}')">${s}</div>`).join('');
+  populateStageNameFilter();
   renderInspSeams();
 }
 function switchSec(s){activeSec=s;renderInspection();}
+
 function renderInspSeams(){
   const seams=getSeams(CU.pid,activeSec);
-  $('insp-seams').innerHTML=seams.length?seams.map(s=>renderSeamCard(s,false)).join(''):empty('No seams in this section.');
+  const stageNameF=$('stage-name-filter')?$('stage-name-filter').value:'';
+
+  // For each seam, filter stages by status and name
+  let html='';
+  seams.forEach(seam=>{
+    const filteredStages=seam.stages.map((st,i)=>({...st,_i:i})).filter(st=>{
+      const statusMatch = activeStageFilter==='all' || st.status===activeStageFilter;
+      const nameMatch = !stageNameF || st.name===stageNameF;
+      return statusMatch&&nameMatch;
+    });
+
+    // Only show seam if it has matching stages (or show all seams if filter is 'all' and no name filter)
+    if(filteredStages.length===0 && (activeStageFilter!=='all' || stageNameF)) return;
+
+    const ss=stageStats(seam);
+    const ncr=hasNCR(seam);
+    html+=`<div class="seam-detail-card">
+      <div class="sdh">
+        <div>
+          <div class="sd-num">${seam.num}${ncr?' <span class="chip ch-rej" style="font-size:8px;">NCR</span>':''}</div>
+          <div class="sd-desc">${seam.desc}</div>
+          <div class="sd-meta">${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--cyan);">${ss.pct}%</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text3);">${ss.a}/${ss.t} stages</div>
+          <div class="pbar" style="width:100px;margin-top:4px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
+        </div>
+      </div>`;
+
+    // Render only the matching stages (or all if no filter)
+    const stagesToShow = (activeStageFilter==='all' && !stageNameF) ? seam.stages.map((st,i)=>({...st,_i:i})) : filteredStages;
+    stagesToShow.forEach(st=>{
+      const i=st._i;
+      const prev=i===0||seam.stages[i-1].status==='accepted';
+      const locked=!prev&&st.status==='pending';
+      const canOffer=CU.role==='production';
+      const canInspect=CU.role==='quality';
+      let chip='',action='';
+      if(locked)chip='<span class="chip ch-lock">🔒 LOCKED</span>';
+      else if(st.status==='pending')chip='<span class="chip ch-pend">○ PENDING</span>';
+      else if(st.status==='offered')chip='<span class="chip ch-off">⬆ OFFERED</span>';
+      else if(st.status==='accepted')chip='<span class="chip ch-acc">✓ ACCEPTED</span>';
+      else if(st.status==='rejected')chip=`<span class="chip ch-rej">✗ REJECTED${st.ncrNumber?' · '+st.ncrNumber:''}</span>`;
+      else if(st.status==='returned')chip='<span class="chip ch-ret">↩ RETURNED</span>';
+      // Offer button logic
+      if(canOffer&&!locked&&st.status==='pending')
+        action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">OFFER ↑</button>`;
+      else if(canOffer&&!locked&&st.status==='returned')
+        action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">RE-OFFER ↑</button>`;
+      else if(canOffer&&!locked&&st.status==='rejected')
+        action=`<button class="abtn ab-amber" onclick="openNcrOfferModal('${seam.id}',${i})">🔴 NCR RE-OFFER ↑</button>`;
+      if(canInspect&&st.status==='offered')
+        action=`<button class="abtn ab-green" onclick="openInspectModal('${seam.id}',${i})">INSPECT ▸</button>`;
+      let detail='';
+      if(st.offeredAt)detail+=`Offered: ${st.offeredBy} (${st.offeredByCo}) @ ${st.offeredAt}`;
+      if(st.location)detail+=` | 📍 ${st.location}`;
+      if(st.drawing)detail+=` | DRG: ${st.drawing}`;
+      if(st.inspectedAt)detail+=`\nInspected: ${st.inspectedBy} @ ${st.inspectedAt}`;
+      if(st.ncrNumber)detail+=`\n🔴 NCR: ${st.ncrNumber}`;
+      html+=`<div class="stage-row">
+        <div class="sr-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="sr-info">
+          <div class="sr-name">${st.name}</div>
+          ${detail?`<div class="sr-detail">${detail.replace(/\n/g,'<br>')}</div>`:''}
+          ${st.prodRem?`<div class="sr-remark" style="color:var(--blue2)">🔵 Prod: ${st.prodRem}</div>`:''}
+          ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':st.status==='returned'?'#79c0ff':'var(--amber)'}">🔍 QE: ${st.qeRem}</div>`:''}
+        </div>
+        <div class="sr-actions">${chip}${action}</div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+
+  $('insp-seams').innerHTML=html||empty(activeStageFilter==='all'&&!stageNameF?'No seams in this section.':'No stages match this filter.');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -995,10 +1326,15 @@ function renderSeamCard(seam,standalone){
     else if(st.status==='pending')chip='<span class="chip ch-pend">○ PENDING</span>';
     else if(st.status==='offered')chip='<span class="chip ch-off">⬆ OFFERED</span>';
     else if(st.status==='accepted')chip='<span class="chip ch-acc">✓ ACCEPTED</span>';
-    else if(st.status==='rejected')chip='<span class="chip ch-rej">✗ REJECTED</span>';
+    else if(st.status==='rejected')chip=`<span class="chip ch-rej">✗ REJECTED${st.ncrNumber?' · '+st.ncrNumber:''}</span>`;
+    else if(st.status==='returned')chip='<span class="chip ch-ret">↩ RETURNED</span>';
 
-    if(canOffer&&!locked&&(st.status==='pending'||st.status==='rejected'))
+    if(canOffer&&!locked&&st.status==='pending')
       action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">OFFER ↑</button>`;
+    else if(canOffer&&!locked&&st.status==='returned')
+      action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">RE-OFFER ↑</button>`;
+    else if(canOffer&&!locked&&st.status==='rejected')
+      action=`<button class="abtn ab-amber" onclick="openNcrOfferModal('${seam.id}',${i})">🔴 NCR RE-OFFER ↑</button>`;
     if(canInspect&&st.status==='offered')
       action=`<button class="abtn ab-green" onclick="openInspectModal('${seam.id}',${i})">INSPECT ▸</button>`;
 
@@ -1007,6 +1343,7 @@ function renderSeamCard(seam,standalone){
     if(st.location)detail+=` | 📍 ${st.location}`;
     if(st.drawing)detail+=` | DRG: ${st.drawing}`;
     if(st.inspectedAt)detail+=`\nInspected: ${st.inspectedBy} @ ${st.inspectedAt}`;
+    if(st.ncrNumber)detail+=`\n🔴 NCR: ${st.ncrNumber}`;
 
     html+=`<div class="stage-row">
       <div class="sr-num">${String(i+1).padStart(2,'0')}</div>
@@ -1014,7 +1351,7 @@ function renderSeamCard(seam,standalone){
         <div class="sr-name">${st.name}</div>
         ${detail?`<div class="sr-detail">${detail.replace(/\n/g,'<br>')}</div>`:''}
         ${st.prodRem?`<div class="sr-remark" style="color:var(--blue2)">🔵 Prod: ${st.prodRem}</div>`:''}
-        ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':'var(--amber)'}">🔍 QE: ${st.qeRem}</div>`:''}
+        ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':st.status==='returned'?'#79c0ff':'var(--amber)'}">🔍 QE: ${st.qeRem}</div>`:''}
       </div>
       <div class="sr-actions">${chip}${action}</div>
     </div>`;
@@ -1055,6 +1392,53 @@ function confirmOffer(){
   sendWA(seamId,idx);
 }
 
+// ── NCR RE-OFFER (rejected → re-offer with Manager approval) ──
+function openNcrOfferModal(seamId,idx){
+  const seam=getSeam(seamId);const st=seam.stages[idx];
+  offerTarget={seamId,idx};
+  $('ncr-of-loc').value='';$('ncr-of-drw').value='';$('ncr-of-rem').value='';
+  $('ncr-of-ncr').value=st.ncrNumber||'';
+  $('ncr-offer-info').innerHTML=`
+    <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v">${seam.num}</span></div>
+    <div class="ir"><span class="ir-k">Description</span><span class="ir-v">${seam.desc}</span></div>
+    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber)">${st.name}</span></div>
+    <div class="ir"><span class="ir-k">Previous NCR</span><span class="ir-v" style="color:var(--red)">${st.ncrNumber||'—'}</span></div>
+    <div class="ir"><span class="ir-k">Rejection Remarks</span><span class="ir-v">${st.qeRem||'—'}</span></div>
+    <div class="ir"><span class="ir-k">Re-Offered By</span><span class="ir-v">${CU.name} · ${CU.co}</span></div>
+  `;
+  openModal('m-ncr-offer');
+}
+
+function confirmNcrOffer(){
+  if(!offerTarget)return;
+  const ncrNum=$('ncr-of-ncr').value.trim();
+  if(!ncrNum){$('ncr-of-ncr').style.borderColor='var(--red)';toast('NCR Number is required','err');return;}
+  const{seamId,idx}=offerTarget;
+  const seam=getSeam(seamId);const st=seam.stages[idx];
+  // Build pending action for Manager approval
+  const actionData={
+    seamId,idx,
+    loc:$('ncr-of-loc').value.trim(),
+    drw:$('ncr-of-drw').value.trim(),
+    rem:$('ncr-of-rem').value.trim(),
+    ncrNumber:ncrNum,
+    offeredBy:CU.name,offeredByMob:CU.mob,offeredByCo:CU.co,offeredAt:now()
+  };
+  DB.pendingActions.push({
+    id:'pa'+Date.now(),
+    type:'ncr_reoffer',
+    data:actionData,
+    requestedBy:CU.name,
+    requestedAt:now(),
+    desc:`NCR Re-Offer: ${seam.num} · ${st.name} · NCR: ${ncrNum} (${CU.co})`
+  });
+  log(`🔴 NCR RE-OFFER PENDING — ${seam.num} · ${st.name} · NCR: ${ncrNum} by ${CU.name} (${CU.co}) — Awaiting Manager Approval`);
+  save();closeModal('m-ncr-offer');
+  updateApprovalBadge();
+  refreshCurrentView();
+  toast('NCR Re-offer submitted — awaiting Manager approval','ok');
+}
+
 function sendWA(seamId,idx){
   const seam=getSeam(seamId);const st=seam.stages[idx];
   const qcList=DB.users.filter(u=>u.role==='quality'&&u.pid===CU.pid&&u.approved);
@@ -1071,7 +1455,8 @@ function sendWA(seamId,idx){
 // ══════════════════════════════════════════════════════════════
 function openInspectModal(seamId,idx){
   const seam=getSeam(seamId);const st=seam.stages[idx];
-  inspTarget={seamId,idx};$('ins-rem').value='';
+  inspTarget={seamId,idx};$('ins-rem').value='';$('ins-ncr').value='';
+  $('ncr-field').style.display='none';
   $('inspect-info').innerHTML=`
     <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v">${seam.num}</span></div>
     <div class="ir"><span class="ir-k">Description</span><span class="ir-v">${seam.desc}</span></div>
@@ -1087,15 +1472,54 @@ function openInspectModal(seamId,idx){
   openModal('m-inspect');
 }
 
-function submitInspect(result){
+function prepareReject(){
+  // Show NCR field, user must fill NCR number before confirming reject
+  $('ncr-field').style.display='block';
+  $('ins-ncr').focus();
+  // Replace reject button with confirm step
+  const ncrVal=$('ins-ncr').value.trim();
+  submitReject();
+}
+
+function submitReject(){
+  const ncrVal=$('ins-ncr').value.trim();
+  if(!ncrVal){
+    $('ncr-field').style.display='block';
+    $('ins-ncr').style.borderColor='var(--red)';
+    $('ins-ncr').focus();
+    toast('NCR Number is required to reject a stage','err');
+    return;
+  }
+  submitInspect('rejected',ncrVal);
+}
+
+function submitInspect(result,ncrNumber){
   if(!inspTarget)return;
+  // If reject clicked directly (not via submitReject), show NCR field first
+  if(result==='rejected'&&!ncrNumber){
+    $('ncr-field').style.display='block';
+    $('ins-ncr').focus();
+    toast('Please enter NCR number then click REJECT again','err');
+    return;
+  }
   const{seamId,idx}=inspTarget;
   const seam=getSeam(seamId);const st=seam.stages[idx];
-  st.status=result;st.inspectedBy=CU.name;st.inspectedAt=now();st.qeRem=$('ins-rem').value.trim();
-  log(`${result==='accepted'?'✅':'❌'} ${result.toUpperCase()} — ${seam.num} · ${st.name} by ${CU.name}${st.qeRem?' — '+st.qeRem:''}`);
+  st.status=result;
+  st.inspectedBy=CU.name;st.inspectedAt=now();
+  st.qeRem=$('ins-rem').value.trim();
+  if(result==='rejected'){
+    st.ncrNumber=ncrNumber||$('ins-ncr').value.trim();
+    log(`❌ REJECTED (NCR: ${st.ncrNumber}) — ${seam.num} · ${st.name} by ${CU.name}${st.qeRem?' — '+st.qeRem:''}`);
+  } else if(result==='returned'){
+    st.ncrNumber='';
+    log(`↩ RETURNED — ${seam.num} · ${st.name} by ${CU.name}${st.qeRem?' — '+st.qeRem:''}`);
+  } else {
+    log(`✅ ACCEPTED — ${seam.num} · ${st.name} by ${CU.name}${st.qeRem?' — '+st.qeRem:''}`);
+  }
   save();closeModal('m-inspect');
   refreshCurrentView();
-  toast(`Stage ${result}`,'ok');
+  const resultLabel=result==='returned'?'Stage returned to production':result==='rejected'?'Stage rejected with NCR':'Stage accepted';
+  toast(resultLabel,'ok');
 }
 
 function refreshCurrentView(){
@@ -1181,6 +1605,7 @@ function renderAdminSeams(){
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
           <button class="abtn ab-amber" onclick="openEditSeam('${s.id}')">EDIT</button>
           <button class="abtn ab-blue" onclick="dupeSeam('${s.id}')" title="Duplicate seam">DUPE</button>
+          <button class="abtn ab-ghost" onclick="openSeamStageEditor('${s.id}')" title="Customize stages for this seam">STAGES</button>
           <button class="abtn ab-red" onclick="delSeam('${s.id}')">DEL</button>
         </div>
       </td>
@@ -1238,6 +1663,69 @@ function delSeam(id){
   DB.pendingActions.push({id:'pa'+Date.now(),type:'del_seam',data:{id},requestedBy:CU.name,requestedAt:now(),desc:`Delete Seam: ${s.num} — ${s.desc}`});
   log(`📋 PENDING APPROVAL — Delete Seam: ${s.num} requested by ${CU.name}`);save();
   renderAdminSeams();toast('✓ Deletion request sent to Manager for approval','ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PER-SEAM STAGE EDITOR (Admin only)
+// ══════════════════════════════════════════════════════════════
+function openSeamStageEditor(seamId){
+  $('ss-seam-id').value=seamId;
+  renderSeamStageLines(seamId);
+  openModal('m-seam-stages');
+}
+
+function renderSeamStageLines(seamId){
+  const seam=getSeam(seamId);
+  if(!seam){return;}
+  $('seam-stage-lines').innerHTML=seam.stages.map((st,i)=>{
+    const canEdit=st.status==='pending'; // only pending stages can be renamed/removed
+    return`<div class="stage-list-item" style="${!canEdit?'opacity:.6':''}">
+      <span class="sli-handle" style="${!canEdit?'cursor:default':''}">⠿</span>
+      <input style="flex:1;background:transparent;border:none;border-bottom:1px solid var(--border2);color:var(--text);padding:4px 6px;font-family:'Barlow',sans-serif;font-size:13px;" 
+        value="${st.name}" 
+        ${!canEdit?'disabled title="Cannot rename — stage already in progress"':''}
+        onchange="updateSeamStageName('${seamId}',${i},this.value)">
+      <span class="chip ${st.status==='accepted'?'ch-acc':st.status==='offered'?'ch-off':st.status==='rejected'?'ch-rej':st.status==='returned'?'ch-ret':'ch-pend'}" style="font-size:8px;margin:0 4px;">${st.status.toUpperCase()}</span>
+      <div class="sli-actions">
+        ${canEdit&&i>0?`<button class="abtn ab-ghost" style="padding:2px 6px;" onclick="moveSeamStage('${seamId}',${i},-1)">↑</button>`:'<span style="width:28px;"></span>'}
+        ${canEdit&&i<seam.stages.length-1?`<button class="abtn ab-ghost" style="padding:2px 6px;" onclick="moveSeamStage('${seamId}',${i},1)">↓</button>`:'<span style="width:28px;"></span>'}
+        ${canEdit?`<button class="abtn ab-red" style="padding:2px 8px;" onclick="removeSeamStage('${seamId}',${i})">✕</button>`:'<span style="width:36px;"></span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateSeamStageName(seamId,i,val){
+  const seam=getSeam(seamId);if(!seam||seam.stages[i].status!=='pending')return;
+  seam.stages[i].name=val;save();
+}
+
+function moveSeamStage(seamId,i,dir){
+  const seam=getSeam(seamId);if(!seam)return;
+  const j=i+dir;if(j<0||j>=seam.stages.length)return;
+  if(seam.stages[i].status!=='pending'||seam.stages[j].status!=='pending'){toast('Can only reorder pending stages','err');return;}
+  [seam.stages[i],seam.stages[j]]=[seam.stages[j],seam.stages[i]];
+  save();renderSeamStageLines(seamId);
+}
+
+function removeSeamStage(seamId,i){
+  const seam=getSeam(seamId);if(!seam)return;
+  if(seam.stages[i].status!=='pending'){toast('Cannot remove a stage already in progress','err');return;}
+  if(!confirm(`Remove stage "${seam.stages[i].name}" from seam ${seam.num}?`))return;
+  seam.stages.splice(i,1);save();renderSeamStageLines(seamId);
+  log(`🔧 STAGE REMOVED — ${seam.num} · stage ${i+1} removed by ${CU.name}`);
+  toast('Stage removed','ok');
+}
+
+function addSeamStageLine(){
+  const seamId=$('ss-seam-id').value;
+  const seam=getSeam(seamId);if(!seam)return;
+  const name=$('ss-new-stage').value.trim();
+  if(!name){toast('Enter a stage name','err');return;}
+  seam.stages.push({name,status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',location:'',drawing:'',prodRem:'',inspectedBy:'',inspectedAt:'',qeRem:'',ncrNumber:'',returnRem:''});
+  $('ss-new-stage').value='';save();renderSeamStageLines(seamId);
+  log(`🔧 STAGE ADDED — ${seam.num} · "${name}" added by ${CU.name}`);
+  toast('Stage added','ok');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1390,11 +1878,24 @@ function delUser(id){
 // LOG
 // ══════════════════════════════════════════════════════════════
 function renderLog(){
-  $('log-body').innerHTML=DB.log.length?DB.log.map(l=>`
+  const roleF=$('log-role-filter')?$('log-role-filter').value:'';
+  let entries=DB.log;
+
+  // Apply role filter
+  if(roleF) entries=entries.filter(l=>l.role===roleF);
+
+  // Apply activity type filter
+  if(activeLogFilter==='offered') entries=entries.filter(l=>l.msg.includes('OFFERED'));
+  else if(activeLogFilter==='accepted') entries=entries.filter(l=>l.msg.includes('ACCEPTED')||l.msg.includes('APPROVED'));
+  else if(activeLogFilter==='rejected') entries=entries.filter(l=>l.msg.includes('REJECTED'));
+  else if(activeLogFilter==='pending') entries=entries.filter(l=>l.msg.includes('PENDING')||l.msg.includes('APPROVAL'));
+  else if(activeLogFilter==='user') entries=entries.filter(l=>l.msg.includes('USER')||l.msg.includes('REGISTERED')||l.msg.includes('ROLE'));
+
+  $('log-body').innerHTML=entries.length?entries.map(l=>`
     <div class="log-row">
-      <div class="log-time">${l.t} · ${(l.role||'').toUpperCase()} · ${l.user}${l.co?' ('+l.co+')':''}</div>
+      <div class="log-time">${l.t} · <span style="color:var(--blue2)">${(l.role||'').toUpperCase()}</span> · <strong>${l.user}</strong>${l.co?' ('+l.co+')':''}</div>
       <div class="log-msg">${l.msg}</div>
-    </div>`).join(''):empty('No activity yet.');
+    </div>`).join(''):empty('No matching activity found.');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1459,10 +1960,11 @@ function buildPrintPreview(){
             <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">QE Remarks</th>
           </tr></thead>
           <tbody>${seam.stages.map((st,i)=>{
-            const sc=st.status==='accepted'?'var(--green)':st.status==='rejected'?'var(--red)':st.status==='offered'?'var(--amber)':'var(--text3)';
+            const sc=st.status==='accepted'?'var(--green)':st.status==='rejected'?'var(--red)':st.status==='offered'?'var(--amber)':st.status==='returned'?'#79c0ff':'var(--text3)';
+            const stLabel=st.status==='returned'?'RETURNED':st.status.toUpperCase();
             return`<tr><td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-family:'JetBrains Mono',monospace;">${i+1}</td>
               <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.name}</td>
-              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);color:${sc};font-weight:600;text-transform:uppercase;font-size:9px;">${st.status}</td>
+              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);color:${sc};font-weight:600;text-transform:uppercase;font-size:9px;">${stLabel}${st.ncrNumber?`<br><span style="color:var(--red);font-size:8px;">NCR: ${st.ncrNumber}</span>`:''}</td>
               <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-size:10px;">${st.offeredBy?st.offeredBy+'<br><span style="color:var(--text3);font-size:9px;">'+st.offeredByCo+'</span><br><span style="color:var(--text3);font-size:9px;">'+st.offeredAt+'</span>':'—'}</td>
               <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.location||'—'}</td>
               <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-size:10px;">${st.inspectedBy?st.inspectedBy+'<br><span style="color:var(--text3);font-size:9px;">'+st.inspectedAt+'</span>':'—'}</td>
@@ -1564,6 +2066,115 @@ function changeSecretKey(){
 }
 
 // ══════════════════════════════════════════════════════════════
+// BACKUP & RESTORE
+// ══════════════════════════════════════════════════════════════
+function renderBackupPage(){
+  const seams=DB.seams.length;
+  const stages=DB.seams.reduce((a,s)=>a+s.stages.length,0);
+  const accepted=DB.seams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
+  const logCount=DB.log.length;
+  const users=DB.users.length;
+  const size=Math.round(JSON.stringify(DB).length/1024);
+  $('backup-stats').innerHTML=`
+    Projects: ${DB.projects.length} &nbsp;|&nbsp; Seams: ${seams} &nbsp;|&nbsp; Total Stages: ${stages}<br>
+    Accepted Stages: ${accepted} &nbsp;|&nbsp; Log Entries: ${logCount} &nbsp;|&nbsp; Users: ${users}<br>
+    Data Size: ~${size} KB
+  `;
+  const last=localStorage.getItem('tqims3_last_backup');
+  $('last-backup-time').textContent=last?`Last backup: ${last}`:'No backup taken yet on this device';
+}
+
+function exportBackup(){
+  const ts=new Date().toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).replace(/[\s,:\/]+/g,'-');
+  const filename=`TQIMS-Backup-${ts}.json`;
+  const data=JSON.stringify(DB,null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  const timeStr=new Date().toLocaleString('en-IN');
+  localStorage.setItem('tqims3_last_backup',timeStr);
+  log(`💾 BACKUP EXPORTED — ${filename} by ${CU.name}`);save();
+  $('last-backup-time').textContent=`Last backup: ${timeStr}`;
+  toast('✓ Backup file downloaded successfully','ok');
+}
+
+function importBackup(input){
+  const file=input.files[0];
+  if(!file){return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const parsed=JSON.parse(e.target.result);
+      // Validate it's a TQIMS backup
+      if(!parsed.projects||!parsed.seams||!parsed.users){
+        $('import-msg').innerHTML='<div class="msg msg-err">❌ Invalid backup file. Not a TQIMS backup.</div>';return;
+      }
+      if(!parsed.pendingActions)parsed.pendingActions=[];
+      if(!parsed.templates)parsed.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];
+      if(!parsed.secretKey)parsed.secretKey='TQIMS@Admin2024';
+      DB=parsed;save();
+      $('import-msg').innerHTML=`<div class="msg msg-ok">✓ Backup restored! ${parsed.projects.length} projects, ${parsed.seams.length} seams, ${parsed.users.length} users loaded.</div>`;
+      log(`📥 BACKUP IMPORTED — by ${CU.name}`);save();
+      toast('✓ Data restored from backup','ok');
+      // Refresh current user reference from restored DB
+      if(CU){const refreshed=DB.users.find(u=>u.id===CU.id);if(refreshed)CU=refreshed;}
+      populateSelects();
+      setTimeout(()=>{renderBackupPage();renderDashboard();},800);
+    }catch(err){
+      $('import-msg').innerHTML='<div class="msg msg-err">❌ File is corrupted or not valid JSON.</div>';
+    }
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+
+function resetAllData(){
+  if(!confirm('⚠ This will DELETE ALL DATA and reset to defaults.\n\nAre you absolutely sure?'))return;
+  if(!confirm('FINAL WARNING: All seams, inspection records, users and logs will be lost. Continue?'))return;
+  localStorage.removeItem('tqims3');
+  DB=defaultDB();save();
+  log(`🔄 SYSTEM RESET TO DEFAULTS by ${CU.name}`);save();
+  populateSelects();renderBackupPage();renderDashboard();
+  toast('System reset to defaults');
+}
+
+// ══════════════════════════════════════════════════════════════
+// STAGE FILTER (Inspection page)
+// ══════════════════════════════════════════════════════════════
+let activeStageFilter='all';
+
+function setStageFilter(f,el){
+  activeStageFilter=f;
+  document.querySelectorAll('[data-f]').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderInspSeams();
+}
+
+function populateStageNameFilter(){
+  const el=$('stage-name-filter');if(!el)return;
+  // Collect all unique stage names across all templates
+  const names=new Set();
+  DB.templates.forEach(t=>t.stages.forEach(s=>names.add(s)));
+  DB.seams.forEach(s=>s.stages.forEach(st=>names.add(st.name)));
+  const cur=el.value;
+  el.innerHTML='<option value="">All Stage Types</option>'+[...names].map(n=>`<option value="${n}" ${n===cur?'selected':''}>${n}</option>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// LOG FILTER
+// ══════════════════════════════════════════════════════════════
+let activeLogFilter='all';
+
+function setLogFilter(f,el){
+  activeLogFilter=f;
+  document.querySelectorAll('[data-lf]').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderLog();
+}
+
+// ══════════════════════════════════════════════════════════════
 // MANAGER APPROVALS
 // ══════════════════════════════════════════════════════════════
 function updateApprovalBadge(){
@@ -1590,6 +2201,7 @@ function renderApprovals(){
               a.type==='del_seam'?`<span class="chip ch-rej" style="font-size:8px;">DELETE SEAM</span>`:
               a.type==='add_proj'?`<span class="chip ch-off" style="font-size:8px;">NEW PROJECT</span>`:
               a.type==='edit_proj'?`<span class="chip ch-off" style="font-size:8px;">EDIT PROJECT</span>`:
+              a.type==='ncr_reoffer'?`<span class="chip ch-ncr" style="font-size:8px;">🔴 NCR RE-OFFER</span>`:
               `<span class="chip ch-rej" style="font-size:8px;">DELETE PROJECT</span>`}
           </div>
         </div>
@@ -1610,6 +2222,19 @@ function approveAction(id){
   else if(a.type==='add_proj'){DB.projects.push(a.data);log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='edit_proj'){const p=getProj(a.data.id);if(p){Object.assign(p,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='del_proj'){DB.projects=DB.projects.filter(p=>p.id!==a.data.id);DB.seams=DB.seams.filter(s=>s.pid!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='ncr_reoffer'){
+    const d=a.data;
+    const seam=getSeam(d.seamId);
+    if(seam&&seam.stages[d.idx]){
+      const st=seam.stages[d.idx];
+      st.status='offered';
+      st.offeredBy=d.offeredBy;st.offeredByMob=d.offeredByMob;st.offeredByCo=d.offeredByCo;
+      st.offeredAt=d.offeredAt;st.location=d.loc;st.drawing=d.drw;st.prodRem=d.rem;
+      st.ncrNumber=d.ncrNumber;
+      st.inspectedBy='';st.inspectedAt='';st.qeRem='';
+      log(`✅ NCR RE-OFFER APPROVED — ${seam.num} · ${st.name} · NCR: ${d.ncrNumber} (approved by ${CU.name}) — Now offered for QC inspection`);
+    }
+  }
   DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
   save();populateSelects();renderApprovals();updateApprovalBadge();
   toast('Approved & applied','ok');
