@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IEMQS — Inspection & Quality Management System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e3050;
+    --accent: #00c9a7;
+    --accent2: #0ea5e9;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #475569;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRID BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,201,167,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,201,167,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== LOGIN ===== */
+  #login-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    width: 420px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 0 60px rgba(0,201,167,0.08);
+  }
+
+  .login-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .login-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .role-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 16px 12px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .role-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .role-btn.active {
+    background: rgba(0,201,167,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: inset 0 0 20px rgba(0,201,167,0.05);
+  }
+
+  .role-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+
+  .input-group { margin-bottom: 16px; }
+  .input-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .input-field {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: var(--accent); }
+
+  .btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { background: #00e6bf; box-shadow: 0 0 20px rgba(0,201,167,0.3); }
+
+  .project-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    background: rgba(14,165,233,0.1);
+    border: 1px solid rgba(14,165,233,0.2);
+    padding: 4px 10px;
+    margin-top: 16px;
+    display: inline-block;
+  }
+
+  /* ===== MAIN APP ===== */
+  #app { display: none; min-height: 100vh; position: relative; z-index: 1; }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 3px;
+  }
+
+  .header-right { display: flex; align-items: center; gap: 16px; }
+
+  .role-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 4px 12px;
+    border: 1px solid;
+    text-transform: uppercase;
+  }
+
+  .role-badge.admin { color: var(--warn); border-color: var(--warn); background: rgba(245,158,11,0.08); }
+  .role-badge.production { color: var(--accent2); border-color: var(--accent2); background: rgba(14,165,233,0.08); }
+  .role-badge.quality { color: var(--accent); border-color: var(--accent); background: rgba(0,201,167,0.08); }
+  .role-badge.manager { color: #a78bfa; border-color: #a78bfa; background: rgba(167,139,250,0.08); }
+
+  .logout-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* LAYOUT */
+  .layout { display: flex; height: calc(100vh - 58px); }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .sidebar-section { margin-bottom: 8px; }
+
+  .sidebar-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 20px;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar-item:hover { background: var(--surface2); color: var(--text); }
+  .sidebar-item.active { background: rgba(0,201,167,0.07); color: var(--accent); border-left-color: var(--accent); }
+
+  .sidebar-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  /* MAIN CONTENT */
+  .main-content { flex: 1; overflow-y: auto; padding: 28px; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .page-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 1px;
+    margin-bottom: 28px;
+  }
+
+  /* PROJECT INFO BAR */
+  .project-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .project-field { display: flex; flex-direction: column; gap: 2px; }
+  .project-field-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .project-field-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: 1px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* SECTION TABS */
+  .section-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .section-tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+
+  .section-tab:hover { color: var(--text2); }
+  .section-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* SEAM TABLE */
+  .seam-table-wrap { overflow-x: auto; }
+
+  .seam-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .seam-table th {
+    background: var(--surface2);
+    padding: 10px 14px;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .seam-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .seam-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .seam-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 500;
+  }
+
+  /* STAGE PILLS */
+  .stages-row { display: flex; gap: 4px; flex-wrap: wrap; }
+
+  .stage-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+    white-space: nowrap;
+    cursor: default;
+    position: relative;
+  }
+
+  .stage-pill.pending { color: var(--text3); border-color: var(--border); background: transparent; }
+  .stage-pill.offered { color: var(--warn); border-color: var(--warn); background: rgba(245,158,11,0.08); }
+  .stage-pill.accepted { color: var(--success); border-color: var(--success); background: rgba(34,197,94,0.08); }
+  .stage-pill.rejected { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.08); }
+  .stage-pill.locked { color: var(--text3); border-color: var(--text3); background: rgba(71,85,105,0.15); cursor: not-allowed; }
+
+  /* OFFER BTN */
+  .offer-btn {
+    background: none;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    padding: 4px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .offer-btn:hover { background: rgba(14,165,233,0.1); }
+  .offer-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .inspect-btn {
+    background: none;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .inspect-btn:hover { background: rgba(0,201,167,0.1); }
+
+  /* OVERALL STATUS */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .stat-card.total::before { background: var(--accent2); }
+  .stat-card.offered::before { background: var(--warn); }
+  .stat-card.accepted::before { background: var(--success); }
+  .stat-card.rejected::before { background: var(--danger); }
+  .stat-card.pending::before { background: var(--text3); }
+
+  .stat-number {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    width: 560px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    box-shadow: 0 0 80px rgba(0,0,0,0.5);
+  }
+
+  .modal-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    color: var(--accent);
+  }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+  .btn-accept {
+    background: var(--success);
+    color: var(--bg);
+    border: none;
+    padding: 10px 24px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-accept:hover { box-shadow: 0 0 20px rgba(34,197,94,0.3); }
+
+  .btn-reject {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .btn-cancel {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 10px 24px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .info-row:last-child { border-bottom: none; }
+  .info-row span:first-child { color: var(--text3); font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+  .info-row span:last-child { color: var(--text); font-weight: 500; }
+
+  .remarks-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    margin-top: 16px;
+  }
+  .remarks-input:focus { border-color: var(--accent); }
+
+  /* ADD SEAM FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-full { grid-column: 1 / -1; }
+
+  .btn-add {
+    background: rgba(0,201,167,0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 10px 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-add:hover { background: rgba(0,201,167,0.2); }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    margin-top: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.5s ease;
+    border-radius: 2px;
+  }
+
+  /* NCR BADGE */
+  .ncr-badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    padding: 2px 6px;
+    letter-spacing: 1px;
+    margin-left: 6px;
+  }
+
+  /* NOTIFICATION */
+  .notif {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 14px 20px;
+    font-size: 13px;
+    z-index: 2000;
+    transform: translateX(120%);
+    transition: transform 0.3s ease;
+    max-width: 320px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .notif.show { transform: translateX(0); }
+
+  /* HISTORY LOG */
+  .log-entry {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .log-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    margin-bottom: 3px;
+  }
+
+  .log-text { color: var(--text2); line-height: 1.5; }
+
+  .log-text strong { color: var(--text); }
+
+  /* SECTION OVERVIEW */
+  .section-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .section-card:hover { border-color: var(--accent2); }
+  .section-card.selected { border-color: var(--accent); background: rgba(0,201,167,0.04); }
+
+  .section-card-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .section-card-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  select.input-field option { background: var(--surface2); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.3; }
+
+  .stage-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stage-name-cell {
+    flex: 1;
+    font-size: 13px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .stage-status-cell { width: 130px; }
+  .stage-action-cell { width: 110px; text-align: right; }
+
+  .stage-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    width: 24px;
+    flex-shrink: 0;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  .tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 2px 6px;
+    border: 1px solid;
+    letter-spacing: 1px;
+  }
+
+  .tag.ncr { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.08); }
+  .tag.hold { color: var(--warn); border-color: var(--warn); background: rgba(245,158,11,0.08); }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">IEMQS</div>
+    <div class="login-sub">Inspection & Examination Management Quality System</div>
+
+    <div style="margin-bottom:18px;">
+      <label class="input-label">Select Your Role</label>
+      <div class="role-grid">
+        <div class="role-btn" onclick="selectRole('admin')" id="role-admin">
+          <span class="role-icon">🔧</span>Admin
+        </div>
+        <div class="role-btn" onclick="selectRole('production')" id="role-production">
+          <span class="role-icon">🏭</span>Production
+        </div>
+        <div class="role-btn" onclick="selectRole('quality')" id="role-quality">
+          <span class="role-icon">🔍</span>Quality Engineer
+        </div>
+        <div class="role-btn" onclick="selectRole('manager')" id="role-manager">
+          <span class="role-icon">📊</span>Manager
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Name</label>
+      <input class="input-field" id="login-name" placeholder="Enter your name" />
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">Password</label>
+      <input class="input-field" id="login-pass" type="password" placeholder="Enter password" />
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);margin-top:4px;">
+        Admin: admin123 | Production: prod123 | Quality: qual123 | Manager: mgr123
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="doLogin()">ACCESS SYSTEM</button>
+    <div class="project-badge">▸ Project #1242 — Heat Exchanger Fabrication</div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app">
+  <div class="header">
+    <div class="header-logo">⬡ IEMQS</div>
+    <div class="header-right">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text2);">
+        Project <span style="color:var(--accent2);">#1242</span> — Heat Exchanger
+      </div>
+      <div class="role-badge" id="header-role-badge"></div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);" id="header-user"></div>
+      <button class="logout-btn" onclick="logout()">LOGOUT</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <span class="sidebar-label">Navigation</span>
+        <div class="sidebar-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+          <span class="icon">📊</span> Dashboard
+        </div>
+        <div class="sidebar-item" onclick="showPage('inspection')" id="nav-inspection">
+          <span class="icon">🔬</span> Inspection Stages
+        </div>
+        <div class="sidebar-item admin-only" onclick="showPage('admin')" id="nav-admin" style="display:none;">
+          <span class="icon">⚙️</span> Admin / Setup
+        </div>
+        <div class="sidebar-item" onclick="showPage('log')" id="nav-log">
+          <span class="icon">📋</span> Activity Log
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+      <!-- ============ DASHBOARD PAGE ============ -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">// Project #1242 — Heat Exchanger Fabrication — Overall Status</div>
+
+        <div class="project-bar">
+          <div class="project-field">
+            <span class="project-field-label">Project No.</span>
+            <span class="project-field-value">1242</span>
+          </div>
+          <div class="project-field">
+            <span class="project-field-label">Equipment</span>
+            <span class="project-field-value">Heat Exchanger</span>
+          </div>
+          <div class="project-field">
+            <span class="project-field-label">Process</span>
+            <span class="project-field-value">Fabrication</span>
+          </div>
+          <div class="project-field">
+            <span class="project-field-label">Client</span>
+            <span class="project-field-value">IOCL</span>
+          </div>
+          <div class="project-field">
+            <span class="project-field-label">Status</span>
+            <span class="project-field-value" style="color:var(--warn);">IN PROGRESS</span>
+          </div>
+        </div>
+
+        <div class="stat-grid" id="stat-grid"></div>
+
+        <div class="card">
+          <div class="card-title">Section-wise Progress</div>
+          <div id="section-progress"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Recent Activity</div>
+          <div id="recent-activity"></div>
+        </div>
+      </div>
+
+      <!-- ============ INSPECTION PAGE ============ -->
+      <div class="page" id="page-inspection">
+        <div class="page-title">Inspection Stages</div>
+        <div class="page-sub">// Offer and inspect seam stages section-by-section</div>
+
+        <div class="section-tabs" id="section-tabs"></div>
+
+        <div id="seam-content"></div>
+      </div>
+
+      <!-- ============ ADMIN PAGE ============ -->
+      <div class="page" id="page-admin">
+        <div class="page-title">Admin Setup</div>
+        <div class="page-sub">// Manage sections, seams, and stage configurations</div>
+
+        <div class="card">
+          <div class="card-title">Add New Seam / Joint</div>
+          <div class="form-grid">
+            <div>
+              <label class="input-label">Section</label>
+              <select class="input-field" id="new-seam-section">
+                <option value="Pre-Fabrication">Pre-Fabrication</option>
+                <option value="Head Assembly">Head Assembly</option>
+                <option value="Channel Side">Channel Side</option>
+                <option value="Shell Side">Shell Side</option>
+                <option value="Tube Bundle Assembly">Tube Bundle Assembly</option>
+              </select>
+            </div>
+            <div>
+              <label class="input-label">Seam Description</label>
+              <input class="input-field" id="new-seam-desc" placeholder="e.g. Nozzle Neck fit-up with Flange" />
+            </div>
+            <div>
+              <label class="input-label">Seam / Joint Number</label>
+              <input class="input-field" id="new-seam-num" placeholder="e.g. Circ. Seam No: 101" />
+            </div>
+            <div>
+              <label class="input-label">Joint Type</label>
+              <select class="input-field" id="new-seam-type">
+                <option>Butt Joint</option>
+                <option>Fillet Joint</option>
+                <option>Nozzle Weld</option>
+                <option>Corner Joint</option>
+                <option>T-Joint</option>
+              </select>
+            </div>
+            <div>
+              <label class="input-label">Material</label>
+              <input class="input-field" id="new-seam-mat" placeholder="e.g. SA516 Gr.70" />
+            </div>
+            <div>
+              <label class="input-label">Thickness (mm)</label>
+              <input class="input-field" id="new-seam-thk" placeholder="e.g. 20" />
+            </div>
+            <div class="form-full" style="display:flex;justify-content:flex-end;">
+              <button class="btn-add" onclick="addSeam()">+ ADD SEAM</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Existing Seams</div>
+          <div id="admin-seam-list"></div>
+        </div>
+      </div>
+
+      <!-- ============ LOG PAGE ============ -->
+      <div class="page" id="page-log">
+        <div class="page-title">Activity Log</div>
+        <div class="page-sub">// Full inspection offer and acceptance history</div>
+        <div class="card">
+          <div id="full-log"></div>
+        </div>
+      </div>
+
+    </div><!-- end main-content -->
+  </div>
+</div>
+
+<!-- ============ INSPECT MODAL ============ -->
+<div class="modal-overlay" id="inspect-modal">
+  <div class="modal">
+    <div class="modal-title">🔍 Quality Inspection</div>
+    <div id="inspect-modal-content"></div>
+    <textarea class="remarks-input" id="inspect-remarks" placeholder="Remarks / NCR Number / Hold notes (optional)..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-reject" onclick="submitInspection('rejected')">✗ REJECT</button>
+      <button class="btn-accept" onclick="submitInspection('accepted')">✓ ACCEPT</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script>
+// ============================================================
+// DATA STORE (in-memory — replace with localStorage or backend)
+// ============================================================
+
+const PASSWORDS = { admin: 'admin123', production: 'prod123', quality: 'qual123', manager: 'mgr123' };
+
+const INSPECTION_STAGES = [
+  'WEP PT/MT',
+  'Fit-up Inspection',
+  'Root Run / Back Chip PT/MT',
+  'Complete Weld Dimension Inspection',
+  'Complete Weld PT/MT',
+  'Hardness Test',
+  'RT (Radiographic Test)',
+  'UT (Ultrasonic Test)'
+];
+
+// Load from localStorage if exists
+function loadData() {
+  try {
+    const saved = localStorage.getItem('iemqs_data');
+    if (saved) return JSON.parse(saved);
+  } catch(e) {}
+  return getDefaultData();
+}
+
+function saveData() {
+  try {
+    localStorage.setItem('iemqs_data', JSON.stringify(DB));
+  } catch(e) {}
+}
+
+function getDefaultData() {
+  return {
+    seams: [
+      { id: 's1', section: 'Pre-Fabrication', number: 'Circ. Seam No: 101', desc: 'Nozzle Neck fit-up with Flange', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '20', stages: buildStages() },
+      { id: 's2', section: 'Pre-Fabrication', number: 'Circ. Seam No: 102', desc: 'Shell Plate to End Plate', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '25', stages: buildStages() },
+      { id: 's3', section: 'Head Assembly', number: 'Circ. Seam No: 201', desc: 'Ellipsoidal Head to Shell', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '22', stages: buildStages() },
+      { id: 's4', section: 'Shell Side', number: 'Circ. Seam No: 301', desc: 'Shell Longitudinal Seam', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '18', stages: buildStages() },
+      { id: 's5', section: 'Channel Side', number: 'Circ. Seam No: 401', desc: 'Channel Cover to Flange', type: 'Butt Joint', material: 'SA516 Gr.70', thickness: '30', stages: buildStages() },
+      { id: 's6', section: 'Tube Bundle Assembly', number: 'Circ. Seam No: 501', desc: 'Tube to Tubesheet Welding', type: 'Fillet Joint', material: 'SA179', thickness: '3', stages: buildStages() },
+    ],
+    log: []
+  };
+}
+
+function buildStages() {
+  return INSPECTION_STAGES.map((name, i) => ({
+    name,
+    status: 'pending', // pending | offered | accepted | rejected
+    offeredBy: null,
+    offeredAt: null,
+    inspectedBy: null,
+    inspectedAt: null,
+    remarks: ''
+  }));
+}
+
+let DB = loadData();
+let currentUser = null;
+let currentRole = null;
+let selectedRole = null;
+let activeSection = null;
+let inspectTarget = null; // { seamId, stageIdx }
+
+// ============================================================
+// LOGIN
+// ============================================================
+function selectRole(role) {
+  selectedRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('role-' + role).classList.add('active');
+}
+
+function doLogin() {
+  if (!selectedRole) { notify('Please select a role'); return; }
+  const name = document.getElementById('login-name').value.trim();
+  const pass = document.getElementById('login-pass').value.trim();
+  if (!name) { notify('Please enter your name'); return; }
+  if (pass !== PASSWORDS[selectedRole]) { notify('Incorrect password'); return; }
+
+  currentUser = name;
+  currentRole = selectedRole;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  // Set role badge
+  const badge = document.getElementById('header-role-badge');
+  badge.className = 'role-badge ' + currentRole;
+  badge.textContent = currentRole.toUpperCase();
+  document.getElementById('header-user').textContent = currentUser;
+
+  // Show admin nav only for admin
+  if (currentRole === 'admin') {
+    document.getElementById('nav-admin').style.display = 'flex';
+  }
+
+  // Init active section
+  const sections = getSections();
+  if (sections.length > 0) activeSection = sections[0];
+
+  renderAll();
+  showPage('dashboard');
+}
+
+function logout() {
+  currentUser = null;
+  currentRole = null;
+  selectedRole = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('login-name').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page)?.classList.add('active');
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'inspection') renderInspection();
+  if (page === 'admin') renderAdmin();
+  if (page === 'log') renderLog();
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getSections() {
+  return [...new Set(DB.seams.map(s => s.section))];
+}
+
+function getSeamsForSection(section) {
+  return DB.seams.filter(s => s.section === section);
+}
+
+function getSeamById(id) {
+  return DB.seams.find(s => s.id === id);
+}
+
+function now() {
+  return new Date().toLocaleString('en-IN', { hour12: false });
+}
+
+function addLog(msg) {
+  DB.log.unshift({ time: now(), user: currentUser, role: currentRole, msg });
+  saveData();
+}
+
+function stageProgress(seam) {
+  const total = seam.stages.length;
+  const done = seam.stages.filter(s => s.status === 'accepted').length;
+  return { total, done, pct: Math.round((done / total) * 100) };
+}
+
+function getOverallStageCount(status) {
+  let count = 0;
+  DB.seams.forEach(seam => {
+    seam.stages.forEach(stage => {
+      if (stage.status === status) count++;
+    });
+  });
+  return count;
+}
+
+function getTotalStages() {
+  return DB.seams.reduce((a, s) => a + s.stages.length, 0);
+}
+
+// ============================================================
+// OFFER STAGE (Production)
+// ============================================================
+function offerStage(seamId, stageIdx) {
+  const seam = getSeamById(seamId);
+  if (!seam) return;
+
+  // Check previous stage is accepted (except first)
+  if (stageIdx > 0 && seam.stages[stageIdx - 1].status !== 'accepted') {
+    notify('⚠ Previous stage must be accepted before offering this stage');
+    return;
+  }
+
+  const stage = seam.stages[stageIdx];
+  if (stage.status !== 'pending' && stage.status !== 'rejected') {
+    notify('Stage already offered or accepted');
+    return;
+  }
+
+  stage.status = 'offered';
+  stage.offeredBy = currentUser;
+  stage.offeredAt = now();
+  stage.inspectedBy = null;
+  stage.inspectedAt = null;
+  stage.remarks = '';
+
+  addLog(`🔵 OFFERED — <strong>${seam.number}</strong> · Stage: <strong>${stage.name}</strong> by Production (${currentUser})`);
+  saveData();
+  renderInspection();
+  notify(`Stage "${stage.name}" offered for inspection`);
+}
+
+// ============================================================
+// INSPECT STAGE (Quality)
+// ============================================================
+function openInspectModal(seamId, stageIdx) {
+  const seam = getSeamById(seamId);
+  const stage = seam.stages[stageIdx];
+
+  inspectTarget = { seamId, stageIdx };
+
+  document.getElementById('inspect-modal-content').innerHTML = `
+    <div class="info-row"><span>Seam / Joint</span><span>${seam.number}</span></div>
+    <div class="info-row"><span>Description</span><span>${seam.desc}</span></div>
+    <div class="info-row"><span>Section</span><span>${seam.section}</span></div>
+    <div class="info-row"><span>Stage</span><span style="color:var(--warn);">${stage.name}</span></div>
+    <div class="info-row"><span>Offered By</span><span>${stage.offeredBy} at ${stage.offeredAt}</span></div>
+    <div class="info-row"><span>Material</span><span>${seam.material} · ${seam.thickness}mm</span></div>
+    <div class="info-row"><span>Joint Type</span><span>${seam.type}</span></div>
+  `;
+
+  document.getElementById('inspect-remarks').value = '';
+  document.getElementById('inspect-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('inspect-modal').classList.remove('open');
+  inspectTarget = null;
+}
+
+function submitInspection(result) {
+  if (!inspectTarget) return;
+  const { seamId, stageIdx } = inspectTarget;
+  const seam = getSeamById(seamId);
+  const stage = seam.stages[stageIdx];
+  const remarks = document.getElementById('inspect-remarks').value.trim();
+
+  stage.status = result;
+  stage.inspectedBy = currentUser;
+  stage.inspectedAt = now();
+  stage.remarks = remarks;
+
+  const icon = result === 'accepted' ? '✅' : '❌';
+  const hasNCR = remarks.toLowerCase().includes('ncr');
+  addLog(`${icon} ${result.toUpperCase()} — <strong>${seam.number}</strong> · Stage: <strong>${stage.name}</strong> by QE (${currentUser})${remarks ? ` — Remarks: ${remarks}` : ''}`);
+
+  closeModal();
+  saveData();
+  renderInspection();
+  renderDashboard();
+  notify(`Stage "${stage.name}" ${result}`);
+}
+
+// ============================================================
+// RENDER DASHBOARD
+// ============================================================
+function renderDashboard() {
+  // Stat grid
+  const total = getTotalStages();
+  const accepted = getOverallStageCount('accepted');
+  const offered = getOverallStageCount('offered');
+  const rejected = getOverallStageCount('rejected');
+  const pending = total - accepted - offered - rejected;
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-card total">
+      <div class="stat-number" style="color:var(--accent2);">${total}</div>
+      <div class="stat-label">Total Stages</div>
+    </div>
+    <div class="stat-card accepted">
+      <div class="stat-number" style="color:var(--success);">${accepted}</div>
+      <div class="stat-label">Accepted</div>
+    </div>
+    <div class="stat-card offered">
+      <div class="stat-number" style="color:var(--warn);">${offered}</div>
+      <div class="stat-label">Awaiting Inspection</div>
+    </div>
+    <div class="stat-card rejected">
+      <div class="stat-number" style="color:var(--danger);">${rejected}</div>
+      <div class="stat-label">Rejected / Rework</div>
+    </div>
+    <div class="stat-card pending">
+      <div class="stat-number" style="color:var(--text3);">${pending}</div>
+      <div class="stat-label">Not Started</div>
+    </div>
+    <div class="stat-card total">
+      <div class="stat-number" style="color:var(--accent);">${total > 0 ? Math.round((accepted/total)*100) : 0}%</div>
+      <div class="stat-label">Overall Completion</div>
+    </div>
+  `;
+
+  // Section progress
+  const sections = getSections();
+  let secHtml = '';
+  sections.forEach(sec => {
+    const seams = getSeamsForSection(sec);
+    const secTotal = seams.reduce((a, s) => a + s.stages.length, 0);
+    const secDone = seams.reduce((a, s) => a + s.stages.filter(st => st.status === 'accepted').length, 0);
+    const pct = secTotal > 0 ? Math.round((secDone / secTotal) * 100) : 0;
+
+    secHtml += `
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;">${sec}</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);">${secDone}/${secTotal} stages · <span style="color:var(--accent)">${pct}%</span></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  });
+
+  document.getElementById('section-progress').innerHTML = secHtml || '<div class="empty-state"><div class="empty-icon">📊</div>No data yet</div>';
+
+  // Recent activity
+  const recent = DB.log.slice(0, 8);
+  document.getElementById('recent-activity').innerHTML = recent.length ? recent.map(l => `
+    <div class="log-entry">
+      <div class="log-time">${l.time} · ${l.role?.toUpperCase()}</div>
+      <div class="log-text">${l.msg}</div>
+    </div>
+  `).join('') : '<div class="empty-state"><div class="empty-icon">📋</div>No activity yet</div>';
+}
+
+// ============================================================
+// RENDER INSPECTION PAGE
+// ============================================================
+function renderInspection() {
+  const sections = getSections();
+
+  // Tabs
+  document.getElementById('section-tabs').innerHTML = sections.map(s => `
+    <div class="section-tab ${s === activeSection ? 'active' : ''}" onclick="switchSection('${s}')">${s}</div>
+  `).join('');
+
+  if (!activeSection && sections.length > 0) activeSection = sections[0];
+
+  renderSeamContent();
+}
+
+function switchSection(sec) {
+  activeSection = sec;
+  renderInspection();
+}
+
+function renderSeamContent() {
+  const seams = getSeamsForSection(activeSection);
+  const wrap = document.getElementById('seam-content');
+
+  if (!seams.length) {
+    wrap.innerHTML = `<div class="empty-state"><div class="empty-icon">🔩</div>No seams in this section.<br>Admin can add seams from the Admin Setup page.</div>`;
+    return;
+  }
+
+  let html = '';
+
+  seams.forEach(seam => {
+    const { done, total, pct } = stageProgress(seam);
+    const hasNCR = seam.stages.some(s => s.remarks && s.remarks.toLowerCase().includes('ncr'));
+
+    html += `
+      <div class="card" style="margin-bottom:20px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="seam-name" style="font-size:15px;">${seam.number} ${hasNCR ? '<span class="tag ncr">NCR</span>' : ''}</div>
+            <div style="font-size:13px;color:var(--text2);margin-top:3px;">${seam.desc}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-top:4px;">${seam.type} · ${seam.material} · ${seam.thickness}mm</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);">${done}/${total} stages</div>
+            <div class="progress-bar" style="width:120px;margin-top:6px;"><div class="progress-fill" style="width:${pct}%"></div></div>
+          </div>
+        </div>
+
+        <div>
+          ${seam.stages.map((stage, i) => renderStageRow(seam, stage, i)).join('')}
+        </div>
+      </div>
+    `;
+  });
+
+  wrap.innerHTML = html;
+}
+
+function renderStageRow(seam, stage, i) {
+  const canOffer = currentRole === 'production';
+  const canInspect = currentRole === 'quality';
+  const prevAccepted = i === 0 || seam.stages[i - 1].status === 'accepted';
+  const isLocked = !prevAccepted && stage.status === 'pending';
+
+  let statusPill = '';
+  let actionBtn = '';
+
+  if (stage.status === 'pending') {
+    statusPill = `<span class="stage-pill ${isLocked ? 'locked' : 'pending'}">${isLocked ? '🔒 LOCKED' : '○ PENDING'}</span>`;
+    if (canOffer && !isLocked) {
+      actionBtn = `<button class="offer-btn" onclick="offerStage('${seam.id}', ${i})">OFFER ↑</button>`;
+    }
+  } else if (stage.status === 'offered') {
+    statusPill = `<span class="stage-pill offered">⬆ OFFERED</span>`;
+    if (canInspect) {
+      actionBtn = `<button class="inspect-btn" onclick="openInspectModal('${seam.id}', ${i})">INSPECT ▸</button>`;
+    }
+  } else if (stage.status === 'accepted') {
+    statusPill = `<span class="stage-pill accepted">✓ ACCEPTED</span>`;
+  } else if (stage.status === 'rejected') {
+    statusPill = `<span class="stage-pill rejected">✗ REJECTED</span>`;
+    if (canOffer) {
+      actionBtn = `<button class="offer-btn" onclick="offerStage('${seam.id}', ${i})">RE-OFFER ↑</button>`;
+    }
+  }
+
+  const hasRemarks = stage.remarks;
+
+  return `
+    <div class="stage-detail-row">
+      <div class="stage-num">${String(i + 1).padStart(2, '0')}</div>
+      <div class="stage-name-cell">
+        <div style="font-size:13px;">${stage.name}</div>
+        ${stage.offeredAt ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px;">Offered: ${stage.offeredBy} @ ${stage.offeredAt}</div>` : ''}
+        ${stage.inspectedAt ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);">Inspected: ${stage.inspectedBy} @ ${stage.inspectedAt}</div>` : ''}
+        ${hasRemarks ? `<div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--warn);margin-top:3px;">📝 ${stage.remarks}</div>` : ''}
+      </div>
+      <div class="stage-status-cell">${statusPill}</div>
+      <div class="stage-action-cell">${actionBtn}</div>
+    </div>
+  `;
+}
+
+// ============================================================
+// RENDER ADMIN
+// ============================================================
+function renderAdmin() {
+  const seams = DB.seams;
+  const grouped = {};
+
+  seams.forEach(s => {
+    if (!grouped[s.section]) grouped[s.section] = [];
+    grouped[s.section].push(s);
+  });
+
+  let html = '';
+  Object.keys(grouped).forEach(sec => {
+    html += `<div style="margin-bottom:20px;">
+      <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--accent2);text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">${sec}</div>`;
+
+    grouped[sec].forEach(seam => {
+      html += `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(30,48,80,0.5);">
+          <div>
+            <div class="seam-name">${seam.number}</div>
+            <div style="font-size:12px;color:var(--text2);">${seam.desc} · ${seam.material} · ${seam.thickness}mm</div>
+          </div>
+          <button onclick="removeSeam('${seam.id}')" style="background:none;border:1px solid var(--danger);color:var(--danger);padding:4px 10px;font-family:'IBM Plex Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;">REMOVE</button>
+        </div>
+      `;
+    });
+
+    html += '</div>';
+  });
+
+  document.getElementById('admin-seam-list').innerHTML = html || '<div class="empty-state"><div class="empty-icon">🔩</div>No seams added yet</div>';
+}
+
+function addSeam() {
+  const section = document.getElementById('new-seam-section').value;
+  const desc = document.getElementById('new-seam-desc').value.trim();
+  const num = document.getElementById('new-seam-num').value.trim();
+  const type = document.getElementById('new-seam-type').value;
+  const mat = document.getElementById('new-seam-mat').value.trim();
+  const thk = document.getElementById('new-seam-thk').value.trim();
+
+  if (!desc || !num) { notify('Please fill Seam Number and Description'); return; }
+
+  const newSeam = {
+    id: 's' + Date.now(),
+    section, number: num, desc, type,
+    material: mat || 'N/A',
+    thickness: thk || 'N/A',
+    stages: buildStages()
+  };
+
+  DB.seams.push(newSeam);
+  addLog(`🔩 ADDED SEAM — <strong>${num}</strong> in ${section} by Admin (${currentUser})`);
+  saveData();
+
+  // Clear fields
+  document.getElementById('new-seam-desc').value = '';
+  document.getElementById('new-seam-num').value = '';
+  document.getElementById('new-seam-mat').value = '';
+  document.getElementById('new-seam-thk').value = '';
+
+  renderAdmin();
+  notify('Seam added successfully');
+}
+
+function removeSeam(id) {
+  if (!confirm('Remove this seam? This will delete all inspection data for it.')) return;
+  const seam = getSeamById(id);
+  DB.seams = DB.seams.filter(s => s.id !== id);
+  addLog(`🗑 REMOVED SEAM — <strong>${seam.number}</strong> by Admin (${currentUser})`);
+  saveData();
+  renderAdmin();
+  notify('Seam removed');
+}
+
+// ============================================================
+// RENDER LOG
+// ============================================================
+function renderLog() {
+  document.getElementById('full-log').innerHTML = DB.log.length ? DB.log.map(l => `
+    <div class="log-entry">
+      <div class="log-time">${l.time} · ${l.role?.toUpperCase()} · ${l.user}</div>
+      <div class="log-text">${l.msg}</div>
+    </div>
+  `).join('') : '<div class="empty-state"><div class="empty-icon">📋</div>No activity recorded yet</div>';
+}
+
+// ============================================================
+// RENDER ALL
+// ============================================================
+function renderAll() {
+  renderDashboard();
+  renderInspection();
+  if (currentRole === 'admin') renderAdmin();
+}
+
+// ============================================================
+// NOTIFY
+// ============================================================
+function notify(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
