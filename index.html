@@ -491,29 +491,66 @@ tr:hover td{background:var(--surf2);}
         </div>
 
         <div class="card">
-          <div class="chead"><div class="ctitle">Add Seam / Joint</div></div>
-          <div class="grid2">
-            <div><label class="lbl">Project</label><select id="ns-proj" onchange="refreshNsSections()"></select></div>
-            <div><label class="lbl">Section</label><select id="ns-sec"></select></div>
-            <div><label class="lbl">Seam / Joint Number</label><input id="ns-num" placeholder="Circ. Seam No: 101"></div>
-            <div><label class="lbl">Description</label><input id="ns-desc" placeholder="Nozzle Neck fit-up with Flange"></div>
-            <div><label class="lbl">Joint Type</label>
-              <select id="ns-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select>
+          <div class="chead"><div class="ctitle">Add New Seam / Joint</div><div style="font-size:12px;color:var(--text3);">Fill all fields · Default stages from template will be auto-assigned</div></div>
+
+          <!-- Step 1: Project + Section -->
+          <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 1 — Select Project &amp; Section</div>
+            <div class="grid2">
+              <div>
+                <label class="lbl">Project <span style="color:var(--red);">*</span></label>
+                <select id="ns-proj" onchange="refreshNsSections()" style="font-weight:600;">
+                  <option value="">— Select Project —</option>
+                </select>
+                <div id="ns-proj-info"></div>
+              </div>
+              <div>
+                <label class="lbl">Section <span style="color:var(--red);">*</span></label>
+                <select id="ns-sec" disabled>
+                  <option value="">— Select a project first —</option>
+                </select>
+              </div>
             </div>
-            <div><label class="lbl">Material</label><input id="ns-mat" placeholder="SA516 Gr.70"></div>
-            <div><label class="lbl">Thickness (mm)</label><input id="ns-thk" placeholder="20"></div>
-            <div><label class="lbl">WPS No.</label><input id="ns-wps" placeholder="WPS-001"></div>
-            <div><label class="lbl">Stage Template</label><select id="ns-tmpl"></select></div>
-            <div class="span2" style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">
-              <button class="abtn ab-blue" style="padding:8px 20px;font-size:11px;" onclick="addSeam()">+ ADD SEAM</button>
+          </div>
+
+          <!-- Step 2: Seam Details -->
+          <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 2 — Seam Details</div>
+            <div class="grid2">
+              <div><label class="lbl">Seam / Joint Number <span style="color:var(--red);">*</span></label><input id="ns-num" placeholder="e.g. Circ. Seam No: 101"></div>
+              <div><label class="lbl">Description <span style="color:var(--red);">*</span></label><input id="ns-desc" placeholder="e.g. Nozzle Neck fit-up with Flange"></div>
+              <div><label class="lbl">Joint Type</label>
+                <select id="ns-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select>
+              </div>
+              <div><label class="lbl">Material</label><input id="ns-mat" placeholder="SA516 Gr.70"></div>
+              <div><label class="lbl">Thickness (mm)</label><input id="ns-thk" placeholder="20"></div>
+              <div><label class="lbl">WPS No.</label><input id="ns-wps" placeholder="WPS-001"></div>
             </div>
+          </div>
+
+          <!-- Step 3: Stages -->
+          <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 3 — Inspection Stage Template</div>
+            <div>
+              <label class="lbl">Stage Template <span style="color:var(--text3);font-weight:400;">(default stages will be auto-applied to this seam)</span></label>
+              <select id="ns-tmpl" style="max-width:400px;"></select>
+              <div style="font-size:12px;color:var(--text3);margin-top:6px;">💡 After the seam is approved, you can customise its specific stages using the <strong>⚙ STAGES</strong> button in the seam table.</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;justify-content:flex-end;align-items:center;">
+            <div style="font-size:12px;color:var(--amber);">⏳ Requires Manager approval before appearing in Inspection</div>
+            <button class="btn btn-blue" style="padding:10px 24px;" onclick="addSeam()">+ ADD SEAM →</button>
           </div>
         </div>
 
-        <div class="card">
+        <div class="card" id="seams-card">
           <div class="chead">
-            <div class="ctitle">All Seams</div>
-            <select id="fp" onchange="renderAdminSeams()" style="padding:5px 8px;font-size:11px;background:var(--surf2);border:1px solid var(--border2);color:var(--text);border-radius:2px;"></select>
+            <div>
+              <div class="ctitle">Seams / Joints</div>
+              <div style="font-size:12px;color:var(--text3);margin-top:2px;">Click <strong style="color:var(--blue2);">⚙ STAGES</strong> on any approved seam to edit its inspection stages</div>
+            </div>
+            <select id="fp" onchange="renderAdminSeams()" style="padding:7px 12px;font-size:13px;font-weight:600;background:var(--surf);border:1.5px solid var(--border2);color:var(--blue2);border-radius:7px;min-width:200px;"></select>
           </div>
           <div class="tbl-wrap">
             <table><thead><tr><th>Section</th><th>Seam #</th><th>Description</th><th>Type</th><th>Material</th><th>THK</th><th>WPS</th><th>Stages</th><th>Progress</th><th>Actions</th></tr></thead>
@@ -761,7 +798,7 @@ tr:hover td{background:var(--surf2);}
         <div><label class="lbl">Project Number</label><input id="np-num" placeholder="1242"></div>
         <div><label class="lbl">Equipment Name</label><input id="np-eq" placeholder="Heat Exchanger"></div>
         <div><label class="lbl">Client</label><input id="np-cl" placeholder="IOCL"></div>
-        <div><label class="lbl">Process</label><input id="np-pr" placeholder="Fabrication"></div>
+        <div><label class="lbl">Tag</label><input id="np-pr" placeholder="Fabrication"></div>
         <div class="span2"><label class="lbl">Sections (comma separated)</label><input id="np-secs" placeholder="Pre-Fabrication, Head Assembly, Shell Side, Channel Side, Tube Bundle Assembly"></div>
         <div class="span2"><label class="lbl">Code / Standard</label><input id="np-code" placeholder="ASME Sec VIII Div.1"></div>
       </div>
@@ -828,7 +865,10 @@ tr:hover td{background:var(--surf2);}
   <div class="modal" style="max-width:600px;">
     <div class="mhead"><div class="mtitle">🔧 Edit Stages for Seam</div><button class="mclose" onclick="closeModal('m-seam-stages')">✕</button></div>
     <div class="mbody">
-      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amber);margin-bottom:12px;">⚠ Only stages with PENDING status can be added/removed. Accepted/Offered stages are locked.</div>
+      <div id="ss-context"></div>
+      <div style="font-size:12px;color:var(--amber);background:var(--amber-lt);border:1px solid #f59e0b;border-radius:6px;padding:8px 12px;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <span>⚠️</span> Only <strong>PENDING</strong> stages can be renamed, reordered or removed. Stages already offered/accepted are locked.
+      </div>
       <input type="hidden" id="ss-seam-id">
       <div id="seam-stage-lines"></div>
       <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -880,16 +920,9 @@ function mkStages(names) {
 
 function defaultDB() {
   return {
-    projects:[{id:'p1',number:'1242',equipment:'Heat Exchanger',client:'IOCL',process:'Fabrication',code:'ASME Sec VIII Div.1',sections:['Pre-Fabrication','Head Assembly','Shell Side','Channel Side','Tube Bundle Assembly']}],
-    seams:[
-      {id:'s1',pid:'p1',sec:'Pre-Fabrication',num:'Circ. Seam No: 101',desc:'Nozzle Neck fit-up with Flange',type:'Butt Joint',mat:'SA516 Gr.70',thk:'20',wps:'WPS-001',stages:mkStages()},
-      {id:'s2',pid:'p1',sec:'Pre-Fabrication',num:'Circ. Seam No: 102',desc:'Shell Plate to End Plate',type:'Butt Joint',mat:'SA516 Gr.70',thk:'25',wps:'WPS-001',stages:mkStages()},
-      {id:'s3',pid:'p1',sec:'Head Assembly',num:'Circ. Seam No: 201',desc:'Ellipsoidal Head to Shell',type:'Butt Joint',mat:'SA516 Gr.70',thk:'22',wps:'WPS-002',stages:mkStages()},
-      {id:'s4',pid:'p1',sec:'Shell Side',num:'Circ. Seam No: 301',desc:'Shell Longitudinal Seam',type:'Butt Joint',mat:'SA516 Gr.70',thk:'18',wps:'WPS-001',stages:mkStages()},
-      {id:'s5',pid:'p1',sec:'Channel Side',num:'Circ. Seam No: 401',desc:'Channel Cover to Flange',type:'Butt Joint',mat:'SA516 Gr.70',thk:'30',wps:'WPS-003',stages:mkStages()},
-      {id:'s6',pid:'p1',sec:'Tube Bundle Assembly',num:'Circ. Seam No: 501',desc:'Tube to Tubesheet Welding',type:'Fillet Joint',mat:'SA179',thk:'3',wps:'WPS-004',stages:mkStages()}
-    ],
-    users:[{id:'u0',name:'Admin User',mob:'0000000000',email:'',co:'TQIMS',desig:'System Admin',role:'admin',pid:'p1',pw:'admin123',approved:true}],
+    projects:[],
+    seams:[],
+    users:[{id:'u0',name:'Admin User',mob:'0000000000',email:'',co:'TQIMS',desig:'System Admin',role:'admin',pid:'',pw:'admin123',approved:true}],
     templates:[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}],
     log:[],
     pendingActions:[],
@@ -919,7 +952,13 @@ function getSeams(pid,sec){return DB.seams.filter(s=>s.pid===pid&&(!sec||s.sec==
 function stageStats(seam){const t=seam.stages.length,a=seam.stages.filter(s=>s.status==='accepted').length,o=seam.stages.filter(s=>s.status==='offered').length,r=seam.stages.filter(s=>s.status==='rejected').length,ret=seam.stages.filter(s=>s.status==='returned').length;return{t,a,o,r,ret,pct:t?Math.round(a/t*100):0};}
 function hasNCR(seam){return seam.stages.some(s=>s.ncrNumber||(s.qeRem&&s.qeRem.toLowerCase().includes('ncr')));}
 function overallStats(pid){let t=0,a=0,o=0,r=0,ret=0;getSeams(pid).forEach(s=>s.stages.forEach(st=>{t++;if(st.status==='accepted')a++;else if(st.status==='offered')o++;else if(st.status==='rejected')r++;else if(st.status==='returned')ret++;}));return{t,a,o,r,ret,p:t?Math.round(a/t*100):0,seams:getSeams(pid).length};}
-function updateBadge(){const seams=getSeams(CU?CU.pid:'');let o=0;seams.forEach(s=>s.stages.forEach(st=>{if(st.status==='offered')o++;}));const nb=$('nb');if(nb){nb.style.display=o>0?'inline':'none';nb.textContent=o;}}
+function updateBadge(){
+  let pid=CU?CU.pid:'';
+  if(!pid&&CU&&CU.role==='admin'&&DB.projects.length>0)pid=DB.projects[0].id;
+  const seams=getSeams(pid);
+  let o=0;seams.forEach(s=>s.stages.forEach(st=>{if(st.status==='offered')o++;}));
+  const nb=$('nb');if(nb){nb.style.display=o>0?'inline':'none';nb.textContent=o;}
+}
 function empty(t){return`<div style="text-align:center;padding:36px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);">${t}</div>`;}
 
 function toast(msg,type){
@@ -944,7 +983,9 @@ function showTab(t){
     $('form-'+id).classList.toggle('on',id===t);
   });
   // populate project dropdowns
-  const opts=DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('');
+  const opts=DB.projects.length
+    ? DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('')
+    : '<option value="">— No projects yet —</option>';
   ['r-proj','ar-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
 }
 
@@ -971,7 +1012,7 @@ function doRegister(){
   const roleEl=document.querySelector('.rchip.on');
   const role=roleEl?roleEl.dataset.r:'';
   const err=$('r-err');
-  if(!name||!mob||!co||!pw||!pid||!role){err.innerHTML='<div class="msg msg-err">Please fill all required fields and select a role.</div>';return;}
+  if(!name||!mob||!co||!pw||!role){err.innerHTML='<div class="msg msg-err">Please fill all required fields and select a role.</div>';return;}
   if(pw!==pw2){err.innerHTML='<div class="msg msg-err">Passwords do not match.</div>';return;}
   if(pw.length<6){err.innerHTML='<div class="msg msg-err">Password must be at least 6 characters.</div>';return;}
   if(DB.users.find(u=>u.mob===mob)){err.innerHTML='<div class="msg msg-err">Mobile number already registered.</div>';return;}
@@ -991,7 +1032,7 @@ function doAdminReg(){
   const pw2=$('ar-pw2').value;
   const key=$('ar-key').value;
   const err=$('ar-err');
-  if(!name||!mob||!pw||!pid||!key){err.innerHTML='<div class="msg msg-err">Please fill all required fields.</div>';return;}
+  if(!name||!mob||!pw||!key){err.innerHTML='<div class="msg msg-err">Please fill Name, Mobile, Password and Admin Key.</div>';return;}
   if(key!==DB.secretKey){err.innerHTML='<div class="msg msg-err">❌ Invalid admin secret key. Access denied.</div>';$('ar-key').value='';return;}
   if(pw!==pw2){err.innerHTML='<div class="msg msg-err">Passwords do not match.</div>';return;}
   if(pw.length<6){err.innerHTML='<div class="msg msg-err">Password must be at least 6 characters.</div>';return;}
@@ -1012,12 +1053,17 @@ function loginAs(u){
   $('hdr-name').textContent=u.name;
   $('admin-nav').style.display=u.role==='admin'?'block':'none';
   $('manager-nav').style.display=u.role==='manager'?'block':'none';
-  // Show backup button on dashboard warning only for admin
   const warnBtn=$('storage-warn-admin');
   if(warnBtn) warnBtn.style.display=u.role==='admin'?'block':'none';
   populateSelects();
   updateApprovalBadge();
-  goPage('dashboard');
+  // Admin with no projects: redirect to Projects page so they can set up first
+  if(u.role==='admin' && DB.projects.length===0){
+    goPage('projects');
+    toast('Welcome! Start by adding a Project, then the Manager must approve it.','ok');
+  } else {
+    goPage('dashboard');
+  }
 }
 
 function doLogout(){
@@ -1057,17 +1103,49 @@ function closeSidebar(){$('sidebar').classList.remove('open');$('sov').classList
 // POPULATE SELECTS
 // ══════════════════════════════════════════════════════════════
 function populateSelects(){
-  const opts=DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('');
+  const noOptHtml='<option value="">— No projects yet —</option>';
+  const opts=DB.projects.length
+    ? DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('')
+    : noOptHtml;
   ['fp','print-proj','au-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
+  // ns-proj (add seam form) — same options
+  const nsp=$('ns-proj');
+  if(nsp){
+    nsp.innerHTML = DB.projects.length
+      ? '<option value="">— Select Project —</option>' + DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('')
+      : '<option value="">— No projects yet —</option>';
+  }
   refreshNsSections();
   refreshPrintSecs();
   refreshTmplSelect();
 }
 
 function refreshNsSections(){
-  const pid=$('ns-proj')&&$('ns-proj').value;
+  const nsp=$('ns-proj');
+  const pid=nsp&&nsp.value;
   const secs=getSections(pid);
-  const el=$('ns-sec');if(el)el.innerHTML=secs.map(s=>`<option>${s}</option>`).join('');
+  const secEl=$('ns-sec');
+  if(secEl){
+    if(secs.length){
+      secEl.innerHTML=secs.map(s=>`<option>${s}</option>`).join('');
+      secEl.disabled=false;
+    } else {
+      secEl.innerHTML='<option value="">— Select a project first —</option>';
+      secEl.disabled=true;
+    }
+  }
+  // Show project info banner below the select
+  const infoEl=$('ns-proj-info');
+  if(infoEl){
+    const proj=getProj(pid);
+    if(proj){
+      infoEl.innerHTML=`<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:7px 12px;margin-top:4px;">
+        <strong>Project #${proj.number}</strong> — ${proj.equipment}${proj.client?' · Client: '+proj.client:''}${proj.code?' · '+proj.code:''}
+      </div>`;
+    } else {
+      infoEl.innerHTML='';
+    }
+  }
 }
 
 function refreshPrintSecs(){
@@ -1086,9 +1164,24 @@ function refreshTmplSelect(){
 // ══════════════════════════════════════════════════════════════
 function renderDashboard(){
   if(!CU)return;
-  const pid=CU.pid;
-  const p=getProj(pid);
-  if(!p){$('dash-sections').innerHTML=empty('No project assigned. Contact admin.');return;}
+  // Admin with no project: show all projects or prompt to create
+  let pid=CU.pid;
+  let p=getProj(pid);
+  // If no project found but there are projects, use first one for admin
+  if(!p && CU.role==='admin' && DB.projects.length>0){
+    pid=DB.projects[0].id;
+    p=getProj(pid);
+  }
+  if(!p){
+    let msg = CU.role==='admin'
+      ? 'No projects exist yet. Go to <strong>Projects &amp; Seams</strong> → Add Project first, then the Manager must approve it.'
+      : 'You have not been assigned to a project. Ask Admin to assign you.';
+    $('dash-sections').innerHTML=`<div style="text-align:center;padding:48px 20px;"><div style="font-size:36px;margin-bottom:12px;">📋</div><div style="font-size:15px;color:var(--text2);">${msg}</div></div>`;
+    $('stat-grid').innerHTML='';
+    $('projbar').innerHTML='';
+    $('dash-sub').textContent='No Project Selected';
+    return;
+  }
 
   $('dash-sub').textContent=`Project #${p.number} — ${p.equipment}`;
   $('projbar').innerHTML=`
@@ -1173,11 +1266,18 @@ function renderSeamDetailContent(seamId){
 let activeSec=null;
 function renderInspection(){
   if(!CU)return;
-  const pid=CU.pid;
+  // For admin: use first project if not assigned
+  let pid=CU.pid;
+  if(!pid && CU.role==='admin' && DB.projects.length>0) pid=DB.projects[0].id;
   const secs=getSections(pid);
   if(!activeSec||!secs.includes(activeSec))activeSec=secs[0]||null;
-  const hint = CU.role==='production' ? '// You can offer stages for inspection'
-    : CU.role==='quality' ? '// You can accept or reject offered stages'
+  if(!pid || !DB.projects.length){
+    $('insp-seams').innerHTML=`<div style="text-align:center;padding:48px 20px;"><div style="font-size:36px;margin-bottom:12px;">📋</div><div style="font-size:15px;color:var(--text2);">No project assigned. Admin needs to add a project and seams first.</div></div>`;
+    $('insp-tabs').innerHTML='';
+    return;
+  }
+  const hint = CU.role==='production' ? 'You can offer stages for QC inspection'
+    : CU.role==='quality' ? 'You can accept or reject offered stages'
     : 'View only — inspection actions are role-restricted';
   const hintEl=$('insp-hint');if(hintEl)hintEl.textContent=hint;
   $('insp-tabs').innerHTML=secs.map(s=>`<div class="stab ${s===activeSec?'on':''}" onclick="switchSec('${s}')">${s}</div>`).join('');
@@ -1196,7 +1296,9 @@ function toggleStages(id){
   caret.classList.toggle('open', isOpen);
 }
 function renderInspSeams(){
-  const seams=getSeams(CU.pid,activeSec);
+  let pid=CU.pid;
+  if(!pid && CU.role==='admin' && DB.projects.length>0) pid=DB.projects[0].id;
+  const seams=getSeams(pid,activeSec);
   const stageNameF=$('stage-name-filter')?$('stage-name-filter').value:'';
   const filtered=(activeStageFilter!=='all'||!!stageNameF);
   let html='';
@@ -1588,13 +1690,20 @@ function delProj(id){
 }
 
 function renderAdminSeams(){
-  const pid=$('fp')&&$('fp').value||DB.projects[0]&&DB.projects[0].id;
+  if(!DB.projects.length){
+    $('seam-tbody').innerHTML=`<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text3);">No projects yet — add a project above first.</td></tr>`;
+    return;
+  }
+  const fpEl=$('fp');
+  const pid=fpEl&&fpEl.value||DB.projects[0].id;
   const seams=DB.seams.filter(s=>s.pid===pid);
-  $('seam-tbody').innerHTML=seams.map(s=>{
+  // Also show any pending seams for this project (so admin can see what's waiting)
+  const pending=DB.pendingActions.filter(a=>a.type==='add_seam'&&a.data&&a.data.pid===pid);
+  let rows = seams.map(s=>{
     const ss=stageStats(s);
     return`<tr>
       <td>${s.sec}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--blue2);">${s.num}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--blue2);font-weight:600;">${s.num}</td>
       <td>${s.desc}</td>
       <td style="font-size:11px;">${s.type}</td>
       <td style="font-size:11px;">${s.mat}</td>
@@ -1607,29 +1716,50 @@ function renderAdminSeams(){
       </td>
       <td>
         <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="abtn ab-ghost" onclick="openSeamStageEditor('${s.id}')" title="Edit stages for this seam" style="color:var(--blue2);border-color:var(--blue2);">⚙ STAGES</button>
           <button class="abtn ab-amber" onclick="openEditSeam('${s.id}')">EDIT</button>
           <button class="abtn ab-blue" onclick="dupeSeam('${s.id}')" title="Duplicate seam">DUPE</button>
-          <button class="abtn ab-ghost" onclick="openSeamStageEditor('${s.id}')" title="Customize stages for this seam">STAGES</button>
           <button class="abtn ab-red" onclick="delSeam('${s.id}')">DEL</button>
         </div>
       </td>
     </tr>`;
-  }).join('')||`<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text3);">No seams</td></tr>`;
+  });
+  // Show pending adds as greyed-out rows
+  pending.forEach(a=>{
+    const d=a.data;
+    rows.push(`<tr style="opacity:.55;background:var(--amber-lt);">
+      <td>${d.sec}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--amber);font-weight:600;">${d.num}</td>
+      <td>${d.desc}</td>
+      <td style="font-size:11px;">${d.type}</td>
+      <td style="font-size:11px;">${d.mat}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;">${d.thk}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;">${d.wps||'—'}</td>
+      <td style="font-size:10px;">${d.stages.length} stages</td>
+      <td colspan="2" style="font-size:11px;color:var(--amber);font-style:italic;">⏳ Awaiting Manager Approval · Req. by ${a.requestedBy}</td>
+    </tr>`);
+  });
+  $('seam-tbody').innerHTML=rows.join('')||`<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text3);">No seams added for this project yet. Use the form above to add one.</td></tr>`;
 }
 
 function addSeam(){
-  const pid=$('ns-proj').value,sec=$('ns-sec').value,num=$('ns-num').value.trim(),desc=$('ns-desc').value.trim();
+  const pid=$('ns-proj').value;
+  if(!pid){toast('Please select a Project first','err');return;}
+  const sec=$('ns-sec').value;
+  if(!sec){toast('Please select a Section','err');return;}
+  const num=$('ns-num').value.trim(),desc=$('ns-desc').value.trim();
   if(!num||!desc){toast('Seam number and description required','err');return;}
   const tmplId=$('ns-tmpl').value;
   const tmpl=DB.templates.find(t=>t.id===tmplId);
   const stages=mkStages(tmpl?tmpl.stages.slice():DEFAULT_STAGES.slice());
+  const proj=getProj(pid);
   const newSeam={id:'s'+Date.now(),pid,sec,num,desc,type:$('ns-type').value,mat:$('ns-mat').value.trim()||'N/A',thk:$('ns-thk').value.trim()||'N/A',wps:$('ns-wps').value.trim()||'—',stages};
-  // Submit for Manager approval
-  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),desc:`Add Seam: ${num} — ${desc} in ${sec}`});
-  log(`📋 PENDING APPROVAL — Add Seam: ${num} requested by ${CU.name}`);save();
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),desc:`Add Seam: ${num} — ${desc} [Project #${proj?proj.number:'?'} / ${sec}]`});
+  log(`📋 PENDING APPROVAL — Add Seam: ${num} in Project #${proj?proj.number:'?'} requested by ${CU.name}`);
+  save();
   ['ns-num','ns-desc','ns-mat','ns-thk','ns-wps'].forEach(id=>$(id).value='');
   renderAdminSeams();
-  toast('✓ Seam add request sent to Manager for approval','ok');
+  toast(`✓ Seam "${num}" sent to Manager for approval`,'ok');
 }
 
 function openEditSeam(id){
@@ -1673,7 +1803,19 @@ function delSeam(id){
 // PER-SEAM STAGE EDITOR (Admin only)
 // ══════════════════════════════════════════════════════════════
 function openSeamStageEditor(seamId){
+  const seam=getSeam(seamId);
+  if(!seam){toast('Seam not found','err');return;}
   $('ss-seam-id').value=seamId;
+  // Update modal title to show which seam is being edited
+  const mTitle=document.querySelector('#m-seam-stages .mtitle');
+  if(mTitle) mTitle.textContent=`⚙ Stages — ${seam.num}: ${seam.desc}`;
+  // Show project + section context
+  const proj=getProj(seam.pid);
+  const ctx=document.getElementById('ss-context');
+  if(ctx) ctx.innerHTML=`<div style="font-size:12px;color:var(--text3);margin-bottom:10px;padding:8px 12px;background:var(--surf2);border-radius:6px;border-left:3px solid var(--blue2);">
+    <strong style="color:var(--blue2);">Project #${proj?proj.number:'?'} — ${proj?proj.equipment:''}</strong><br>
+    Section: ${seam.sec} · Type: ${seam.type} · Material: ${seam.mat} · THK: ${seam.thk}mm · WPS: ${seam.wps||'—'}
+  </div>`;
   renderSeamStageLines(seamId);
   openModal('m-seam-stages');
 }
@@ -2223,7 +2365,12 @@ function approveAction(id){
   if(a.type==='add_seam'){DB.seams.push(a.data);log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='edit_seam'){const s=getSeam(a.data.id);if(s){Object.assign(s,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='del_seam'){DB.seams=DB.seams.filter(s=>s.id!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
-  else if(a.type==='add_proj'){DB.projects.push(a.data);log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='add_proj'){
+    DB.projects.push(a.data);
+    // If current user has no project assigned, auto-assign to this new project
+    if(CU && !CU.pid){CU.pid=a.data.id;const cu=DB.users.find(u=>u.id===CU.id);if(cu)cu.pid=a.data.id;}
+    log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);
+  }
   else if(a.type==='edit_proj'){const p=getProj(a.data.id);if(p){Object.assign(p,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='del_proj'){DB.projects=DB.projects.filter(p=>p.id!==a.data.id);DB.seams=DB.seams.filter(s=>s.pid!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='ncr_reoffer'){
@@ -2240,8 +2387,19 @@ function approveAction(id){
     }
   }
   DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
-  save();populateSelects();renderApprovals();updateApprovalBadge();
-  toast('Approved & applied','ok');
+  save();
+  populateSelects();
+  renderApprovals();
+  updateApprovalBadge();
+  // Refresh any visible pages so data shows immediately
+  const visiblePg = document.querySelector('.pg.on');
+  if(visiblePg){
+    const pgId = visiblePg.id.replace('pg-','');
+    if(pgId==='projects') renderProjectsPage();
+    else if(pgId==='dashboard') renderDashboard();
+    else if(pgId==='inspection') renderInspection();
+  }
+  toast('✓ Approved & applied','ok');
 }
 
 function rejectAction(id){
