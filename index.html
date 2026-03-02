@@ -159,8 +159,8 @@ textarea{resize:vertical;min-height:64px;}
 .pfill{height:100%;background:linear-gradient(90deg,var(--blue2),var(--cyan));transition:width .4s;border-radius:4px;}
 
 /* ── PROJECT BAR ── */
-.projbar{display:flex;flex-wrap:wrap;gap:20px;background:var(--surf);border:1px solid var(--border);padding:14px 18px;margin-bottom:20px;border-radius:10px;box-shadow:var(--shadow-sm);}
-.pf-lbl{font-size:10px;font-weight:600;color:var(--text4);letter-spacing:.5px;text-transform:uppercase;}
+.projbar{display:flex;flex-wrap:wrap;gap:0;background:var(--surf);border:1px solid var(--border);padding:18px 20px;margin-bottom:20px;border-radius:10px;box-shadow:var(--shadow-sm);}
+.pf-lbl{font-size:10px;font-weight:700;color:var(--text4);letter-spacing:.6px;text-transform:uppercase;margin-bottom:2px;}
 .pf-val{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--blue2);margin-top:1px;}
 
 /* ── SECTION TABS ── */
@@ -424,13 +424,13 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── DASHBOARD ── -->
       <div class="pg on" id="pg-dashboard">
-        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs" id="dash-sub">Project Overview</div></div>
+        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs">All Projects Overview</div></div>
 
-           <!-- COMPACT DATA NOTICE -->
+        <!-- COMPACT DATA NOTICE -->
         <div id="storage-warning" style="display:flex;align-items:center;gap:10px;background:#fffbeb;border:1px solid #f59e0b;border-left:4px solid #d97706;border-radius:8px;padding:10px 16px;margin-bottom:16px;flex-wrap:wrap;">
           <span style="font-size:15px;flex-shrink:0;">⚠️</span>
           <div style="flex:1;min-width:200px;font-size:13px;color:#78350f;line-height:1.5;">
-            <strong>Notice:</strong> All changes are shared across all devices in real time and logged with your name &amp; timestamp. Users entering false data or making unauthorised edits will have their access <strong>permanently revoked.</strong>
+            <strong>Notice:</strong> All changes are logged with your name &amp; timestamp. Users entering false data will have their access <strong>permanently revoked.</strong>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
             <div id="storage-warn-admin" style="display:none;">
@@ -439,9 +439,19 @@ tr:hover td{background:var(--surf2);}
             <button onclick="document.getElementById('storage-warning').remove()" style="background:none;border:none;font-size:20px;color:#92400e;cursor:pointer;opacity:.5;padding:0 4px;line-height:1;" title="Dismiss">×</button>
           </div>
         </div>
-        <div class="projbar" id="projbar"></div>
-        <div class="sgrid" id="stat-grid"></div>
-        <div id="dash-sections"></div>
+
+        <!-- ALL PROJECTS SUMMARY CARDS -->
+        <div id="dash-all-projects"></div>
+
+        <!-- SELECTED PROJECT DETAIL (seams) -->
+        <div id="dash-project-detail" style="display:none;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button onclick="closeProjDetail()" style="background:var(--surf);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);">← All Projects</button>
+            <div id="dash-detail-title" style="font-size:16px;font-weight:700;color:var(--text);"></div>
+          </div>
+          <div class="sgrid" id="stat-grid"></div>
+          <div id="dash-sections"></div>
+        </div>
       </div>
 
       <!-- ── SEAM DETAIL (from dashboard click) ── -->
@@ -791,21 +801,51 @@ tr:hover td{background:var(--surf2);}
 
 <!-- Add Project Modal -->
 <div class="mbg" id="m-add-proj">
-  <div class="modal">
+  <div class="modal" style="max-width:560px;">
     <div class="mhead"><div class="mtitle">+ New Project</div><button class="mclose" onclick="closeModal('m-add-proj')">✕</button></div>
-    <div class="mbody">
+    <div class="mbody" style="display:flex;flex-direction:column;gap:14px;">
+
       <div class="grid2">
-        <div><label class="lbl">Project Number</label><input id="np-num" placeholder="1242"></div>
-        <div><label class="lbl">Equipment Name</label><input id="np-eq" placeholder="Heat Exchanger"></div>
-        <div><label class="lbl">Client</label><input id="np-cl" placeholder="IOCL"></div>
-        <div><label class="lbl">Tag</label><input id="np-pr" placeholder="Fabrication"></div>
-        <div class="span2"><label class="lbl">Sections (comma separated)</label><input id="np-secs" placeholder="Pre-Fabrication, Head Assembly, Shell Side, Channel Side, Tube Bundle Assembly"></div>
-        <div class="span2"><label class="lbl">Code / Standard</label><input id="np-code" placeholder="ASME Sec VIII Div.1"></div>
+        <div>
+          <label class="lbl">Project Code <span style="color:var(--red)">*</span></label>
+          <input id="np-num" placeholder="e.g. 1242, PV-2024-01">
+        </div>
+        <div>
+          <label class="lbl">Client</label>
+          <input id="np-cl" placeholder="e.g. IOCL, HPCL">
+        </div>
+        <div>
+          <label class="lbl">Equipment Type <span style="color:var(--red)">*</span></label>
+          <select id="np-eqtype" onchange="onEqTypeChange()">
+            <option value="">— Select —</option>
+            <option>Pressure Vessel</option>
+            <option>Heat Exchanger</option>
+            <option>Manual</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Equipment Name <span style="color:var(--red)">*</span></label>
+          <input id="np-eq" placeholder="e.g. High Pressure Separator">
+        </div>
+        <div>
+          <label class="lbl">Process</label>
+          <input id="np-pr" placeholder="e.g. Fabrication, Repair">
+        </div>
+        <div>
+          <label class="lbl">Code / Standard</label>
+          <input id="np-code" placeholder="e.g. ASME Sec VIII Div.1">
+        </div>
       </div>
+
+      <div>
+        <label class="lbl">Inspection Sections <span style="color:var(--text3);font-weight:400;">(one per line — auto-filled, editable)</span></label>
+        <textarea id="np-secs" rows="4" placeholder="Select equipment type to auto-fill sections, or type manually" style="font-size:12px;line-height:1.7;"></textarea>
+      </div>
+
     </div>
     <div class="mfoot">
       <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-add-proj')">Cancel</button>
-      <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="confirmAddProj()">CREATE PROJECT</button>
+      <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="confirmAddProj()">SUBMIT FOR APPROVAL →</button>
     </div>
   </div>
 </div>
@@ -906,6 +946,41 @@ tr:hover td{background:var(--surf2);}
   </div>
 </div>
 
+
+<!-- Edit Project Modal -->
+<div class="mbg" id="m-edit-proj">
+  <div class="modal" style="max-width:560px;">
+    <div class="mhead"><div class="mtitle">✏️ Edit Project</div><button class="mclose" onclick="closeModal('m-edit-proj')">✕</button></div>
+    <div class="mbody" style="display:flex;flex-direction:column;gap:14px;">
+      <input type="hidden" id="ep-id">
+      <div class="grid2">
+        <div><label class="lbl">Project Code <span style="color:var(--red)">*</span></label><input id="ep-num"></div>
+        <div><label class="lbl">Client</label><input id="ep-cl"></div>
+        <div>
+          <label class="lbl">Equipment Type</label>
+          <select id="ep-eqtype">
+            <option value="">— Not specified —</option>
+            <option>Pressure Vessel</option>
+            <option>Heat Exchanger</option>
+            <option>Manual</option>
+          </select>
+        </div>
+        <div><label class="lbl">Equipment Name <span style="color:var(--red)">*</span></label><input id="ep-eq"></div>
+        <div><label class="lbl">Process</label><input id="ep-pr"></div>
+        <div><label class="lbl">Code / Standard</label><input id="ep-code"></div>
+      </div>
+      <div>
+        <label class="lbl">Inspection Sections <span style="color:var(--text3);font-weight:400;">(one per line)</span></label>
+        <textarea id="ep-secs" rows="4" style="font-size:12px;line-height:1.7;"></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-edit-proj')">Cancel</button>
+      <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="saveEditProj()">SUBMIT FOR APPROVAL →</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -913,6 +988,35 @@ tr:hover td{background:var(--surf2);}
 // DATABASE
 // ══════════════════════════════════════════════════════════════
 const DEFAULT_STAGES = ['WEP PT/MT','Fit-up Inspection','Root Run / Back Chip PT/MT','Complete Weld Dimension Inspection','Complete Weld PT/MT','Hardness Test','RT (Radiographic Test)','UT (Ultrasonic Test)'];
+
+
+// ── Equipment Type Catalog (no subtypes — simple & clean) ──
+const EQUIPMENT_CATALOG = {
+  'Pressure Vessel': {
+    icon: '🔵',
+    color: '#1d4ed8',
+    bg: '#dbeafe',
+    sections: ['Material Inspection','Pre-Fabrication','Shell Course Assembly','Head Assembly','Nozzle Fabrication & Welding','Shell Longitudinal Seams','Shell Circumferential Seams','Support / Skirt Welding','Internal Fitting','Hydrotest','Final Inspection & Painting']
+  },
+  'Heat Exchanger': {
+    icon: '🔶',
+    color: '#b45309',
+    bg: '#fef3c7',
+    sections: ['Material Inspection','Pre-Fabrication','Shell Side','Channel Side','Tube Bundle Assembly','Nozzle Fabrication & Welding','Tubesheet to Shell Welding','Baffle & Support Assembly','Hydrotest (Shell Side)','Hydrotest (Tube Side)','Final Inspection & Painting']
+  },
+  'Manual': {
+    icon: '⚙️',
+    color: '#374151',
+    bg: '#f3f4f6',
+    sections: []
+  }
+};
+
+function getEquipmentTypes(){ return Object.keys(EQUIPMENT_CATALOG); }
+function getDefaultSections(eqType){ return (EQUIPMENT_CATALOG[eqType]||{}).sections||[]; }
+function eqIcon(t){ return (EQUIPMENT_CATALOG[t]||{}).icon||'⚙️'; }
+function eqColor(t){ return (EQUIPMENT_CATALOG[t]||{}).color||'#374151'; }
+function eqBg(t){ return (EQUIPMENT_CATALOG[t]||{}).bg||'#f3f4f6'; }
 
 function mkStages(names) {
   return (names||DEFAULT_STAGES).map(n=>({name:n,status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',location:'',drawing:'',prodRem:'',inspectedBy:'',inspectedAt:'',qeRem:'',ncrNumber:'',returnRem:''}));
@@ -953,9 +1057,14 @@ function stageStats(seam){const t=seam.stages.length,a=seam.stages.filter(s=>s.s
 function hasNCR(seam){return seam.stages.some(s=>s.ncrNumber||(s.qeRem&&s.qeRem.toLowerCase().includes('ncr')));}
 function overallStats(pid){let t=0,a=0,o=0,r=0,ret=0;getSeams(pid).forEach(s=>s.stages.forEach(st=>{t++;if(st.status==='accepted')a++;else if(st.status==='offered')o++;else if(st.status==='rejected')r++;else if(st.status==='returned')ret++;}));return{t,a,o,r,ret,p:t?Math.round(a/t*100):0,seams:getSeams(pid).length};}
 function updateBadge(){
-  let pid=CU?CU.pid:'';
-  if(!pid&&CU&&CU.role==='admin'&&DB.projects.length>0)pid=DB.projects[0].id;
-  const seams=getSeams(pid);
+  // Admin/manager see all offered stages across all projects
+  let seams;
+  if(CU&&(CU.role==='admin'||CU.role==='manager')){
+    seams=DB.seams;
+  } else {
+    const pid=CU?CU.pid:'';
+    seams=getSeams(pid);
+  }
   let o=0;seams.forEach(s=>s.stages.forEach(st=>{if(st.status==='offered')o++;}));
   const nb=$('nb');if(nb){nb.style.display=o>0?'inline':'none';nb.textContent=o;}
 }
@@ -984,7 +1093,7 @@ function showTab(t){
   });
   // populate project dropdowns
   const opts=DB.projects.length
-    ? DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('')
+    ? DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}${p.eqType?' ['+p.eqType+']':''}</option>`).join('')
     : '<option value="">— No projects yet —</option>';
   ['r-proj','ar-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
 }
@@ -1057,13 +1166,7 @@ function loginAs(u){
   if(warnBtn) warnBtn.style.display=u.role==='admin'?'block':'none';
   populateSelects();
   updateApprovalBadge();
-  // Admin with no projects: redirect to Projects page so they can set up first
-  if(u.role==='admin' && DB.projects.length===0){
-    goPage('projects');
-    toast('Welcome! Start by adding a Project, then the Manager must approve it.','ok');
-  } else {
-    goPage('dashboard');
-  }
+  goPage('dashboard');
 }
 
 function doLogout(){
@@ -1105,14 +1208,14 @@ function closeSidebar(){$('sidebar').classList.remove('open');$('sov').classList
 function populateSelects(){
   const noOptHtml='<option value="">— No projects yet —</option>';
   const opts=DB.projects.length
-    ? DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('')
+    ? DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}${p.eqType?' ['+p.eqType+']':''}</option>`).join('')
     : noOptHtml;
   ['fp','print-proj','au-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
   // ns-proj (add seam form) — same options
   const nsp=$('ns-proj');
   if(nsp){
     nsp.innerHTML = DB.projects.length
-      ? '<option value="">— Select Project —</option>' + DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('')
+      ? '<option value="">— Select Project —</option>' + DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}${p.eqType?' ['+p.eqType+']':''}</option>`).join('')
       : '<option value="">— No projects yet —</option>';
   }
   refreshNsSections();
@@ -1139,8 +1242,12 @@ function refreshNsSections(){
   if(infoEl){
     const proj=getProj(pid);
     if(proj){
-      infoEl.innerHTML=`<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:7px 12px;margin-top:4px;">
-        <strong>Project #${proj.number}</strong> — ${proj.equipment}${proj.client?' · Client: '+proj.client:''}${proj.code?' · '+proj.code:''}
+      infoEl.innerHTML=`<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:8px 12px;margin-top:4px;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;">
+        <div style="flex:1;">
+          <strong>Project #${proj.number}</strong> — ${proj.equipment}<br>
+          <span style="color:var(--text2);">${[proj.eqType,proj.subtype].filter(Boolean).join(' → ')||''}${proj.client?' · Client: '+proj.client:''}${proj.code?' · '+proj.code:''}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text3);">${proj.sections?proj.sections.length+' sections':''}</div>
       </div>`;
     } else {
       infoEl.innerHTML='';
@@ -1160,49 +1267,142 @@ function refreshTmplSelect(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// DASHBOARD
+// DASHBOARD — Shows ALL projects as cards. Click a project to see seams.
 // ══════════════════════════════════════════════════════════════
+let dashActivePid = null; // which project is expanded
+
 function renderDashboard(){
   if(!CU)return;
-  // Admin with no project: show all projects or prompt to create
-  let pid=CU.pid;
-  let p=getProj(pid);
-  // If no project found but there are projects, use first one for admin
-  if(!p && CU.role==='admin' && DB.projects.length>0){
-    pid=DB.projects[0].id;
-    p=getProj(pid);
-  }
-  if(!p){
-    let msg = CU.role==='admin'
-      ? 'No projects exist yet. Go to <strong>Projects &amp; Seams</strong> → Add Project first, then the Manager must approve it.'
-      : 'You have not been assigned to a project. Ask Admin to assign you.';
-    $('dash-sections').innerHTML=`<div style="text-align:center;padding:48px 20px;"><div style="font-size:36px;margin-bottom:12px;">📋</div><div style="font-size:15px;color:var(--text2);">${msg}</div></div>`;
-    $('stat-grid').innerHTML='';
-    $('projbar').innerHTML='';
-    $('dash-sub').textContent='No Project Selected';
+
+  // Determine which projects this user can see
+  const visibleProjects = CU.role==='admin' || CU.role==='manager'
+    ? DB.projects                          // admin/manager see ALL
+    : DB.projects.filter(p=>p.id===CU.pid); // others see only their own
+
+  // No projects at all
+  if(!visibleProjects.length){
+    const msg = (CU.role==='admin')
+      ? 'No projects yet. Go to <strong>Projects &amp; Seams</strong> to add one.'
+      : 'You are not assigned to any project. Contact your Admin.';
+    $('dash-all-projects').innerHTML=`<div style="text-align:center;padding:56px 20px;">
+      <div style="font-size:48px;margin-bottom:14px;">📋</div>
+      <div style="font-size:15px;color:var(--text2);">${msg}</div>
+    </div>`;
+    $('dash-project-detail').style.display='none';
+    updateBadge();
     return;
   }
 
-  $('dash-sub').textContent=`Project #${p.number} — ${p.equipment}`;
-  $('projbar').innerHTML=`
-    <div><div class="pf-lbl">Project No.</div><div class="pf-val">${p.number}</div></div>
-    <div><div class="pf-lbl">Equipment</div><div class="pf-val">${p.equipment}</div></div>
-    <div><div class="pf-lbl">Client</div><div class="pf-val">${p.client||'—'}</div></div>
-    <div><div class="pf-lbl">Process</div><div class="pf-val">${p.process||'—'}</div></div>
-    <div><div class="pf-lbl">Code</div><div class="pf-val">${p.code||'—'}</div></div>
+  // Build project summary cards
+  let cardsHtml = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px;">`;
+  visibleProjects.forEach(p=>{
+    const st=overallStats(p.id);
+    const circ=2*Math.PI*28;
+    const off=circ-(st.p/100*circ);
+    const ringColor=st.p===100?'var(--green)':st.o>0?'var(--amber)':st.r>0?'var(--red)':'var(--blue2)';
+    const isActive=dashActivePid===p.id;
+    cardsHtml+=`<div onclick="openDashProject('${p.id}')" style="
+      background:var(--surf);border:2px solid ${isActive?'var(--blue2)':'var(--border)'};
+      border-radius:12px;padding:18px;cursor:pointer;transition:all .2s;
+      box-shadow:${isActive?'0 0 0 3px rgba(37,99,235,.15),var(--shadow)':'var(--shadow-sm)'};
+      ${isActive?'':''}
+    " onmouseenter="this.style.borderColor='var(--blue2)';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.1),var(--shadow)'"
+       onmouseleave="this.style.borderColor='${isActive?'var(--blue2)':'var(--border)'}';this.style.boxShadow='${isActive?'0 0 0 3px rgba(37,99,235,.15),var(--shadow)':'var(--shadow-sm)'}'">
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <!-- Ring -->
+        <div style="position:relative;flex-shrink:0;width:64px;height:64px;">
+          <svg width="64" height="64" viewBox="0 0 64 64" style="transform:rotate(-90deg)">
+            <circle cx="32" cy="32" r="28" fill="none" stroke="var(--surf3)" stroke-width="6"/>
+            <circle cx="32" cy="32" r="28" fill="none" stroke="${ringColor}" stroke-width="6"
+              stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1;">${st.p}%</div>
+          </div>
+        </div>
+        <!-- Info -->
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
+            <span style="font-size:15px;font-weight:700;color:var(--blue2);">Project #${p.number}</span>
+            ${p.eqType?`<span style="font-size:10px;font-weight:600;padding:1px 8px;border-radius:20px;background:${eqBg(p.eqType)};color:${eqColor(p.eqType)};">${eqIcon(p.eqType)} ${p.eqType}</span>`:''}
+          </div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.equipment}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;">${p.client||'—'} · ${p.code||'—'}</div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div style="display:flex;gap:0;margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:18px;font-weight:700;color:var(--text)">${st.seams}</div>
+          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Seams</div>
+        </div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:18px;font-weight:700;color:var(--green)">${st.a}</div>
+          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Accepted</div>
+        </div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:18px;font-weight:700;color:var(--amber)">${st.o}</div>
+          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Awaiting QC</div>
+        </div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:18px;font-weight:700;color:var(--red)">${st.r}</div>
+          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">NCR</div>
+        </div>
+      </div>
+
+      ${isActive?'<div style="margin-top:10px;font-size:11px;color:var(--blue2);font-weight:600;text-align:center;">▼ Showing seam details below</div>':''}
+    </div>`;
+  });
+  cardsHtml+='</div>';
+  $('dash-all-projects').innerHTML=cardsHtml;
+
+  // If a project is selected, show its seam detail
+  if(dashActivePid && getProj(dashActivePid)){
+    renderDashProjectDetail(dashActivePid);
+  } else {
+    $('dash-project-detail').style.display='none';
+  }
+  updateBadge();
+}
+
+function openDashProject(pid){
+  dashActivePid = (dashActivePid===pid) ? null : pid; // toggle
+  renderDashboard();
+  if(dashActivePid){
+    setTimeout(()=>$('dash-project-detail').scrollIntoView({behavior:'smooth',block:'start'}),50);
+  }
+}
+
+function closeProjDetail(){
+  dashActivePid=null;
+  renderDashboard();
+}
+
+function renderDashProjectDetail(pid){
+  const p=getProj(pid);
+  if(!p){$('dash-project-detail').style.display='none';return;}
+  $('dash-project-detail').style.display='block';
+  $('dash-detail-title').innerHTML=`
+    <span style="color:var(--blue2);">Project #${p.number}</span>
+    <span style="color:var(--text3);font-weight:400;font-size:13px;"> — ${p.equipment}${p.client?' · '+p.client:''}</span>
   `;
 
   const st=overallStats(pid);
+  const pending=Math.max(0,st.t-(st.a+st.o+st.r+(st.ret||0)));
   $('stat-grid').innerHTML=`
-    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Total Seams</div></div>
-    <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Accepted</div></div>
-    <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${st.o}</div><div class="slbl">Awaiting QC</div></div>
-    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">Rejected/NCR</div></div>
-    <div class="sbox sb-grey"><div class="snum" style="color:#79c0ff">${st.ret||0}</div><div class="slbl">Returned</div></div>
-    <div class="sbox sb-green"><div class="snum" style="color:var(--cyan)">${st.p}%</div><div class="slbl">Completion</div></div>
+    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Total Seams</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t} stages</div></div>
+    <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Accepted</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t?Math.round(st.a/st.t*100):0}%</div></div>
+    <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${st.o}</div><div class="slbl">Awaiting QC</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">offered</div></div>
+    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">NCR</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">rejected</div></div>
+    <div class="sbox sb-grey"><div class="snum" style="color:var(--sky)">${st.ret||0}</div><div class="slbl">Returned</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">to production</div></div>
+    <div class="sbox sb-grey"><div class="snum" style="color:var(--text3)">${pending}</div><div class="slbl">Pending</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">not offered</div></div>
   `;
 
-  // Seam tiles per section
   const sections=getSections(pid);
   let html='';
   sections.forEach(sec=>{
@@ -1211,10 +1411,14 @@ function renderDashboard(){
     const secTotal=seams.reduce((a,s)=>a+s.stages.length,0);
     const secDone=seams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
     const secPct=secTotal?Math.round(secDone/secTotal*100):0;
+    const secColor=secPct===100?'var(--green)':secPct>50?'var(--blue2)':'var(--amber)';
     html+=`<div class="dash-section">
-      <div class="dash-sec-title">
-        <span>${sec}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);">${secDone}/${secTotal} stages · ${secPct}%</span>
+      <div class="dash-sec-title" style="flex-direction:column;align-items:stretch;gap:5px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span>${sec}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);">${seams.length} seam${seams.length!==1?'s':''} · ${secDone}/${secTotal} · <strong style="color:${secColor}">${secPct}%</strong></span>
+        </div>
+        <div class="pbar" style="height:4px;"><div class="pfill" style="width:${secPct}%;background:${secColor};"></div></div>
       </div>
       <div class="seam-grid">`;
     seams.forEach(seam=>{
@@ -1231,15 +1435,14 @@ function renderDashboard(){
         <div class="st-seam-pct">${ss.pct}%</div>
         <div class="st-seam-meta">${ss.a}/${ss.t} stages</div>
         <div class="pbar" style="margin-top:5px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
-        ${hasOff?'<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:var(--amber);margin-top:4px;">● AWAITING QC</div>':''}
-        ${!hasOff&&hasRet?'<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:#79c0ff;margin-top:4px;">↩ RETURNED</div>':''}
-        ${hasRej?'<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:var(--red);margin-top:4px;">🔴 NCR</div>':''}
+        ${hasOff?'<div style="font-size:9px;color:var(--amber);margin-top:4px;font-weight:600;">● AWAITING QC</div>':''}
+        ${!hasOff&&hasRet?'<div style="font-size:9px;color:var(--sky);margin-top:4px;font-weight:600;">↩ RETURNED</div>':''}
+        ${hasRej?'<div style="font-size:9px;color:var(--red);margin-top:4px;font-weight:600;">🔴 NCR</div>':''}
       </div>`;
     });
     html+='</div></div>';
   });
-  $('dash-sections').innerHTML=html||empty('No seams added yet. Admin can add from Projects & Seams.');
-  updateBadge();
+  $('dash-sections').innerHTML=html||`<div style="padding:24px;text-align:center;color:var(--text3);">No seams added yet for this project.</div>`;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1642,43 +1845,99 @@ function refreshCurrentView(){
 // ADMIN — PROJECTS
 // ══════════════════════════════════════════════════════════════
 function renderProjectsPage(){
-  $('proj-list').innerHTML=DB.projects.map(p=>`
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(33,38,45,.7);flex-wrap:wrap;gap:8px;">
-      <div>
-        <div style="font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;color:var(--blue2);">Project #${p.number} — ${p.equipment}</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:2px;">${p.client||'—'} · ${p.process||'—'} · ${p.code||'—'}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;">${p.sections.join(' | ')}</div>
+  $('proj-list').innerHTML=DB.projects.map(p=>{
+    const tag=p.eqType?`<span style="display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;background:${eqBg(p.eqType)};color:${eqColor(p.eqType)};">${eqIcon(p.eqType)} ${p.eqType}</span>`:'';
+    const st=overallStats(p.id);
+    return`<div style="display:flex;align-items:flex-start;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+          <div style="font-size:15px;font-weight:700;color:var(--blue2);">Project #${p.number}</div>
+          ${tag}
+        </div>
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;">${p.equipment}</div>
+        <div style="font-size:12px;color:var(--text3);">${[p.client,p.process,p.code].filter(Boolean).join(' · ')||'—'}</div>
+        <div style="margin-top:6px;display:flex;gap:12px;font-size:12px;">
+          <span style="color:var(--green);">✓ ${st.a} accepted</span>
+          ${st.o?`<span style="color:var(--amber);">⬆ ${st.o} awaiting QC</span>`:''}
+          ${st.r?`<span style="color:var(--red);">✗ ${st.r} NCR</span>`:''}
+          <span style="color:var(--text3);">${st.seams} seams · ${st.p}% done</span>
+        </div>
       </div>
-      <div style="display:flex;gap:6px;">
+      <div style="display:flex;gap:6px;flex-shrink:0;align-items:center;">
         <button class="abtn ab-amber" onclick="editProj('${p.id}')">EDIT</button>
         <button class="abtn ab-red" onclick="delProj('${p.id}')">DEL</button>
       </div>
-    </div>`).join('')||empty('No projects yet.');
+    </div>`;
+  }).join('')||`<div style="text-align:center;padding:36px;color:var(--text3);">No projects yet. Click <strong>+ ADD PROJECT</strong> to get started.</div>`;
   populateSelects();
   renderAdminSeams();
 }
 
+// ── Equipment type handler — auto-fills sections ──
+function onEqTypeChange(){
+  const eqType=$('np-eqtype').value;
+  const secs=getDefaultSections(eqType);
+  if(secs.length) $('np-secs').value=secs.join('\n');
+  else $('np-secs').value='';
+}
+
 function confirmAddProj(){
-  const num=$('np-num').value.trim(),eq=$('np-eq').value.trim();
-  if(!num||!eq){toast('Project number and equipment required','err');return;}
-  const secs=$('np-secs').value.split(',').map(s=>s.trim()).filter(Boolean);
-  const newProj={id:'p'+Date.now(),number:num,equipment:eq,client:$('np-cl').value.trim(),process:$('np-pr').value.trim(),sections:secs.length?secs:['General'],code:$('np-code').value.trim()};
-  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_proj',data:newProj,requestedBy:CU.name,requestedAt:now(),desc:`Add Project: #${num} — ${eq}`});
-  log(`📋 PENDING APPROVAL — Add Project #${num} requested by ${CU.name}`);save();
+  const num=$('np-num').value.trim();
+  const eq=$('np-eq').value.trim();
+  const eqType=$('np-eqtype').value;
+  if(!num){toast('Project code is required','err');return;}
+  if(!eqType){toast('Please select Equipment Type','err');return;}
+  if(!eq){toast('Equipment name is required','err');return;}
+  const rawSecs=$('np-secs').value;
+  const secs=rawSecs.split(/[\n,]/).map(s=>s.trim()).filter(Boolean);
+  const newProj={
+    id:'p'+Date.now(),number:num,equipment:eq,eqType,
+    client:$('np-cl').value.trim(),process:$('np-pr').value.trim(),
+    sections:secs.length?secs:['General'],code:$('np-code').value.trim()
+  };
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_proj',data:newProj,requestedBy:CU.name,requestedAt:now(),desc:`Add Project: #${num} — ${eq} [${eqType}]`});
+  log(`📋 PENDING APPROVAL — Add Project #${num} (${eqType}) requested by ${CU.name}`);
+  save();
+  ['np-num','np-eq','np-cl','np-pr','np-code','np-secs'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  $('np-eqtype').value='';
   closeModal('m-add-proj');renderProjectsPage();
-  toast('✓ Project add request sent to Manager for approval','ok');
+  toast('✓ Project request sent to Manager for approval','ok');
 }
 
 function editProj(id){
   const p=getProj(id);
-  const num=prompt('Project Number:',p.number);if(!num)return;
-  const eq=prompt('Equipment Name:',p.equipment)||p.equipment;
-  const cl=prompt('Client:',p.client)||p.client;
-  const secs=prompt('Sections (comma separated):',p.sections.join(', '));
-  const updated={id,number:num,equipment:eq,client:cl,sections:secs?secs.split(',').map(s=>s.trim()).filter(Boolean):p.sections,code:p.code,process:p.process};
+  // Populate the edit modal
+  $('ep-id').value=id;
+  $('ep-num').value=p.number;
+  $('ep-eq').value=p.equipment;
+  $('ep-cl').value=p.client||'';
+  $('ep-pr').value=p.process||'';
+  $('ep-code').value=p.code||'';
+  $('ep-secs').value=p.sections.join('\n');
+  $('ep-eqtype').value=p.eqType||'';
+  openModal('m-edit-proj');
+}
+
+function saveEditProj(){
+  const id=$('ep-id').value;
+  const p=getProj(id);
+  const num=$('ep-num').value.trim();
+  const eq=$('ep-eq').value.trim();
+  if(!num||!eq){toast('Project number and name required','err');return;}
+  const rawSecs=$('ep-secs').value;
+  const secs=rawSecs.split(/[\n,]/).map(s=>s.trim()).filter(Boolean);
+  const updated={
+    id,number:num,equipment:eq,
+    eqType:$('ep-eqtype').value||p.eqType||'',
+    client:$('ep-cl').value.trim(),
+    process:$('ep-pr').value.trim(),
+    sections:secs.length?secs:p.sections,
+    code:$('ep-code').value.trim()
+  };
   DB.pendingActions.push({id:'pa'+Date.now(),type:'edit_proj',data:updated,requestedBy:CU.name,requestedAt:now(),desc:`Edit Project: #${p.number} → #${num} ${eq}`});
-  log(`📋 PENDING APPROVAL — Edit Project #${p.number} requested by ${CU.name}`);save();
-  renderProjectsPage();toast('✓ Project edit request sent to Manager for approval','ok');
+  log(`📋 PENDING APPROVAL — Edit Project #${p.number} requested by ${CU.name}`);
+  save();closeModal('m-edit-proj');renderProjectsPage();
+  toast('✓ Edit request sent to Manager for approval','ok');
 }
 
 function delProj(id){
@@ -2070,6 +2329,7 @@ function buildPrintPreview(){
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:14px;">
     <div><b>Project No.:</b> ${p.number}</div><div><b>Equipment:</b> ${p.equipment}</div>
+    ${p.eqType?`<div><b>Type:</b> ${p.eqType}</div><div><b>Sub-Type:</b> ${p.subtype||'—'}</div>`:''}
     <div><b>Client:</b> ${p.client||'—'}</div><div><b>Process:</b> ${p.process||'—'}</div>
     <div><b>Code/Standard:</b> ${p.code||'—'}</div><div><b>Report Date:</b> ${today}</div>
     <div><b>Total Seams:</b> ${st.seams}</div><div><b>Completion:</b> ${st.p}%</div>
@@ -2399,6 +2659,8 @@ function approveAction(id){
     else if(pgId==='dashboard') renderDashboard();
     else if(pgId==='inspection') renderInspection();
   }
+  // Also update approval badge for all roles
+  updateBadge();
   toast('✓ Approved & applied','ok');
 }
 
