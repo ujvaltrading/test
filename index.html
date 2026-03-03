@@ -287,6 +287,39 @@ tr:hover td{background:var(--surf2);}
   .profile-grid{grid-template-columns:1fr;}
 }
 
+/* ── BREADCRUMB ── */
+.breadcrumb{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:18px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;}
+.bc-item{color:var(--text3);cursor:pointer;font-weight:500;padding:2px 4px;border-radius:4px;transition:color .15s;}
+.bc-item:hover{color:var(--blue2);}
+.bc-item.active{color:var(--text);font-weight:700;cursor:default;}
+.bc-sep{color:var(--border2);margin:0 4px;font-size:11px;}
+.bc-home{color:var(--blue2);font-weight:700;}
+
+/* ── TAG CARDS ── */
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:20px;}
+.tag-card{background:var(--surf);border:2px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow-sm);}
+.tag-card:hover{border-color:var(--blue2);box-shadow:var(--shadow);transform:translateY(-1px);}
+.tag-card.active{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(37,99,235,.12),var(--shadow);}
+.tag-num{font-family:'DM Mono',monospace;font-size:17px;font-weight:700;color:var(--blue2);letter-spacing:.5px;}
+.tag-desc{font-size:12px;color:var(--text3);margin-top:2px;margin-bottom:10px;}
+.tag-statrow{display:flex;border-top:1px solid var(--border);padding-top:10px;gap:0;}
+.tag-stat{flex:1;text-align:center;}
+.tag-stat-num{font-size:16px;font-weight:700;}
+.tag-stat-lbl{font-size:9px;color:var(--text4);text-transform:uppercase;letter-spacing:.4px;font-weight:600;}
+
+/* ── COMPONENT CARDS ── */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:20px;}
+.comp-card{background:var(--surf);border:1.5px solid var(--border);border-radius:8px;padding:14px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm);}
+.comp-card:hover{border-color:var(--blue2);background:var(--blue-lt);}
+.comp-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.comp-meta{font-size:11px;color:var(--text3);}
+
+/* ── PROJECT SUMMARY CARDS ── */
+.proj-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px;}
+.proj-card{background:var(--surf);border:2px solid var(--border);border-radius:12px;padding:18px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow-sm);}
+.proj-card:hover{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(37,99,235,.1),var(--shadow);}
+.proj-card.active{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(37,99,235,.15),var(--shadow);}
+
 /* ── COLLAPSIBLE STAGE PANELS ── */
 .sdh{cursor:pointer;user-select:none;transition:background .15s;}
 .sdh:hover{background:var(--surf3) !important;}
@@ -424,13 +457,13 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── DASHBOARD ── -->
       <div class="pg on" id="pg-dashboard">
-        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs">All Projects Overview</div></div>
+        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs" id="dash-pgs">Project → Tag → Component → Seam → Stage</div></div>
 
-        <!-- COMPACT DATA NOTICE -->
+        <!-- NOTICE -->
         <div id="storage-warning" style="display:flex;align-items:center;gap:10px;background:#fffbeb;border:1px solid #f59e0b;border-left:4px solid #d97706;border-radius:8px;padding:10px 16px;margin-bottom:16px;flex-wrap:wrap;">
           <span style="font-size:15px;flex-shrink:0;">⚠️</span>
           <div style="flex:1;min-width:200px;font-size:13px;color:#78350f;line-height:1.5;">
-            <strong>Notice:</strong> All changes are logged with your name &amp; timestamp. Users entering false data will have their access <strong>permanently revoked.</strong>
+            <strong>Notice:</strong> All changes are logged with your name &amp; timestamp. Unauthorized edits will result in <strong>permanent access revocation.</strong>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
             <div id="storage-warn-admin" style="display:none;">
@@ -440,18 +473,17 @@ tr:hover td{background:var(--surf2);}
           </div>
         </div>
 
-        <!-- ALL PROJECTS SUMMARY CARDS -->
-        <div id="dash-all-projects"></div>
+        <!-- BREADCRUMB — always visible when drilling down -->
+        <div id="dash-breadcrumb" class="breadcrumb" style="display:none;"></div>
 
-        <!-- SELECTED PROJECT DETAIL (seams) -->
-        <div id="dash-project-detail" style="display:none;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-            <button onclick="closeProjDetail()" style="background:var(--surf);border:1px solid var(--border);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);">← All Projects</button>
-            <div id="dash-detail-title" style="font-size:16px;font-weight:700;color:var(--text);"></div>
-          </div>
-          <div class="sgrid" id="stat-grid"></div>
-          <div id="dash-sections"></div>
-        </div>
+        <!-- LEVEL 0: All Projects -->
+        <div id="dash-lv0"></div>
+        <!-- LEVEL 1: Tags for selected project -->
+        <div id="dash-lv1" style="display:none;"></div>
+        <!-- LEVEL 2: Components for selected tag -->
+        <div id="dash-lv2" style="display:none;"></div>
+        <!-- LEVEL 3: Seams for selected component -->
+        <div id="dash-lv3" style="display:none;"></div>
       </div>
 
       <!-- ── SEAM DETAIL (from dashboard click) ── -->
@@ -463,25 +495,61 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── INSPECTION ── -->
       <div class="pg" id="pg-inspection">
-        <div class="pgh"><div class="pgt">Inspection Stages</div><div class="pgs" id="insp-hint">Select a section, then offer or inspect stages</div></div>
+        <div class="pgh"><div class="pgt">Inspection Stages</div><div class="pgs" id="insp-hint">Filter by Project → Tag → Component, then offer or inspect stages</div></div>
 
-        <!-- FILTER BAR -->
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:10px 14px;background:var(--surf);border:1px solid var(--border2);border-radius:3px;">
-          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;flex-shrink:0;">Filter:</span>
-          <div id="stage-filter-chips" style="display:flex;flex-wrap:wrap;gap:6px;flex:1;">
-            <button class="fchip on" data-f="all" onclick="setStageFilter('all',this)">All Stages</button>
+        <!-- FILTER BAR: Project → Tag → Component → Seam → Stage Type + Status -->
+        <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+
+          <!-- Row 1: Project + Tag + Component -->
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:10px;">
+            <div style="flex:1;min-width:150px;">
+              <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">① Project</div>
+              <select id="insp-proj" onchange="onInspProjChange()" style="width:100%;padding:7px 10px;font-size:13px;font-weight:700;background:var(--surf2);border:1.5px solid var(--blue2);color:var(--blue2);border-radius:7px;">
+                <option value="">— Select Project —</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:130px;">
+              <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">② Tag Number</div>
+              <select id="insp-tag" onchange="onInspTagChange()" style="width:100%;padding:7px 10px;font-size:13px;font-weight:600;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;" disabled>
+                <option value="">All Tags</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:130px;">
+              <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">③ Component</div>
+              <select id="insp-comp" onchange="onInspCompChange()" style="width:100%;padding:7px 10px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;" disabled>
+                <option value="">All Components</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2: Seam Number + Stage Type (seam is the key new addition) -->
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px;padding:10px 12px;background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:8px;">
+            <div style="flex:1;min-width:150px;">
+              <div style="font-size:10px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">④ Seam / Joint Number</div>
+              <select id="insp-seam" onchange="onInspSeamChange()" style="width:100%;padding:8px 10px;font-size:13px;font-weight:700;background:var(--surf);border:1.5px solid var(--blue2);color:var(--blue2);border-radius:7px;" disabled>
+                <option value="">All Seams</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:130px;">
+              <div style="font-size:10px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">⑤ Stage Type</div>
+              <select id="stage-name-filter" onchange="renderInspSeams()" style="width:100%;padding:8px 10px;font-size:13px;background:var(--surf);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
+                <option value="">All Stage Types</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Stage status filter chips -->
+          <div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:10px;border-top:1px solid var(--border);">
+            <span style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;padding-top:4px;margin-right:4px;">Status:</span>
+            <button class="fchip on" data-f="all" onclick="setStageFilter('all',this)">All</button>
             <button class="fchip" data-f="pending" onclick="setStageFilter('pending',this)">○ Pending</button>
-            <button class="fchip" data-f="offered" onclick="setStageFilter('offered',this)">⬆ Offered / Awaiting QC</button>
+            <button class="fchip" data-f="offered" onclick="setStageFilter('offered',this)">⬆ Awaiting QC</button>
             <button class="fchip" data-f="accepted" onclick="setStageFilter('accepted',this)">✓ Accepted</button>
-            <button class="fchip" data-f="rejected" onclick="setStageFilter('rejected',this)">✗ Rejected / NCR</button>
+            <button class="fchip" data-f="rejected" onclick="setStageFilter('rejected',this)">✗ NCR</button>
             <button class="fchip" data-f="returned" onclick="setStageFilter('returned',this)">↩ Returned</button>
           </div>
-          <select id="stage-name-filter" onchange="renderInspSeams()" style="padding:5px 9px;font-size:11px;background:var(--surf2);border:1px solid var(--border2);color:var(--text);border-radius:2px;max-width:220px;">
-            <option value="">All Stage Types</option>
-          </select>
         </div>
 
-        <div class="stabs" id="insp-tabs"></div>
         <div id="insp-seams"></div>
       </div>
 
@@ -503,32 +571,52 @@ tr:hover td{background:var(--surf2);}
         <div class="card">
           <div class="chead"><div class="ctitle">Add New Seam / Joint</div><div style="font-size:12px;color:var(--text3);">Fill all fields · Default stages from template will be auto-assigned</div></div>
 
-          <!-- Step 1: Project + Section -->
+          <!-- Step 1: Project + Tag + Component -->
           <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
-            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 1 — Select Project &amp; Section</div>
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 1 — Project › Tag › Component</div>
             <div class="grid2">
               <div>
                 <label class="lbl">Project <span style="color:var(--red);">*</span></label>
-                <select id="ns-proj" onchange="refreshNsSections()" style="font-weight:600;">
+                <select id="ns-proj" onchange="refreshNsTagComp()" style="font-weight:600;">
                   <option value="">— Select Project —</option>
                 </select>
-                <div id="ns-proj-info"></div>
               </div>
               <div>
-                <label class="lbl">Section <span style="color:var(--red);">*</span></label>
-                <select id="ns-sec" disabled>
-                  <option value="">— Select a project first —</option>
-                </select>
+                <label class="lbl">Tag Number <span style="color:var(--red);">*</span></label>
+                <div style="display:flex;gap:6px;">
+                  <select id="ns-tag" onchange="refreshNsComp()" style="flex:1;" disabled>
+                    <option value="">— Select project first —</option>
+                  </select>
+                  <input id="ns-tag-new" placeholder="New tag…" style="width:110px;display:none;">
+                </div>
+                <div style="margin-top:4px;display:flex;gap:8px;">
+                  <button type="button" onclick="toggleNewTag(false)" id="btn-tag-existing" style="font-size:10px;color:var(--blue2);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Select existing</button>
+                  <button type="button" onclick="toggleNewTag(true)" id="btn-tag-new" style="font-size:10px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Add new tag</button>
+                </div>
+              </div>
+              <div class="span2">
+                <label class="lbl">Component <span style="color:var(--red);">*</span></label>
+                <div style="display:flex;gap:6px;">
+                  <select id="ns-comp" style="flex:1;" disabled>
+                    <option value="">— Select tag first —</option>
+                  </select>
+                  <input id="ns-comp-new" placeholder="New component…" style="width:150px;display:none;">
+                </div>
+                <div style="margin-top:4px;display:flex;gap:8px;">
+                  <button type="button" onclick="toggleNewComp(false)" id="btn-comp-existing" style="font-size:10px;color:var(--blue2);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Select existing</button>
+                  <button type="button" onclick="toggleNewComp(true)" id="btn-comp-new" style="font-size:10px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Add new component</button>
+                </div>
               </div>
             </div>
+            <div id="ns-proj-info" style="margin-top:8px;"></div>
           </div>
 
           <!-- Step 2: Seam Details -->
           <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
-            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 2 — Seam Details</div>
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 2 — Seam / Joint Details</div>
             <div class="grid2">
-              <div><label class="lbl">Seam / Joint Number <span style="color:var(--red);">*</span></label><input id="ns-num" placeholder="e.g. Circ. Seam No: 101"></div>
-              <div><label class="lbl">Description <span style="color:var(--red);">*</span></label><input id="ns-desc" placeholder="e.g. Nozzle Neck fit-up with Flange"></div>
+              <div><label class="lbl">Seam / Joint Number <span style="color:var(--red);">*</span></label><input id="ns-num" placeholder="e.g. CS-101, LS-205"></div>
+              <div><label class="lbl">Description <span style="color:var(--red);">*</span></label><input id="ns-desc" placeholder="e.g. Shell Circ. Seam No.1"></div>
               <div><label class="lbl">Joint Type</label>
                 <select id="ns-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select>
               </div>
@@ -542,9 +630,9 @@ tr:hover td{background:var(--surf2);}
           <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
             <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 3 — Inspection Stage Template</div>
             <div>
-              <label class="lbl">Stage Template <span style="color:var(--text3);font-weight:400;">(default stages will be auto-applied to this seam)</span></label>
+              <label class="lbl">Stage Template <span style="color:var(--text3);font-weight:400;">(auto-assigned — customise after approval)</span></label>
               <select id="ns-tmpl" style="max-width:400px;"></select>
-              <div style="font-size:12px;color:var(--text3);margin-top:6px;">💡 After the seam is approved, you can customise its specific stages using the <strong>⚙ STAGES</strong> button in the seam table.</div>
+              <div style="font-size:12px;color:var(--text3);margin-top:6px;">💡 Use <strong>⚙ STAGES</strong> button in the seam table to customise stages per seam after approval.</div>
             </div>
           </div>
 
@@ -563,7 +651,7 @@ tr:hover td{background:var(--surf2);}
             <select id="fp" onchange="renderAdminSeams()" style="padding:7px 12px;font-size:13px;font-weight:600;background:var(--surf);border:1.5px solid var(--border2);color:var(--blue2);border-radius:7px;min-width:200px;"></select>
           </div>
           <div class="tbl-wrap">
-            <table><thead><tr><th>Section</th><th>Seam #</th><th>Description</th><th>Type</th><th>Material</th><th>THK</th><th>WPS</th><th>Stages</th><th>Progress</th><th>Actions</th></tr></thead>
+            <table><thead><tr><th>Tag No.</th><th>Component</th><th>Seam #</th><th>Description</th><th>Type</th><th>Material</th><th>THK</th><th>WPS</th><th>Stages</th><th>Progress</th><th>Actions</th></tr></thead>
             <tbody id="seam-tbody"></tbody></table>
           </div>
         </div>
@@ -857,7 +945,8 @@ tr:hover td{background:var(--surf2);}
     <div class="mbody">
       <input type="hidden" id="es-id">
       <div class="grid2">
-        <div><label class="lbl">Section</label><select id="es-sec"></select></div>
+        <div><label class="lbl">Tag Number</label><input id="es-tag" placeholder="e.g. 361-V-330"></div>
+        <div><label class="lbl">Component</label><input id="es-comp" placeholder="e.g. Shell Section"></div>
         <div><label class="lbl">Seam Number</label><input id="es-num"></div>
         <div class="span2"><label class="lbl">Description</label><input id="es-desc"></div>
         <div><label class="lbl">Joint Type</label><select id="es-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select></div>
@@ -1070,6 +1159,26 @@ function updateBadge(){
 }
 function empty(t){return`<div style="text-align:center;padding:36px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);">${t}</div>`;}
 
+// ── Hierarchy: Project → Tag → Component → Seam → Stage ──
+function getSeamsByProj(pid){ return DB.seams.filter(s=>s.pid===pid); }
+// Normalize tag/comp — always use trimmed value, fallback to sec, then placeholder
+const normT = s => (s.tag  || s.sec || '').trim() || '(untagged)';
+const normC = s => (s.comp || s.sec || '').trim() || '(general)';
+function getTags(pid){ return [...new Set(getSeamsByProj(pid).map(s=>normT(s)))].sort(); }
+function getComponents(pid,tag){ return [...new Set(getSeamsByProj(pid).filter(s=>normT(s)===tag).map(s=>normC(s)))].sort(); }
+function getSeamsByTag(pid,tag){ return getSeamsByProj(pid).filter(s=>normT(s)===tag); }
+function getSeamsByTagComp(pid,tag,comp){ return getSeamsByProj(pid).filter(s=>normT(s)===tag&&normC(s)===comp); }
+function tagStats(pid,tag){
+  let t=0,a=0,o=0,r=0,ret=0,seams=0;
+  getSeamsByTag(pid,tag).forEach(s=>{seams++;s.stages.forEach(st=>{t++;if(st.status==='accepted')a++;else if(st.status==='offered')o++;else if(st.status==='rejected')r++;else if(st.status==='returned')ret++;});});
+  return{t,a,o,r,ret,p:t?Math.round(a/t*100):0,seams};
+}
+function compStats(pid,tag,comp){
+  let t=0,a=0,o=0,r=0,seams=0;
+  getSeamsByTagComp(pid,tag,comp).forEach(s=>{seams++;s.stages.forEach(st=>{t++;if(st.status==='accepted')a++;else if(st.status==='offered')o++;else if(st.status==='rejected')r++;});});
+  return{t,a,o,r,p:t?Math.round(a/t*100):0,seams};
+}
+
 function toast(msg,type){
   const el=$('toast');
   el.textContent=msg;
@@ -1218,42 +1327,12 @@ function populateSelects(){
       ? '<option value="">— Select Project —</option>' + DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}${p.eqType?' ['+p.eqType+']':''}</option>`).join('')
       : '<option value="">— No projects yet —</option>';
   }
-  refreshNsSections();
+  // refreshNsTagComp called on demand
   refreshPrintSecs();
   refreshTmplSelect();
 }
 
-function refreshNsSections(){
-  const nsp=$('ns-proj');
-  const pid=nsp&&nsp.value;
-  const secs=getSections(pid);
-  const secEl=$('ns-sec');
-  if(secEl){
-    if(secs.length){
-      secEl.innerHTML=secs.map(s=>`<option>${s}</option>`).join('');
-      secEl.disabled=false;
-    } else {
-      secEl.innerHTML='<option value="">— Select a project first —</option>';
-      secEl.disabled=true;
-    }
-  }
-  // Show project info banner below the select
-  const infoEl=$('ns-proj-info');
-  if(infoEl){
-    const proj=getProj(pid);
-    if(proj){
-      infoEl.innerHTML=`<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:8px 12px;margin-top:4px;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;">
-        <div style="flex:1;">
-          <strong>Project #${proj.number}</strong> — ${proj.equipment}<br>
-          <span style="color:var(--text2);">${[proj.eqType,proj.subtype].filter(Boolean).join(' → ')||''}${proj.client?' · Client: '+proj.client:''}${proj.code?' · '+proj.code:''}</span>
-        </div>
-        <div style="font-size:11px;color:var(--text3);">${proj.sections?proj.sections.length+' sections':''}</div>
-      </div>`;
-    } else {
-      infoEl.innerHTML='';
-    }
-  }
-}
+// refreshNsSections replaced by refreshNsTagComp
 
 function refreshPrintSecs(){
   const pid=$('print-proj')&&$('print-proj').value||DB.projects[0]&&DB.projects[0].id;
@@ -1267,182 +1346,186 @@ function refreshTmplSelect(){
 }
 
 // ══════════════════════════════════════════════════════════════
-// DASHBOARD — Shows ALL projects as cards. Click a project to see seams.
+// DASHBOARD — 4-level drill: Project → Tag → Component → Seams
 // ══════════════════════════════════════════════════════════════
-let dashActivePid = null; // which project is expanded
+let dashPid=null, dashTag=null, dashComp=null;
+
+function showDashLevel(lv){
+  ['lv0','lv1','lv2','lv3'].forEach(l=>$('dash-'+l).style.display=l===lv?'block':'none');
+  const bc=$('dash-breadcrumb');
+  if(lv==='lv0'){bc.style.display='none';return;}
+  bc.style.display='flex';
+  const p=getProj(dashPid);
+  let parts=`<span class="bc-item bc-home" onclick="dashGoL0()">🏠 All Projects</span>`;
+  parts+=`<span class="bc-sep">›</span><span class="bc-item ${lv==='lv1'?'active':''}" onclick="dashGoL1()">#${p.number} — ${p.equipment}</span>`;
+  if(lv==='lv2'||lv==='lv3') parts+=`<span class="bc-sep">›</span><span class="bc-item ${lv==='lv2'?'active':''}" onclick="dashGoL2()">${dashTag}</span>`;
+  if(lv==='lv3') parts+=`<span class="bc-sep">›</span><span class="bc-item active">${dashComp}</span>`;
+  bc.innerHTML=parts;
+}
 
 function renderDashboard(){
   if(!CU)return;
-
-  // Determine which projects this user can see
-  const visibleProjects = CU.role==='admin' || CU.role==='manager'
-    ? DB.projects                          // admin/manager see ALL
-    : DB.projects.filter(p=>p.id===CU.pid); // others see only their own
-
-  // No projects at all
-  if(!visibleProjects.length){
-    const msg = (CU.role==='admin')
-      ? 'No projects yet. Go to <strong>Projects &amp; Seams</strong> to add one.'
-      : 'You are not assigned to any project. Contact your Admin.';
-    $('dash-all-projects').innerHTML=`<div style="text-align:center;padding:56px 20px;">
+  // All roles see all projects on dashboard — production/quality work across projects
+  const visibleProjs = DB.projects;
+  if(!visibleProjs.length){
+    $('dash-lv0').innerHTML=`<div style="text-align:center;padding:60px 20px;">
       <div style="font-size:48px;margin-bottom:14px;">📋</div>
-      <div style="font-size:15px;color:var(--text2);">${msg}</div>
+      <div style="font-size:15px;color:var(--text2);">${CU.role==='admin'?'No projects yet. Go to <strong>Projects &amp; Seams</strong> to add one.':'You are not assigned to any project. Contact your Admin.'}</div>
     </div>`;
-    $('dash-project-detail').style.display='none';
-    updateBadge();
-    return;
+    showDashLevel('lv0');updateBadge();return;
   }
-
-  // Build project summary cards
-  let cardsHtml = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px;">`;
-  visibleProjects.forEach(p=>{
+  // Show project cards
+  let html='<div class="proj-cards">';
+  visibleProjs.forEach(p=>{
     const st=overallStats(p.id);
-    const circ=2*Math.PI*28;
-    const off=circ-(st.p/100*circ);
-    const ringColor=st.p===100?'var(--green)':st.o>0?'var(--amber)':st.r>0?'var(--red)':'var(--blue2)';
-    const isActive=dashActivePid===p.id;
-    cardsHtml+=`<div onclick="openDashProject('${p.id}')" style="
-      background:var(--surf);border:2px solid ${isActive?'var(--blue2)':'var(--border)'};
-      border-radius:12px;padding:18px;cursor:pointer;transition:all .2s;
-      box-shadow:${isActive?'0 0 0 3px rgba(37,99,235,.15),var(--shadow)':'var(--shadow-sm)'};
-      ${isActive?'':''}
-    " onmouseenter="this.style.borderColor='var(--blue2)';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.1),var(--shadow)'"
-       onmouseleave="this.style.borderColor='${isActive?'var(--blue2)':'var(--border)'}';this.style.boxShadow='${isActive?'0 0 0 3px rgba(37,99,235,.15),var(--shadow)':'var(--shadow-sm)'}'">
-
-      <div style="display:flex;align-items:flex-start;gap:14px;">
-        <!-- Ring -->
-        <div style="position:relative;flex-shrink:0;width:64px;height:64px;">
-          <svg width="64" height="64" viewBox="0 0 64 64" style="transform:rotate(-90deg)">
-            <circle cx="32" cy="32" r="28" fill="none" stroke="var(--surf3)" stroke-width="6"/>
-            <circle cx="32" cy="32" r="28" fill="none" stroke="${ringColor}" stroke-width="6"
+    const tags=getTags(p.id);
+    const circ=2*Math.PI*28,off=circ-(st.p/100*circ);
+    const rc=st.p===100?'var(--green)':st.o>0?'var(--amber)':st.r>0?'var(--red)':'var(--blue2)';
+    html+=`<div class="proj-card" onclick="dashGoL1('${p.id}')">
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+        <div style="position:relative;flex-shrink:0;width:60px;height:60px;">
+          <svg width="60" height="60" viewBox="0 0 60 60" style="transform:rotate(-90deg)">
+            <circle cx="30" cy="30" r="26" fill="none" stroke="var(--surf3)" stroke-width="6"/>
+            <circle cx="30" cy="30" r="26" fill="none" stroke="${rc}" stroke-width="6"
               stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <div style="font-size:14px;font-weight:700;color:var(--text);line-height:1;">${st.p}%</div>
-          </div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text);">${st.p}%</div>
         </div>
-        <!-- Info -->
         <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
-            <span style="font-size:15px;font-weight:700;color:var(--blue2);">Project #${p.number}</span>
-            ${p.eqType?`<span style="font-size:10px;font-weight:600;padding:1px 8px;border-radius:20px;background:${eqBg(p.eqType)};color:${eqColor(p.eqType)};">${eqIcon(p.eqType)} ${p.eqType}</span>`:''}
+          <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--blue2);">#${p.number}</div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.equipment}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">
+            ${p.eqType?`<span style="font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px;background:${eqBg(p.eqType)};color:${eqColor(p.eqType)};">${eqIcon(p.eqType)} ${p.eqType}</span>`:''}
+            <span style="font-size:11px;color:var(--text3);">${p.client||''}</span>
           </div>
-          <div style="font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.equipment}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:2px;">${p.client||'—'} · ${p.code||'—'}</div>
         </div>
       </div>
-
-      <!-- Stats row -->
-      <div style="display:flex;gap:0;margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
-        <div style="flex:1;text-align:center;">
-          <div style="font-size:18px;font-weight:700;color:var(--text)">${st.seams}</div>
-          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Seams</div>
-        </div>
-        <div style="width:1px;background:var(--border);"></div>
-        <div style="flex:1;text-align:center;">
-          <div style="font-size:18px;font-weight:700;color:var(--green)">${st.a}</div>
-          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Accepted</div>
-        </div>
-        <div style="width:1px;background:var(--border);"></div>
-        <div style="flex:1;text-align:center;">
-          <div style="font-size:18px;font-weight:700;color:var(--amber)">${st.o}</div>
-          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">Awaiting QC</div>
-        </div>
-        <div style="width:1px;background:var(--border);"></div>
-        <div style="flex:1;text-align:center;">
-          <div style="font-size:18px;font-weight:700;color:var(--red)">${st.r}</div>
-          <div style="font-size:10px;color:var(--text4);font-weight:600;text-transform:uppercase;letter-spacing:.4px;">NCR</div>
-        </div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-weight:500;">${tags.length} tag${tags.length!==1?'s':''}: ${tags.slice(0,3).join(', ')}${tags.length>3?' …':''}</div>
+      <div style="display:flex;border-top:1px solid var(--border);padding-top:10px;gap:0;">
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--text)">${st.seams}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">Seams</div></div>
+        <div style="width:1px;background:var(--border)"></div>
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--green)">${st.a}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">Accepted</div></div>
+        <div style="width:1px;background:var(--border)"></div>
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--amber)">${st.o}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">Awaiting QC</div></div>
+        <div style="width:1px;background:var(--border)"></div>
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--red)">${st.r}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">NCR</div></div>
       </div>
-
-      ${isActive?'<div style="margin-top:10px;font-size:11px;color:var(--blue2);font-weight:600;text-align:center;">▼ Showing seam details below</div>':''}
     </div>`;
   });
-  cardsHtml+='</div>';
-  $('dash-all-projects').innerHTML=cardsHtml;
-
-  // If a project is selected, show its seam detail
-  if(dashActivePid && getProj(dashActivePid)){
-    renderDashProjectDetail(dashActivePid);
-  } else {
-    $('dash-project-detail').style.display='none';
-  }
-  updateBadge();
+  html+='</div>';
+  $('dash-lv0').innerHTML=html;
+  showDashLevel('lv0');updateBadge();
 }
 
-function openDashProject(pid){
-  dashActivePid = (dashActivePid===pid) ? null : pid; // toggle
-  renderDashboard();
-  if(dashActivePid){
-    setTimeout(()=>$('dash-project-detail').scrollIntoView({behavior:'smooth',block:'start'}),50);
-  }
-}
+function dashGoL0(){dashPid=null;dashTag=null;dashComp=null;renderDashboard();}
 
-function closeProjDetail(){
-  dashActivePid=null;
-  renderDashboard();
-}
-
-function renderDashProjectDetail(pid){
-  const p=getProj(pid);
-  if(!p){$('dash-project-detail').style.display='none';return;}
-  $('dash-project-detail').style.display='block';
-  $('dash-detail-title').innerHTML=`
-    <span style="color:var(--blue2);">Project #${p.number}</span>
-    <span style="color:var(--text3);font-weight:400;font-size:13px;"> — ${p.equipment}${p.client?' · '+p.client:''}</span>
-  `;
-
-  const st=overallStats(pid);
+function dashGoL1(pid){
+  if(pid)dashPid=pid;
+  const p=getProj(dashPid);if(!p)return;
+  const tags=getTags(dashPid);
+  const st=overallStats(dashPid);
   const pending=Math.max(0,st.t-(st.a+st.o+st.r+(st.ret||0)));
-  $('stat-grid').innerHTML=`
-    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Total Seams</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t} stages</div></div>
+  let html=`<div class="sgrid" style="margin-bottom:20px;">
+    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${tags.length}</div><div class="slbl">Total Tags</div></div>
+    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Seams</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t} stages</div></div>
     <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Accepted</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t?Math.round(st.a/st.t*100):0}%</div></div>
-    <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${st.o}</div><div class="slbl">Awaiting QC</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">offered</div></div>
-    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">NCR</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">rejected</div></div>
-    <div class="sbox sb-grey"><div class="snum" style="color:var(--sky)">${st.ret||0}</div><div class="slbl">Returned</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">to production</div></div>
-    <div class="sbox sb-grey"><div class="snum" style="color:var(--text3)">${pending}</div><div class="slbl">Pending</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">not offered</div></div>
-  `;
-
-  const sections=getSections(pid);
-  let html='';
-  sections.forEach(sec=>{
-    const seams=getSeams(pid,sec);
-    if(!seams.length)return;
-    const secTotal=seams.reduce((a,s)=>a+s.stages.length,0);
-    const secDone=seams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
-    const secPct=secTotal?Math.round(secDone/secTotal*100):0;
-    const secColor=secPct===100?'var(--green)':secPct>50?'var(--blue2)':'var(--amber)';
-    html+=`<div class="dash-section">
-      <div class="dash-sec-title" style="flex-direction:column;align-items:stretch;gap:5px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span>${sec}</span>
-          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);">${seams.length} seam${seams.length!==1?'s':''} · ${secDone}/${secTotal} · <strong style="color:${secColor}">${secPct}%</strong></span>
+    <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${st.o}</div><div class="slbl">Awaiting QC</div></div>
+    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">NCR</div></div>
+    <div class="sbox sb-grey"><div class="snum" style="color:var(--text3)">${pending}</div><div class="slbl">Pending</div></div>
+  </div>`;
+  if(!tags.length){html+=`<div style="text-align:center;padding:36px;color:var(--text3);">No seams added yet for this project. Admin can add from Projects &amp; Seams.</div>`;
+  }else{
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Click a Tag to drill down →</div><div class="tag-grid">`;
+    tags.forEach(tag=>{
+      const ts=tagStats(dashPid,tag);
+      const circ=2*Math.PI*22,off=circ-(ts.p/100*circ);
+      const rc=ts.p===100?'var(--green)':ts.o>0?'var(--amber)':ts.r>0?'var(--red)':'var(--blue2)';
+      const comps=getComponents(dashPid,tag);
+      html+=`<div class="tag-card" onclick="dashGoL2('${encodeURIComponent(tag)}')">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+          <div style="position:relative;flex-shrink:0;width:52px;height:52px;">
+            <svg width="52" height="52" viewBox="0 0 52 52" style="transform:rotate(-90deg)">
+              <circle cx="26" cy="26" r="22" fill="none" stroke="var(--surf3)" stroke-width="5"/>
+              <circle cx="26" cy="26" r="22" fill="none" stroke="${rc}" stroke-width="5"
+                stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text);">${ts.p}%</div>
+          </div>
+          <div>
+            <div class="tag-num">${tag}</div>
+            <div class="tag-desc">${comps.length} component${comps.length!==1?'s':''} · ${ts.seams} seam${ts.seams!==1?'s':''}</div>
+          </div>
         </div>
-        <div class="pbar" style="height:4px;"><div class="pfill" style="width:${secPct}%;background:${secColor};"></div></div>
-      </div>
-      <div class="seam-grid">`;
-    seams.forEach(seam=>{
-      const ss=stageStats(seam);
-      const ncr=hasNCR(seam);
-      const hasOff=seam.stages.some(s=>s.status==='offered');
-      const hasRej=seam.stages.some(s=>s.status==='rejected');
-      const hasRet=seam.stages.some(s=>s.status==='returned');
-      const tileClass=ss.pct===100?'st-done':hasOff?'st-active':hasRej?'st-rejected':'st-pending';
-      html+=`<div class="seam-tile ${tileClass}" onclick="openSeamDetail('${seam.id}')">
-        ${ncr?'<div class="ncr-dot" title="NCR Raised"></div>':''}
-        <div class="st-seam-num">${seam.num}</div>
-        <div class="st-seam-desc" title="${seam.desc}">${seam.desc}</div>
-        <div class="st-seam-pct">${ss.pct}%</div>
-        <div class="st-seam-meta">${ss.a}/${ss.t} stages</div>
-        <div class="pbar" style="margin-top:5px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
-        ${hasOff?'<div style="font-size:9px;color:var(--amber);margin-top:4px;font-weight:600;">● AWAITING QC</div>':''}
-        ${!hasOff&&hasRet?'<div style="font-size:9px;color:var(--sky);margin-top:4px;font-weight:600;">↩ RETURNED</div>':''}
-        ${hasRej?'<div style="font-size:9px;color:var(--red);margin-top:4px;font-weight:600;">🔴 NCR</div>':''}
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">
+          ${comps.map(c=>`<span style="background:var(--surf2);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;color:var(--text3);">${c}</span>`).join('')}
+        </div>
+        <div class="tag-statrow">
+          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--green)">${ts.a}</div><div class="tag-stat-lbl">OK</div></div>
+          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--amber)">${ts.o}</div><div class="tag-stat-lbl">QC</div></div>
+          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--red)">${ts.r}</div><div class="tag-stat-lbl">NCR</div></div>
+          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--text3)">${ts.seams}</div><div class="tag-stat-lbl">Seams</div></div>
+        </div>
       </div>`;
     });
-    html+='</div></div>';
+    html+='</div>';
+  }
+  $('dash-lv1').innerHTML=html;
+  showDashLevel('lv1');
+}
+
+function dashGoL2(tagEncoded){
+  if(tagEncoded)dashTag=decodeURIComponent(tagEncoded);
+  const comps=getComponents(dashPid,dashTag);
+  let html=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Tag: <span style="color:var(--blue2);">${dashTag}</span> — Select a component →</div>`;
+  html+='<div class="comp-grid">';
+  comps.forEach(comp=>{
+    const cs=compStats(dashPid,dashTag,comp);
+    const rc=cs.p===100?'var(--green)':cs.o>0?'var(--amber)':cs.r>0?'var(--red)':'var(--blue2)';
+    html+=`<div class="comp-card" onclick="dashGoL3('${encodeURIComponent(comp)}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div class="comp-name">${comp}</div>
+        <div style="font-size:18px;font-weight:700;color:${rc}">${cs.p}%</div>
+      </div>
+      <div class="pbar" style="margin-bottom:8px;"><div class="pfill" style="width:${cs.p}%;background:${rc};"></div></div>
+      <div class="comp-meta">${cs.seams} seam${cs.seams!==1?'s':''} · ${cs.a}/${cs.t} stages accepted
+        ${cs.o?` · <span style="color:var(--amber);font-weight:600;">${cs.o} awaiting QC</span>`:''}
+        ${cs.r?` · <span style="color:var(--red);font-weight:600;">${cs.r} NCR</span>`:''}
+      </div>
+    </div>`;
   });
-  $('dash-sections').innerHTML=html||`<div style="padding:24px;text-align:center;color:var(--text3);">No seams added yet for this project.</div>`;
+  html+='</div>';
+  $('dash-lv2').innerHTML=html;
+  showDashLevel('lv2');
+}
+
+function dashGoL3(compEncoded){
+  if(compEncoded)dashComp=decodeURIComponent(compEncoded);
+  const seams=getSeamsByTagComp(dashPid,dashTag,dashComp);
+  let html=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;">
+    Component: <span style="color:var(--blue2);">${dashComp}</span> — ${seams.length} seam${seams.length!==1?'s':''}
+  </div>`;
+  html+='<div class="seam-grid">';
+  seams.forEach(seam=>{
+    const ss=stageStats(seam);const ncr=hasNCR(seam);
+    const hasOff=seam.stages.some(s=>s.status==='offered');
+    const hasRej=seam.stages.some(s=>s.status==='rejected');
+    const hasRet=seam.stages.some(s=>s.status==='returned');
+    const tc=ss.pct===100?'st-done':hasOff?'st-active':hasRej?'st-rejected':'st-pending';
+    html+=`<div class="seam-tile ${tc}" onclick="openSeamDetail('${seam.id}')">
+      ${ncr?'<div class="ncr-dot"></div>':''}
+      <div class="st-seam-num">${seam.num}</div>
+      <div class="st-seam-desc" title="${seam.desc}">${seam.desc}</div>
+      <div class="st-seam-pct">${ss.pct}%</div>
+      <div class="st-seam-meta">${ss.a}/${ss.t} stages</div>
+      <div class="pbar" style="margin-top:5px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
+      ${hasOff?'<div style="font-size:9px;color:var(--amber);margin-top:4px;font-weight:600;">● AWAITING QC</div>':''}
+      ${!hasOff&&hasRet?'<div style="font-size:9px;color:var(--sky);margin-top:4px;font-weight:600;">↩ RETURNED</div>':''}
+      ${hasRej?'<div style="font-size:9px;color:var(--red);margin-top:4px;font-weight:600;">🔴 NCR</div>':''}
+    </div>`;
+  });
+  html+='</div>';
+  $('dash-lv3').innerHTML=html||`<div style="padding:24px;text-align:center;color:var(--text3);">No seams for this component yet.</div>`;
+  showDashLevel('lv3');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1451,8 +1534,11 @@ function renderDashProjectDetail(pid){
 function openSeamDetail(seamId){
   activeSeamId=seamId;
   const seam=getSeam(seamId);
+  const proj=getProj(seam.pid);
   $('seam-detail-title').textContent=seam.num;
-  $('seam-detail-sub').textContent=`${seam.sec} · ${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}`;
+  const tag=seam.tag||seam.sec||'—';
+  const comp=seam.comp||seam.sec||'—';
+  $('seam-detail-sub').textContent=`#${proj?proj.number:'?'} › ${tag} › ${comp} · ${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}`;
   renderSeamDetailContent(seamId);
   goPage('seam');
   $('ni-dashboard').classList.add('on');
@@ -1464,30 +1550,99 @@ function renderSeamDetailContent(seamId){
 }
 
 // ══════════════════════════════════════════════════════════════
-// INSPECTION PAGE
+// INSPECTION PAGE — cascading filters: Project → Tag → Component
 // ══════════════════════════════════════════════════════════════
-let activeSec=null;
 function renderInspection(){
   if(!CU)return;
-  // For admin: use first project if not assigned
-  let pid=CU.pid;
-  if(!pid && CU.role==='admin' && DB.projects.length>0) pid=DB.projects[0].id;
-  const secs=getSections(pid);
-  if(!activeSec||!secs.includes(activeSec))activeSec=secs[0]||null;
-  if(!pid || !DB.projects.length){
-    $('insp-seams').innerHTML=`<div style="text-align:center;padding:48px 20px;"><div style="font-size:36px;margin-bottom:12px;">📋</div><div style="font-size:15px;color:var(--text2);">No project assigned. Admin needs to add a project and seams first.</div></div>`;
-    $('insp-tabs').innerHTML='';
+  if(!DB.projects.length){
+    $('insp-seams').innerHTML=`<div style="text-align:center;padding:48px 20px;"><div style="font-size:36px;margin-bottom:12px;">📋</div><div style="font-size:15px;color:var(--text2);">No projects yet. Admin needs to add projects and seams first.</div></div>`;
     return;
   }
-  const hint = CU.role==='production' ? 'You can offer stages for QC inspection'
-    : CU.role==='quality' ? 'You can accept or reject offered stages'
-    : 'View only — inspection actions are role-restricted';
+  const hint=CU.role==='production'
+    ?'Select your project & tag number, then offer stages for QC inspection'
+    :CU.role==='quality'?'Select project & tag to inspect offered stages':'View all inspection stages';
   const hintEl=$('insp-hint');if(hintEl)hintEl.textContent=hint;
-  $('insp-tabs').innerHTML=secs.map(s=>`<div class="stab ${s===activeSec?'on':''}" onclick="switchSec('${s}')">${s}</div>`).join('');
+
+  // ALL roles see ALL projects — production & quality work across multiple projects
+  const inspProjEl=$('insp-proj');
+  const prevPid=inspProjEl?inspProjEl.value:'';
+  if(inspProjEl){
+    inspProjEl.innerHTML='<option value="">— Select Project —</option>'
+      +DB.projects.map(p=>`<option value="${p.id}">#${p.number} — ${p.equipment}</option>`).join('');
+    // Restore previous selection or default to user's assigned project
+    if(prevPid && DB.projects.find(p=>p.id===prevPid)){
+      inspProjEl.value=prevPid;
+    } else if(CU.pid && DB.projects.find(p=>p.id===CU.pid)){
+      inspProjEl.value=CU.pid;
+    }
+  }
+  onInspProjChange(false);
+  _resetSeamDrop();
   populateStageNameFilter();
   renderInspSeams();
 }
-function switchSec(s){activeSec=s;renderInspection();}
+
+function _resetSeamDrop(){
+  const el=$('insp-seam');if(!el)return;
+  el.innerHTML='<option value="">All Seams</option>';el.disabled=true;
+}
+
+function onInspProjChange(resetDown=true){
+  const pid=$('insp-proj')&&$('insp-proj').value;
+  const tagEl=$('insp-tag'),compEl=$('insp-comp');
+  if(!tagEl||!compEl)return;
+  if(!pid){
+    tagEl.innerHTML='<option value="">All Tags</option>';tagEl.disabled=true;
+    compEl.innerHTML='<option value="">All Components</option>';compEl.disabled=true;
+    _resetSeamDrop();
+    if(resetDown)renderInspSeams();return;
+  }
+  const tags=getTags(pid);
+  tagEl.innerHTML='<option value="">All Tags</option>'+tags.map(t=>`<option>${t}</option>`).join('');
+  tagEl.disabled=tags.length===0;
+  compEl.innerHTML='<option value="">All Components</option>';compEl.disabled=true;
+  _resetSeamDrop();
+  if(resetDown)renderInspSeams();
+}
+
+function onInspTagChange(){
+  const pid=$('insp-proj')&&$('insp-proj').value;
+  const tag=$('insp-tag')&&$('insp-tag').value;
+  const compEl=$('insp-comp');if(!compEl)return;
+  if(!pid||!tag){
+    compEl.innerHTML='<option value="">All Components</option>';compEl.disabled=true;
+    _resetSeamDrop();renderInspSeams();return;
+  }
+  const comps=getComponents(pid,tag);
+  compEl.innerHTML='<option value="">All Components</option>'+comps.map(c=>`<option>${c}</option>`).join('');
+  compEl.disabled=comps.length===0;
+  _resetSeamDrop();
+  renderInspSeams();
+}
+
+function onInspCompChange(){
+  const pid=$('insp-proj')&&$('insp-proj').value;
+  const tag=$('insp-tag')&&$('insp-tag').value;
+  const comp=$('insp-comp')&&$('insp-comp').value;
+  const seamEl=$('insp-seam');if(!seamEl)return;
+  if(!pid||!comp){
+    seamEl.innerHTML='<option value="">All Seams</option>';seamEl.disabled=true;
+    renderInspSeams();return;
+  }
+  // Get seams for this project filtered by tag+comp
+  const normTagFn  = s=>(s.tag ||s.sec||'').trim()||'(untagged)';
+  const normCompFn = s=>(s.comp||s.sec||'').trim()||'(general)';
+  let seams=DB.seams.filter(s=>s.pid===pid);
+  if(tag) seams=seams.filter(s=>normTagFn(s)===tag);
+  seams=seams.filter(s=>normCompFn(s)===comp);
+  seamEl.innerHTML='<option value="">All Seams</option>'+seams.map(s=>`<option value="${s.id}">${s.num} — ${s.desc}</option>`).join('');
+  seamEl.disabled=seams.length===0;
+  renderInspSeams();
+}
+
+function onInspSeamChange(){
+  renderInspSeams();
+}
 
 
 // ── Toggle stage panel open/close ──
@@ -1499,101 +1654,136 @@ function toggleStages(id){
   caret.classList.toggle('open', isOpen);
 }
 function renderInspSeams(){
-  let pid=CU.pid;
-  if(!pid && CU.role==='admin' && DB.projects.length>0) pid=DB.projects[0].id;
-  const seams=getSeams(pid,activeSec);
-  const stageNameF=$('stage-name-filter')?$('stage-name-filter').value:'';
-  const filtered=(activeStageFilter!=='all'||!!stageNameF);
-  let html='';
-  seams.forEach(seam=>{
-    const filteredStages=seam.stages.map((st,i)=>({...st,_i:i})).filter(st=>{
-      const statusMatch=activeStageFilter==='all'||st.status===activeStageFilter;
-      const nameMatch=!stageNameF||st.name===stageNameF;
-      return statusMatch&&nameMatch;
-    });
-    if(filteredStages.length===0&&filtered)return;
-    const ss=stageStats(seam);
-    const ncr=hasNCR(seam);
-    const hasActive=seam.stages.some(s=>s.status==='offered'||s.status==='rejected'||s.status==='returned');
-    const autoOpen=filtered||hasActive;
-    const offered=seam.stages.filter(s=>s.status==='offered').length;
-    const rejected=seam.stages.filter(s=>s.status==='rejected').length;
-    const returned=seam.stages.filter(s=>s.status==='returned').length;
-    let statusSumm='';
-    if(offered)statusSumm+=`<span class="chip ch-off" style="font-size:10px;">${offered} Offered</span> `;
-    if(rejected)statusSumm+=`<span class="chip ch-rej" style="font-size:10px;">${rejected} NCR</span> `;
-    if(returned)statusSumm+=`<span class="chip ch-ret" style="font-size:10px;">${returned} Returned</span> `;
-    if(!offered&&!rejected&&!returned&&ss.pct===100)statusSumm='<span class="chip ch-acc" style="font-size:10px;">✓ Complete</span>';
-    html+=`<div class="seam-detail-card">
-      <div class="sdh" onclick="toggleStages('${seam.id}')">
-        <div class="sdh-inner">
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
-              <div class="sd-num">${seam.num}${ncr?' <span class="chip ch-rej" style="font-size:9px;padding:2px 6px;">NCR</span>':''}</div>
-              ${statusSumm}
-            </div>
-            <div class="sd-desc">${seam.desc}</div>
-            <div class="sd-meta">${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-            <div style="text-align:right;">
-              <div style="font-size:20px;font-weight:700;color:var(--blue2);">${ss.pct}%</div>
-              <div style="font-size:11px;color:var(--text3);">${ss.a}/${ss.t} stages</div>
-              <div class="pbar" style="width:80px;margin-top:3px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
-            </div>
-            <div class="sdh-caret ${autoOpen?'open':''}" id="ca-${seam.id}">▶</div>
-          </div>
-        </div>
-      </div>
-      <div class="stages-body ${autoOpen?'open':''}" id="sb-${seam.id}">`;
-    const stagesToShow=filtered?filteredStages:seam.stages.map((st,i)=>({...st,_i:i}));
-    stagesToShow.forEach(st=>{
-      const i=st._i;
-      const prev=i===0||seam.stages[i-1].status==='accepted';
-      const locked=!prev&&st.status==='pending';
-      const canOffer=CU.role==='production';
-      const canInspect=CU.role==='quality';
-      let chip='',action='';
-      if(locked)chip='<span class="chip ch-lock">🔒 Locked</span>';
-      else if(st.status==='pending')chip='<span class="chip ch-pend">Pending</span>';
-      else if(st.status==='offered')chip='<span class="chip ch-off">⬆ Offered</span>';
-      else if(st.status==='accepted')chip='<span class="chip ch-acc">✓ Accepted</span>';
-      else if(st.status==='rejected')chip=`<span class="chip ch-rej">✗ Rejected${st.ncrNumber?' · '+st.ncrNumber:''}</span>`;
-      else if(st.status==='returned')chip='<span class="chip ch-ret">↩ Returned</span>';
-      if(canOffer&&!locked&&st.status==='pending')
-        action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">Offer ↑</button>`;
-      else if(canOffer&&!locked&&st.status==='returned')
-        action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">Re-Offer ↑</button>`;
-      else if(canOffer&&!locked&&st.status==='rejected')
-        action=`<button class="abtn ab-amber" onclick="openNcrOfferModal('${seam.id}',${i})">🔴 NCR Re-Offer</button>`;
-      if(canInspect&&st.status==='offered')
-        action=`<button class="abtn ab-green" onclick="openInspectModal('${seam.id}',${i})">Inspect ▸</button>`;
-      let detail='';
-      if(st.offeredAt)detail+=`Offered by ${st.offeredBy} (${st.offeredByCo}) @ ${st.offeredAt}`;
-      if(st.location)detail+=` · 📍 ${st.location}`;
-      if(st.drawing)detail+=` · DRG: ${st.drawing}`;
-      if(st.inspectedAt)detail+=`\nInspected by ${st.inspectedBy} @ ${st.inspectedAt}`;
-      if(st.ncrNumber)detail+=`\n🔴 NCR: ${st.ncrNumber}`;
-      html+=`<div class="stage-row">
-        <div class="sr-num">${String(i+1).padStart(2,'0')}</div>
-        <div class="sr-info">
-          <div class="sr-name">${st.name}</div>
-          ${detail?`<div class="sr-detail">${detail.replace(/\n/g,'<br>')}</div>`:''}
-          ${st.prodRem?`<div class="sr-remark" style="color:var(--blue2);background:#eff6ff;padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔵 ${st.prodRem}</div>`:''}
-          ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':st.status==='returned'?'var(--sky)':'var(--amber)'};background:${st.status==='rejected'?'var(--red-lt)':st.status==='returned'?'var(--cyan-lt)':'var(--amber-lt)'};padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔍 ${st.qeRem}</div>`:''}
-        </div>
-        <div class="sr-actions">${chip}${action?'<div style="margin-top:5px;">'+action+'</div>':''}</div>
-      </div>`;
-    });
-    html+='</div></div>';
+  if(!CU)return;
+  const pid    = ($('insp-proj'       )&&$('insp-proj'       ).value)||'';
+  const tag    = ($('insp-tag'        )&&$('insp-tag'        ).value)||'';
+  const comp   = ($('insp-comp'       )&&$('insp-comp'       ).value)||'';
+  const seamId = ($('insp-seam'       )&&$('insp-seam'       ).value)||'';
+  const stNmF  = ($('stage-name-filter')&&$('stage-name-filter').value)||'';
+
+  // ── Require project selection first ──────────────────────────
+  if(!pid){
+    $('insp-seams').innerHTML=`<div style="text-align:center;padding:44px 20px;">
+      <div style="font-size:36px;margin-bottom:10px;">👆</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text2);margin-bottom:6px;">Select a Project above to begin</div>
+      <div style="font-size:13px;color:var(--text3);">Then optionally filter by Tag Number and Component.</div>
+    </div>`;
+    return;
+  }
+
+  // ── Get all seams for this project ───────────────────────────
+  let seams = DB.seams.filter(s => s.pid === pid);
+
+  if(!seams.length){
+    $('insp-seams').innerHTML=`<div style="text-align:center;padding:44px 20px;">
+      <div style="font-size:36px;margin-bottom:10px;">📋</div>
+      <div style="font-size:14px;font-weight:700;color:var(--text2);margin-bottom:6px;">No seams in this project yet</div>
+      <div style="font-size:13px;color:var(--text3);">Admin adds seams from <strong>Projects &amp; Seams</strong>. Seams appear here after Manager approval.</div>
+    </div>`;
+    return;
+  }
+
+  // ── Apply tag / component filters (consistent normalization) ──
+  const normTag  = s => (s.tag  || s.sec || '').trim() || '(untagged)';
+  const normComp = s => (s.comp || s.sec || '').trim() || '(general)';
+  if(tag)    seams = seams.filter(s => normTag(s)  === tag.trim());
+  if(comp)   seams = seams.filter(s => normComp(s) === comp.trim());
+  if(seamId) seams = seams.filter(s => s.id === seamId);
+
+  // ── Stage-level filters active? ───────────────────────────────
+  const stageFiltered = activeStageFilter !== 'all' || !!stNmF;
+
+  // ── Group by Tag › Component ──────────────────────────────────
+  const groups = {};
+  seams.forEach(s => {
+    const t = normTag(s);
+    const c = normComp(s);
+    const k = t + '||' + c;
+    if(!groups[k]) groups[k] = {tag:t, comp:c, seams:[]};
+    groups[k].seams.push(s);
   });
-  $('insp-seams').innerHTML=html||empty(filtered?'No stages match this filter.':'No seams in this section.');
+
+  let html = '';
+  let totalSeamsShown = 0;
+
+  Object.values(groups).forEach(grp => {
+    let grpBody = '';
+
+    grp.seams.forEach(seam => {
+      // Which stages pass the status / name filter?
+      const stagesIndexed = seam.stages.map((st,i) => ({...st, _i:i}));
+      const visibleStages = stagesIndexed.filter(st => {
+        const okStatus = activeStageFilter === 'all' || st.status === activeStageFilter;
+        const okName   = !stNmF || st.name === stNmF;
+        return okStatus && okName;
+      });
+      if(stageFiltered && visibleStages.length === 0) return; // skip seam entirely
+
+      totalSeamsShown++;
+      const ss  = stageStats(seam);
+      const ncr = hasNCR(seam);
+      const hasActive = seam.stages.some(s => s.status==='offered'||s.status==='rejected'||s.status==='returned');
+      const autoOpen  = stageFiltered || hasActive;
+      const nOff = seam.stages.filter(s=>s.status==='offered').length;
+      const nRej = seam.stages.filter(s=>s.status==='rejected').length;
+      const nRet = seam.stages.filter(s=>s.status==='returned').length;
+
+      let summ = '';
+      if(nOff) summ += `<span class="chip ch-off" style="font-size:10px;">${nOff} Awaiting QC</span> `;
+      if(nRej) summ += `<span class="chip ch-rej" style="font-size:10px;">${nRej} NCR</span> `;
+      if(nRet) summ += `<span class="chip ch-ret" style="font-size:10px;">${nRet} Returned</span> `;
+      if(!nOff&&!nRej&&!nRet&&ss.pct===100) summ='<span class="chip ch-acc" style="font-size:10px;">✓ Complete</span>';
+
+      grpBody += `<div class="seam-detail-card">
+        <div class="sdh" onclick="toggleStages('${seam.id}')">
+          <div class="sdh-inner">
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
+                <div class="sd-num">${seam.num}${ncr?' <span class="chip ch-rej" style="font-size:9px;padding:2px 6px;">NCR</span>':''}</div>
+                ${summ}
+              </div>
+              <div class="sd-desc">${seam.desc}</div>
+              <div class="sd-meta">${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+              <div style="text-align:right;">
+                <div style="font-size:20px;font-weight:700;color:var(--blue2);">${ss.pct}%</div>
+                <div style="font-size:11px;color:var(--text3);">${ss.a}/${ss.t} stages</div>
+                <div class="pbar" style="width:80px;margin-top:3px;"><div class="pfill" style="width:${ss.pct}%"></div></div>
+              </div>
+              <div class="sdh-caret ${autoOpen?'open':''}" id="ca-${seam.id}">▶</div>
+            </div>
+          </div>
+        </div>
+        <div class="stages-body ${autoOpen?'open':''}" id="sb-${seam.id}">`;
+
+      const show = stageFiltered ? visibleStages : stagesIndexed;
+      show.forEach(st => { grpBody += renderStageRow(seam, st, st._i); });
+      grpBody += `</div></div>`;
+    });
+
+    if(grpBody){
+      // Group header
+      html += `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+        margin:14px 0 6px;padding:8px 14px;
+        background:var(--surf2);border:1px solid var(--border);
+        border-left:4px solid var(--blue2);border-radius:0 8px 8px 0;">
+        <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--blue2);">${grp.tag}</span>
+        <span style="color:var(--border2);font-size:14px;">›</span>
+        <span style="font-size:13px;font-weight:600;color:var(--text2);">${grp.comp}</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3);">${grp.seams.length} seam${grp.seams.length!==1?'s':''}</span>
+      </div>` + grpBody;
+    }
+  });
+
+  if(!totalSeamsShown){
+    $('insp-seams').innerHTML=empty('No stages match the current filter. Try changing the status filter or clearing Tag/Component selection.');
+    return;
+  }
+  $('insp-seams').innerHTML = html;
 }
 
 
-// ══════════════════════════════════════════════════════════════
-// SEAM CARD RENDERER (shared by inspection page and seam detail)
-// ══════════════════════════════════════════════════════════════
 function renderSeamCard(seam,standalone){
   const ss=stageStats(seam);
   const ncr=hasNCR(seam);
@@ -1629,41 +1819,7 @@ function renderSeamCard(seam,standalone){
     <div class="stages-body open" id="sb-d-${seam.id}">`;
 
   seam.stages.forEach((st,i)=>{
-    const prev=i===0||seam.stages[i-1].status==='accepted';
-    const locked=!prev&&st.status==='pending';
-    const canOffer=CU.role==='production';
-    const canInspect=CU.role==='quality';
-    let chip='',action='';
-    if(locked)chip='<span class="chip ch-lock">🔒 Locked</span>';
-    else if(st.status==='pending')chip='<span class="chip ch-pend">Pending</span>';
-    else if(st.status==='offered')chip='<span class="chip ch-off">⬆ Offered</span>';
-    else if(st.status==='accepted')chip='<span class="chip ch-acc">✓ Accepted</span>';
-    else if(st.status==='rejected')chip=`<span class="chip ch-rej">✗ Rejected${st.ncrNumber?' · '+st.ncrNumber:''}</span>`;
-    else if(st.status==='returned')chip='<span class="chip ch-ret">↩ Returned</span>';
-    if(canOffer&&!locked&&st.status==='pending')
-      action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">Offer ↑</button>`;
-    else if(canOffer&&!locked&&st.status==='returned')
-      action=`<button class="abtn ab-blue" onclick="openOfferModal('${seam.id}',${i})">Re-Offer ↑</button>`;
-    else if(canOffer&&!locked&&st.status==='rejected')
-      action=`<button class="abtn ab-amber" onclick="openNcrOfferModal('${seam.id}',${i})">🔴 NCR Re-Offer</button>`;
-    if(canInspect&&st.status==='offered')
-      action=`<button class="abtn ab-green" onclick="openInspectModal('${seam.id}',${i})">Inspect ▸</button>`;
-    let detail='';
-    if(st.offeredAt)detail+=`Offered by ${st.offeredBy} (${st.offeredByCo}) @ ${st.offeredAt}`;
-    if(st.location)detail+=` · 📍 ${st.location}`;
-    if(st.drawing)detail+=` · DRG: ${st.drawing}`;
-    if(st.inspectedAt)detail+=`\nInspected by ${st.inspectedBy} @ ${st.inspectedAt}`;
-    if(st.ncrNumber)detail+=`\n🔴 NCR: ${st.ncrNumber}`;
-    html+=`<div class="stage-row">
-      <div class="sr-num">${String(i+1).padStart(2,'0')}</div>
-      <div class="sr-info">
-        <div class="sr-name">${st.name}</div>
-        ${detail?`<div class="sr-detail">${detail.replace(/\n/g,'<br>')}</div>`:''}
-        ${st.prodRem?`<div class="sr-remark" style="color:var(--blue2);background:#eff6ff;padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔵 ${st.prodRem}</div>`:''}
-        ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':st.status==='returned'?'var(--sky)':'var(--amber)'};background:${st.status==='rejected'?'var(--red-lt)':st.status==='returned'?'var(--cyan-lt)':'var(--amber-lt)'};padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔍 ${st.qeRem}</div>`:''}
-      </div>
-      <div class="sr-actions">${chip}${action?'<div style="margin-top:5px;">'+action+'</div>':''}</div>
-    </div>`;
+    html+=renderStageRow(seam,st,i);
   });
   html+='</div></div>';
   return html;
@@ -1671,17 +1827,65 @@ function renderSeamCard(seam,standalone){
 
 
 // ══════════════════════════════════════════════════════════════
+// RENDER A SINGLE STAGE ROW (used in both Inspection page + Seam detail)
+// ══════════════════════════════════════════════════════════════
+function renderStageRow(seam, st, i){
+  const prev  = i===0 || seam.stages[i-1].status==='accepted';
+  const locked = !prev && st.status==='pending';
+  const canOffer   = CU && CU.role==='production';
+  const canInspect = CU && CU.role==='quality';
+
+  let chip='', action='';
+  if(locked)                              chip=`<span class="chip ch-lock">🔒 Locked</span>`;
+  else if(st.status==='pending')          chip=`<span class="chip ch-pend">Pending</span>`;
+  else if(st.status==='offered')          chip=`<span class="chip ch-off">⬆ Offered</span>`;
+  else if(st.status==='accepted')         chip=`<span class="chip ch-acc">✓ Accepted</span>`;
+  else if(st.status==='rejected')         chip=`<span class="chip ch-rej">✗ NCR${st.ncrNumber?' · '+st.ncrNumber:''}</span>`;
+  else if(st.status==='returned')         chip=`<span class="chip ch-ret">↩ Returned</span>`;
+
+  if(canOffer && !locked && st.status==='pending')
+    action=`<button class="abtn ab-blue" style="min-width:90px;font-weight:700;" onclick="openOfferModal('${seam.id}',${i})">⬆ Offer to QC</button>`;
+  else if(canOffer && !locked && st.status==='returned')
+    action=`<button class="abtn ab-blue" style="min-width:90px;font-weight:700;" onclick="openOfferModal('${seam.id}',${i})">⬆ Re-Offer</button>`;
+  else if(canOffer && !locked && st.status==='rejected')
+    action=`<button class="abtn ab-amber" style="min-width:90px;font-weight:700;" onclick="openNcrOfferModal('${seam.id}',${i})">🔴 NCR Re-Offer</button>`;
+  if(canInspect && st.status==='offered')
+    action=`<button class="abtn ab-green" style="min-width:90px;font-weight:700;" onclick="openInspectModal('${seam.id}',${i})">✔ Inspect</button>`;
+
+  let detail='';
+  if(st.offeredAt)   detail+=`Offered by ${st.offeredBy} (${st.offeredByCo}) @ ${st.offeredAt}`;
+  if(st.location)    detail+=` · 📍 ${st.location}`;
+  if(st.drawing)     detail+=` · DRG: ${st.drawing}`;
+  if(st.inspectedAt) detail+=`\nInspected by ${st.inspectedBy} @ ${st.inspectedAt}`;
+  if(st.ncrNumber)   detail+=`\n🔴 NCR: ${st.ncrNumber}`;
+
+  return `<div class="stage-row">
+    <div class="sr-num">${String(i+1).padStart(2,'0')}</div>
+    <div class="sr-info">
+      <div class="sr-name">${st.name}</div>
+      ${detail?`<div class="sr-detail">${detail.replace(/\n/g,'<br>')}</div>`:''}
+      ${st.prodRem?`<div class="sr-remark" style="color:var(--blue2);background:#eff6ff;padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔵 ${st.prodRem}</div>`:''}
+      ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':st.status==='returned'?'var(--sky)':'var(--amber)'};background:${st.status==='rejected'?'var(--red-lt)':st.status==='returned'?'var(--cyan-lt)':'var(--amber-lt)'};padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔍 ${st.qeRem}</div>`:''}
+    </div>
+    <div class="sr-actions">${chip}${action?`<div style="margin-top:6px;">${action}</div>`:''}</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
 // OFFER FLOW
 // ══════════════════════════════════════════════════════════════
 function openOfferModal(seamId,idx){
   const seam=getSeam(seamId);const st=seam.stages[idx];
+  const proj=getProj(seam.pid);
   offerTarget={seamId,idx};
   $('of-loc').value='';$('of-drw').value='';$('of-rem').value='';
   $('offer-info').innerHTML=`
-    <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v">${seam.num}</span></div>
+    <div class="ir"><span class="ir-k">Project</span><span class="ir-v">#${proj?proj.number:'?'} — ${proj?proj.equipment:''}</span></div>
+    <div class="ir"><span class="ir-k">Tag Number</span><span class="ir-v" style="font-family:'DM Mono',monospace;font-weight:700;color:var(--blue2);">${seam.tag||seam.sec||'—'}</span></div>
+    <div class="ir"><span class="ir-k">Component</span><span class="ir-v">${seam.comp||seam.sec||'—'}</span></div>
+    <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v" style="font-weight:700;">${seam.num}</span></div>
     <div class="ir"><span class="ir-k">Description</span><span class="ir-v">${seam.desc}</span></div>
-    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber)">${st.name}</span></div>
-    <div class="ir"><span class="ir-k">Section</span><span class="ir-v">${seam.sec}</span></div>
+    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber);font-weight:600;">${st.name}</span></div>
     <div class="ir"><span class="ir-k">Offered By</span><span class="ir-v">${CU.name} · ${CU.co}</span></div>
   `;
   openModal('m-offer');
@@ -1961,7 +2165,8 @@ function renderAdminSeams(){
   let rows = seams.map(s=>{
     const ss=stageStats(s);
     return`<tr>
-      <td>${s.sec}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--blue2);">${s.tag||s.sec||'—'}</td>
+      <td style="font-size:11px;color:var(--text2);">${s.comp||s.sec||'—'}</td>
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--blue2);font-weight:600;">${s.num}</td>
       <td>${s.desc}</td>
       <td style="font-size:11px;">${s.type}</td>
@@ -2001,39 +2206,95 @@ function renderAdminSeams(){
   $('seam-tbody').innerHTML=rows.join('')||`<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text3);">No seams added for this project yet. Use the form above to add one.</td></tr>`;
 }
 
+// ── Tag/Component toggle helpers ──
+function toggleNewTag(useNew){
+  $('ns-tag').style.display=useNew?'none':'flex';
+  $('ns-tag-new').style.display=useNew?'block':'none';
+  $('btn-tag-new').style.color=useNew?'var(--text3)':'var(--green)';
+  $('btn-tag-existing').style.color=useNew?'var(--blue2)':'var(--text3)';
+}
+function toggleNewComp(useNew){
+  $('ns-comp').style.display=useNew?'none':'flex';
+  $('ns-comp-new').style.display=useNew?'block':'none';
+  $('btn-comp-new').style.color=useNew?'var(--text3)':'var(--green)';
+  $('btn-comp-existing').style.color=useNew?'var(--blue2)':'var(--text3)';
+}
+function refreshNsTagComp(){
+  const pid=$('ns-proj').value;
+  const tagEl=$('ns-tag');
+  const compEl=$('ns-comp');
+  if(!pid){
+    tagEl.innerHTML='<option value="">— Select project first —</option>';tagEl.disabled=true;
+    compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
+    $('ns-proj-info').innerHTML='';return;
+  }
+  const tags=getTags(pid);
+  tagEl.innerHTML='<option value="">— Select tag —</option>'+tags.map(t=>`<option>${t}</option>`).join('');
+  tagEl.disabled=false;
+  compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
+  const proj=getProj(pid);
+  if(proj){
+    $('ns-proj-info').innerHTML=`<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:6px 12px;margin-top:6px;">
+      <strong>Project #${proj.number}</strong> — ${proj.equipment}${proj.client?' · '+proj.client:''}${proj.code?' · '+proj.code:''}
+    </div>`;
+  }
+}
+function refreshNsComp(){
+  const pid=$('ns-proj').value;
+  const tag=$('ns-tag').value||$('ns-tag-new').value.trim();
+  const compEl=$('ns-comp');
+  if(!pid||!tag){compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;return;}
+  const comps=getComponents(pid,tag);
+  compEl.innerHTML='<option value="">— Select component —</option>'+comps.map(c=>`<option>${c}</option>`).join('');
+  compEl.disabled=false;
+}
+
 function addSeam(){
   const pid=$('ns-proj').value;
   if(!pid){toast('Please select a Project first','err');return;}
-  const sec=$('ns-sec').value;
-  if(!sec){toast('Please select a Section','err');return;}
+  // Get tag: either from select or new input
+  const tagFromSel=$('ns-tag').style.display!=='none'?$('ns-tag').value:'';
+  const tagFromNew=$('ns-tag-new').value.trim();
+  const tag=tagFromSel||tagFromNew;
+  if(!tag){toast('Please select or enter a Tag Number','err');return;}
+  // Get component
+  const compFromSel=$('ns-comp').style.display!=='none'?$('ns-comp').value:'';
+  const compFromNew=$('ns-comp-new').value.trim();
+  const comp=compFromSel||compFromNew;
+  if(!comp){toast('Please select or enter a Component','err');return;}
   const num=$('ns-num').value.trim(),desc=$('ns-desc').value.trim();
   if(!num||!desc){toast('Seam number and description required','err');return;}
   const tmplId=$('ns-tmpl').value;
   const tmpl=DB.templates.find(t=>t.id===tmplId);
   const stages=mkStages(tmpl?tmpl.stages.slice():DEFAULT_STAGES.slice());
   const proj=getProj(pid);
-  const newSeam={id:'s'+Date.now(),pid,sec,num,desc,type:$('ns-type').value,mat:$('ns-mat').value.trim()||'N/A',thk:$('ns-thk').value.trim()||'N/A',wps:$('ns-wps').value.trim()||'—',stages};
-  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),desc:`Add Seam: ${num} — ${desc} [Project #${proj?proj.number:'?'} / ${sec}]`});
-  log(`📋 PENDING APPROVAL — Add Seam: ${num} in Project #${proj?proj.number:'?'} requested by ${CU.name}`);
+  const newSeam={id:'s'+Date.now(),pid,tag,comp,sec:comp,num,desc,
+    type:$('ns-type').value,mat:$('ns-mat').value.trim()||'N/A',
+    thk:$('ns-thk').value.trim()||'N/A',wps:$('ns-wps').value.trim()||'—',stages};
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),
+    desc:`Add Seam: ${num} [#${proj?proj.number:'?'} / ${tag} / ${comp}]`});
+  log(`📋 PENDING APPROVAL — Add Seam ${num} | Tag: ${tag} | Comp: ${comp} | Project #${proj?proj.number:'?'} by ${CU.name}`);
   save();
-  ['ns-num','ns-desc','ns-mat','ns-thk','ns-wps'].forEach(id=>$(id).value='');
+  ['ns-num','ns-desc','ns-mat','ns-thk','ns-wps','ns-tag-new','ns-comp-new'].forEach(id=>{const el=$(id);if(el)el.value='';});
   renderAdminSeams();
-  toast(`✓ Seam "${num}" sent to Manager for approval`,'ok');
+  toast(`✓ Seam "${num}" submitted for Manager approval`,'ok');
 }
 
 function openEditSeam(id){
   const s=getSeam(id);
   $('es-id').value=id;$('es-num').value=s.num;$('es-desc').value=s.desc;
   $('es-mat').value=s.mat;$('es-thk').value=s.thk;$('es-wps').value=s.wps||'';
-  const pid=s.pid;const secs=getSections(pid);
-  $('es-sec').innerHTML=secs.map(sec=>`<option ${sec===s.sec?'selected':''}>${sec}</option>`).join('');
+  $('es-tag').value=s.tag||s.sec||'';
+  $('es-comp').value=s.comp||s.sec||'';
   $('es-type').value=s.type;
   openModal('m-edit-seam');
 }
 
 function saveSeamEdit(){
   const id=$('es-id').value;const s=getSeam(id);
-  const updatedData={id,sec:$('es-sec').value,num:$('es-num').value.trim(),desc:$('es-desc').value.trim(),type:$('es-type').value,mat:$('es-mat').value.trim(),thk:$('es-thk').value.trim(),wps:$('es-wps').value.trim()};
+  const tag=$('es-tag').value.trim();
+  const comp=$('es-comp').value.trim();
+  const updatedData={id,tag:tag||s.tag,comp:comp||s.comp,sec:comp||s.sec,num:$('es-num').value.trim(),desc:$('es-desc').value.trim(),type:$('es-type').value,mat:$('es-mat').value.trim(),thk:$('es-thk').value.trim(),wps:$('es-wps').value.trim()};
   DB.pendingActions.push({id:'pa'+Date.now(),type:'edit_seam',data:updatedData,requestedBy:CU.name,requestedAt:now(),desc:`Edit Seam: ${s.num} → ${updatedData.num}`});
   log(`📋 PENDING APPROVAL — Edit Seam: ${s.num} requested by ${CU.name}`);save();
   closeModal('m-edit-seam');renderAdminSeams();
