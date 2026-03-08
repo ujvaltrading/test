@@ -850,12 +850,11 @@ tr:hover td{background:var(--surf2);}
             <!-- Import side -->
             <div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">
               <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;">② Import Filled Excel / CSV</div>
-              <label class="lbl">Custom Date/Time for Historical Records</label>
-              <input id="xl-ts" type="datetime-local" style="width:100%;padding:7px;font-size:12px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;margin-bottom:10px;">
-              <label class="lbl">Inspected By (historical records)</label>
-              <input id="xl-by" placeholder="e.g. John Smith / Historical QE" style="margin-bottom:12px;">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6;">
+                Select your filled CSV file. New seams in the file will be <strong>created automatically</strong>. Existing seams will have their stages updated. Data becomes visible to <strong>all users</strong> immediately after import.
+              </div>
               <label style="display:block;background:var(--amber);color:#fff;padding:10px 16px;text-align:center;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
-                ⬆ Select CSV / Excel File
+                ⬆ Select CSV File & Import
                 <input type="file" accept=".csv,.xlsx,.xls,.txt" onchange="importExcel(this)" style="display:none;">
               </label>
               <div id="xl-msg" style="margin-top:10px;"></div>
@@ -884,8 +883,10 @@ tr:hover td{background:var(--surf2);}
         <!-- DANGER ZONE -->
         <div class="card" style="border:1.5px solid #fca5a5;margin-top:4px;">
           <div class="chead"><div class="ctitle" style="color:var(--red);">🗑️ Danger Zone</div></div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Reset all data on this device back to demo defaults. Export a backup first — this cannot be undone.</div>
-          <button class="btn btn-red" style="width:auto;padding:9px 22px;" onclick="resetAllData()">Reset to Defaults (Danger)</button>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.7;">Reset all data back to factory defaults — erases all projects, seams, inspections, users and logs. Cannot be undone.<br>
+          A <strong>Reset Request</strong> will be sent to the Manager's Approvals section. Nothing is erased until the Manager approves it there.</div>
+          <div id="rst-msg" style="margin-bottom:8px;font-size:12px;"></div>
+          <button class="btn btn-red" style="width:auto;padding:9px 22px;" onclick="requestReset()">⚠ Request System Reset (Manager approval required)</button>
         </div>
       </div>
 
@@ -2916,14 +2917,9 @@ function buildPrintPreview(){
               const txtC=st.status==='accepted'?'#059669':st.status==='rejected'?'#dc2626':st.status==='offered'?'#d97706':st.status==='returned'?'#2563eb':'#6b7280';
               const lbl=st.status==='accepted'?'✓ ACC':st.status==='rejected'?'✗ NCR':st.status==='offered'?'⬆ QC':st.status==='returned'?'↩ RET':'○ PND';
               const dt=st.inspectedAt||st.offeredAt||'';
-              // Show full date + time for each stage cell
-              const dtParts=dt?dt.split(', '):'';
-              const dtDate=dtParts&&dtParts.length>=1?dtParts[0]:'';
-              const dtTime=dtParts&&dtParts.length>=2?dtParts[1]:'';
               return`<td style="padding:3px 2px;border:1px solid #e2e8f0;text-align:center;background:${bgC};">
                 <div style="font-weight:700;color:${txtC};font-size:7px;">${lbl}</div>
-                ${dtDate?`<div style="font-size:6px;color:#64748b;margin-top:1px;font-weight:600;">${dtDate}</div>`:''}
-                ${dtTime?`<div style="font-size:6px;color:#94a3b8;margin-top:1px;">${dtTime}</div>`:''}
+                ${dt?`<div style="font-size:6px;color:#94a3b8;margin-top:1px;">${dt.split(',')[0]}</div>`:''}
               </td>`;
             }).join('')}
             <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;font-weight:700;font-size:8px;color:${ss.pct===100?'#059669':'#d97706'};">${ss.pct}%</td>
@@ -2935,7 +2931,40 @@ function buildPrintPreview(){
       </table>
       </div>
 
-      <!-- Balance summary inline in main table above; no separate section needed -->
+      <!-- Balance summary for this tag -->
+      ${(()=>{
+        const bal=visSeams.flatMap(seam=>seam.stages.filter(st=>st.status!=='accepted').map(st=>({seam,st})));
+        if(!bal.length) return`<div style="margin-top:10px;padding:6px 10px;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;font-size:8.5px;color:#065f46;font-weight:700;">✅ All stages complete for this tag.</div>`;
+        return`<div style="margin-top:12px;">
+          <div style="font-size:8.5px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">⏳ Balance / Pending (${bal.length} stages)</div>
+          <table style="width:100%;border-collapse:collapse;font-size:8px;">
+            <thead><tr style="background:#fef3c7;">
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;font-family:monospace;">Seam No.</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Component</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Pending Stage</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:center;">Status</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">NCR No.</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Remarks</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:center;">Expected Date</th>
+            </tr></thead>
+            <tbody>
+            ${bal.map(({seam,st},i)=>{
+              const sc=st.status==='offered'?'#d97706':st.status==='rejected'?'#dc2626':st.status==='returned'?'#2563eb':'#6b7280';
+              const sl=st.status==='offered'?'AWAITING QC':st.status==='rejected'?'NCR/REJECTED':st.status==='returned'?'RETURNED':'PENDING';
+              return`<tr style="background:${i%2===0?'#fff':'#fefce8'};">
+                <td style="padding:3px 6px;border:1px solid #fde68a;font-family:monospace;font-weight:700;color:#1d4ed8;">${seam.num}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;">${nC(seam)}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;font-weight:600;">${st.name}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;text-align:center;color:${sc};font-weight:700;font-size:7.5px;">${sl}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;color:#dc2626;">${st.ncrNumber||'—'}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;">${st.qeRem||'—'}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;"></td>
+              </tr>`;
+            }).join('')}
+            </tbody>
+          </table>
+        </div>`;
+      })()}
 
       ${_sigBlock()}
     </div>`;
@@ -3236,18 +3265,15 @@ function exportExcel(){
 
 function importExcel(input){
   const file=input.files[0]; if(!file)return;
-  const tsVal=$('xl-ts').value;
-  const by=$('xl-by').value.trim()||CU.name;
   const msgEl=$('xl-msg');
-  msgEl.innerHTML='<div class="msg" style="color:var(--text3);">Reading file…</div>';
+  msgEl.innerHTML='<div class="msg" style="color:var(--text3);">⏳ Reading file…</div>';
   const reader=new FileReader();
   reader.onload=e=>{
     try{
       let text=e.target.result;
       if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
-      const lines=text.split(/\r?\n/).filter(l=>l.trim());
-      if(lines.length<2){msgEl.innerHTML='<div class="msg msg-err">File appears empty.</div>';return;}
-      // CSV parser
+
+      // ── CSV row parser ──
       const parseRow=line=>{
         const cells=[];let cur='';let inQ=false;
         for(let i=0;i<line.length;i++){
@@ -3258,48 +3284,106 @@ function importExcel(input){
         }
         cells.push(cur.trim()); return cells;
       };
-      const headers=parseRow(lines[0]);
-      // Map "StageName|Status" header col → stage name
-      const stageCols={};
+
+      const lines=text.split(/\r?\n/);
+
+      // ── Find header row (contains "Seam No." or "Seam_No") ──
+      let headerIdx=-1, headers=[];
+      for(let i=0;i<Math.min(lines.length,10);i++){
+        const row=parseRow(lines[i]);
+        if(row.some(h=>/seam.?no/i.test(h))){headerIdx=i;headers=row;break;}
+      }
+      if(headerIdx<0){
+        msgEl.innerHTML='<div class="msg msg-err">❌ Header row not found. Export from TQIMS first — do not remove the Seam No. column.</div>';return;
+      }
+
+      // ── Build stage column map: {name, statusCol, +offset cols} ──
+      const stageDefs=[];
       headers.forEach((h,i)=>{
-        const m=h.match(/^(.+)\|Status$/i);
-        if(m) stageCols[m[1].trim()]=i;
+        const m=h.match(/^(.+?)\|Status$/i);
+        if(m) stageDefs.push({name:m[1].trim(),sc:i,oc:i+1,od:i+2,ic:i+3,id:i+4,nc:i+5,rc:i+6});
       });
-      if(!Object.keys(stageCols).length){
+      if(!stageDefs.length){
         msgEl.innerHTML='<div class="msg msg-err">❌ No stage columns found. Export from TQIMS first and do not rename headers.</div>';return;
       }
-      const importTime=tsVal?new Date(tsVal).toLocaleString('en-IN'):now();
-      let updated=0,notFound=0,skipped=0;
-      for(let r=1;r<lines.length;r++){
-        const row=parseRow(lines[r]);
+
+      const importTime=now();
+      let stagesUpdated=0, seamsCreated=0, seamsUpdated=0, rowsSkipped=0;
+
+      for(let r=headerIdx+1;r<lines.length;r++){
+        const raw=lines[r]; if(!raw||!raw.trim()) continue;
+        const row=parseRow(raw);
         const seamNum=(row[3]||'').trim();
-        if(!seamNum||seamNum.startsWith('['))continue;
+        // Skip instruction / project-header / blank rows
+        if(!seamNum||seamNum.startsWith('[')||seamNum.startsWith('=')) continue;
+
         const projNum=(row[0]||'').trim();
-        const seam=DB.seams.find(s=>{
-          const pp=getProj(s.pid);
-          return s.num===seamNum&&(!projNum||pp?.number===projNum);
-        });
-        if(!seam){notFound++;continue;}
-        let rowUpdated=false;
-        Object.entries(stageCols).forEach(([stageName,sCol])=>{
-          const sv=(row[sCol]||'').trim().toLowerCase();
-          if(!sv||sv==='pending'||sv==='n/a'||sv==='offered')return;
-          if(!['accepted','rejected','returned'].includes(sv))return;
-          const st=seam.stages.find(s=>s.name===stageName);
-          if(!st)return;
-          // Don't overwrite already-accepted unless explicit
+        const proj=DB.projects.find(p=>p.number===projNum);
+        if(!proj){rowsSkipped++;continue;}  // project not found in system
+
+        // ── Find or CREATE the seam ──
+        let seam=DB.seams.find(s=>s.num===seamNum&&getProj(s.pid)?.number===projNum);
+        let isNew=false;
+        if(!seam){
+          const stageNames=stageDefs.map(d=>d.name);
+          seam={
+            id:'s'+Date.now()+Math.floor(Math.random()*9999),
+            pid:proj.id,
+            tag:(row[1]||'').trim(), comp:(row[2]||'').trim(), sec:(row[2]||'').trim(),
+            num:seamNum, desc:(row[4]||seamNum).trim(),
+            type:(row[5]||'Butt Weld').trim(),
+            mat:(row[6]||'N/A').trim(), thk:(row[7]||'N/A').trim(), wps:(row[8]||'—').trim(),
+            stages:mkStages(stageNames.length?stageNames:null)
+          };
+          DB.seams.push(seam);
+          isNew=true; seamsCreated++;
+        }
+
+        // ── Apply stage statuses from CSV columns ──
+        let seamStageUpdated=0;
+        stageDefs.forEach(d=>{
+          const sv=(row[d.sc]||'').trim().toLowerCase();
+          if(!sv||sv==='n/a'||sv==='pending') return;
+          if(!['accepted','rejected','returned'].includes(sv)) return;
+          let st=seam.stages.find(s=>s.name===d.name);
+          if(!st){
+            // Stage not on seam yet — add it
+            st={name:d.name,status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',location:'',drawing:'',prodRem:'',inspectedBy:'',inspectedAt:'',qeRem:'',ncrNumber:'',returnRem:''};
+            seam.stages.push(st);
+          }
+          const offBy=(row[d.oc]||'').trim()||'Historical';
+          const offAt=(row[d.od]||'').trim()||importTime;
+          const insBy=(row[d.ic]||'').trim()||offBy;
+          const insAt=(row[d.id]||'').trim()||offAt;
           st.status=sv;
-          st.offeredBy=row[sCol+1]||by; st.offeredByCo='Historical'; st.offeredAt=row[sCol+2]||importTime;
-          st.inspectedBy=row[sCol+3]||by; st.inspectedAt=row[sCol+4]||importTime;
-          st.ncrNumber=row[sCol+5]||''; st.qeRem=row[sCol+6]||'Historical import';
-          updated++; rowUpdated=true;
+          st.offeredBy=offBy; st.offeredByCo='Historical'; st.offeredAt=offAt;
+          st.inspectedBy=insBy; st.inspectedAt=insAt;
+          st.ncrNumber=(row[d.nc]||'').trim();
+          st.qeRem=(row[d.rc]||'').trim()||'Imported';
+          stagesUpdated++; seamStageUpdated++;
         });
-        if(!rowUpdated) skipped++;
+        if(!isNew&&seamStageUpdated>0) seamsUpdated++;
       }
+
       save();
-      msgEl.innerHTML=`<div class="msg msg-ok">✓ Import complete — <strong>${updated}</strong> stage${updated!==1?'s':''} updated${notFound?' · '+notFound+' seam(s) not found in TQIMS':''}${skipped?' · '+skipped+' rows unchanged':''}.</div>`;
-      log(`📥 CSV IMPORT — ${updated} stages updated by ${CU.name}`); save();
-      refreshCurrentView(); toast(`✓ ${updated} stages imported`,'ok');
+
+      const parts=[];
+      if(seamsCreated) parts.push(`<strong style="color:var(--green);">${seamsCreated} new seam${seamsCreated!==1?'s':''} created</strong>`);
+      if(seamsUpdated) parts.push(`<strong>${seamsUpdated} existing seam${seamsUpdated!==1?'s':''} updated</strong>`);
+      if(stagesUpdated) parts.push(`${stagesUpdated} stage record${stagesUpdated!==1?'s':''} imported`);
+      if(rowsSkipped) parts.push(`<span style="color:var(--text3);">${rowsSkipped} row${rowsSkipped!==1?'s':''} skipped (project not in TQIMS)</span>`);
+      const summary=parts.length?parts.join(' · '):'No changes — all rows blank or already up to date.';
+
+      msgEl.innerHTML=`<div class="msg msg-ok">✅ ${summary}</div>`;
+      log(`📥 CSV IMPORT — ${seamsCreated} new seams created, ${stagesUpdated} stages updated by ${CU.name}`);
+      save();
+
+      // Refresh everything so imported data is visible immediately for all users
+      populateSelects();
+      renderDashboard();
+      refreshCurrentView();
+      updateBadge();
+      toast(`✅ Import done — ${seamsCreated} new, ${stagesUpdated} stages updated`,'ok');
     }catch(err){
       msgEl.innerHTML=`<div class="msg msg-err">❌ Error: ${err.message}</div>`;
     }
@@ -3354,32 +3438,19 @@ function importBackup(input){
   reader.readAsText(file);
 }
 
-function resetAllData(){
-  if(CU && CU.role==='manager'){
-    // Manager can approve their own reset request directly
-    if(!confirm('⚠ This will DELETE ALL DATA and reset to defaults.\n\nAre you absolutely sure?'))return;
-    if(!confirm('FINAL WARNING: All seams, inspection records, users and logs will be lost. Continue?'))return;
-    localStorage.removeItem('tqims3');
-    DB=defaultDB();save();
-    log(`🔄 SYSTEM RESET TO DEFAULTS by ${CU.name}`);save();
-    populateSelects();renderBackupPage();renderDashboard();
-    toast('System reset to defaults');
-  } else {
-    // Non-manager roles must submit for Manager approval
-    if(!confirm('⚠ Reset to Defaults requires Manager approval.\n\nYour request will be sent to the Manager. Continue?'))return;
-    DB.pendingActions.push({
-      id:'pa'+Date.now(),
-      type:'reset_defaults',
-      data:{requestedBy:CU.name,requestedAt:now()},
-      requestedBy:CU.name,
-      requestedAt:now(),
-      desc:`🔄 RESET TO DEFAULTS requested by ${CU.name} (${CU.role}) — Will erase all data`
-    });
-    log(`🔄 RESET REQUEST PENDING — Reset to defaults requested by ${CU.name} (${CU.co}) — Awaiting Manager Approval`);
-    save();
-    updateApprovalBadge();
-    toast('Reset request sent to Manager for approval','ok');
+function requestReset(){
+  const already=DB.pendingActions.find(a=>a.type==='system_reset');
+  const msg=$('rst-msg');
+  if(already){
+    if(msg)msg.innerHTML='<div class="msg msg-err">⚠ A reset request is already pending. Ask the Manager to check the Approvals section.</div>';
+    return;
   }
+  if(!confirm('This sends a System Reset request to the Manager for approval.\nNothing is erased until they approve.\n\nContinue?'))return;
+  DB.pendingActions.push({id:'pa'+Date.now(),type:'system_reset',requestedBy:CU.name,requestedAt:now(),desc:'⚠ SYSTEM RESET — Erase all data and reset to factory defaults'});
+  log(`⚠ SYSTEM RESET REQUESTED by ${CU.name}`);save();
+  updateApprovalBadge();
+  if(msg)msg.innerHTML='<div class="msg msg-ok">✅ Reset request sent to Manager. Nothing is erased until they approve it in the Approvals section.</div>';
+  toast('Reset request sent to Manager','ok');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3444,7 +3515,7 @@ function renderApprovals(){
               a.type==='add_proj'?`<span class="chip ch-off" style="font-size:8px;">NEW PROJECT</span>`:
               a.type==='edit_proj'?`<span class="chip ch-off" style="font-size:8px;">EDIT PROJECT</span>`:
               a.type==='ncr_reoffer'?`<span class="chip ch-ncr" style="font-size:8px;">🔴 NCR RE-OFFER</span>`:
-              a.type==='reset_defaults'?`<span class="chip ch-rej" style="font-size:8px;">⚠️ RESET TO DEFAULTS</span>`:
+              a.type==='system_reset'?`<span style="display:inline-block;background:#dc2626;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">⚠ SYSTEM RESET</span>`:
               `<span class="chip ch-rej" style="font-size:8px;">DELETE PROJECT</span>`}
           </div>
         </div>
@@ -3470,14 +3541,13 @@ function approveAction(id){
   }
   else if(a.type==='edit_proj'){const p=getProj(a.data.id);if(p){Object.assign(p,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='del_proj'){DB.projects=DB.projects.filter(p=>p.id!==a.data.id);DB.seams=DB.seams.filter(s=>s.pid!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
-  else if(a.type==='reset_defaults'){
+  else if(a.type==='system_reset'){
+    DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+    save(); log(`🔄 SYSTEM RESET — approved by Manager ${CU.name}`);
     localStorage.removeItem('tqims3');
     DB=defaultDB();save();
-    log(`🔄 SYSTEM RESET TO DEFAULTS — approved by ${CU.name} (requested by ${a.requestedBy})`);save();
-    populateSelects();renderBackupPage();renderDashboard();
-    DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
-    save();renderApprovals();updateApprovalBadge();updateBadge();
-    toast('System reset to defaults','ok');
+    populateSelects();renderDashboard();renderApprovals();updateApprovalBadge();updateBadge();
+    toast('✅ System reset to factory defaults','ok');
     return;
   }
   else if(a.type==='ncr_reoffer'){
