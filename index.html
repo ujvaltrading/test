@@ -347,8 +347,8 @@ tr:hover td{background:var(--surf2);}
 
     <!-- LOGIN -->
     <div class="aform on" id="form-login">
-      <div><label class="lbl">Mobile Number</label><input id="l-mob" type="tel" placeholder="e.g. 9876543210"></div>
-      <div><label class="lbl">Password</label><input id="l-pw" type="password" placeholder="Your password"></div>
+      <div><label class="lbl">Mobile Number <span style="color:var(--text3);font-weight:400;">or Corporate Email</span></label><input id="l-mob" type="text" placeholder="9876543210  or  you@company.com" autocomplete="username"></div>
+      <div><label class="lbl">Password</label><input id="l-pw" type="password" placeholder="Your password" autocomplete="current-password"></div>
       <div id="l-err"></div>
       <button class="btn btn-blue btn-w" onclick="doLogin()">LOGIN →</button>
       <div class="alink"><a onclick="showTab('reg')">Create new account</a> &nbsp;|&nbsp; <a onclick="showTab('admin-reg')" style="color:var(--text3);font-size:10px;">Admin registration</a></div>
@@ -357,21 +357,21 @@ tr:hover td{background:var(--surf2);}
     <!-- REGISTER -->
     <div class="aform" id="form-reg">
       <div class="grid2">
-        <div><label class="lbl">Full Name</label><input id="r-name" placeholder="Your full name"></div>
-        <div><label class="lbl">Mobile</label><input id="r-mob" type="tel" placeholder="10-digit number"></div>
-        <div><label class="lbl">Company / Contractor</label><input id="r-co" placeholder="Company name"></div>
-        <div><label class="lbl">Designation</label><input id="r-desig" placeholder="e.g. QC Engineer"></div>
-        <div class="span2"><label class="lbl">Email (optional)</label><input id="r-email" type="email" placeholder="email@example.com"></div>
-        <div class="span2"><label class="lbl">Role</label>
+        <div><label class="lbl">Full Name *</label><input id="r-name" placeholder="Your full name"></div>
+        <div><label class="lbl">Mobile *</label><input id="r-mob" type="tel" placeholder="10-digit number"></div>
+        <div class="span2"><label class="lbl">Corporate Email <span style="color:var(--text3);font-weight:400;">(can be used to login)</span></label><input id="r-email" type="email" placeholder="you@company.com"></div>
+        <div><label class="lbl">Company / Contractor *</label><input id="r-co" placeholder="Company name"></div>
+        <div><label class="lbl">Designation *</label><input id="r-desig" placeholder="e.g. QC Engineer"></div>
+        <div class="span2"><label class="lbl">Role *</label>
           <div class="rchips">
             <div class="rchip" data-r="production" onclick="pickRole(this)">Production</div>
             <div class="rchip" data-r="quality" onclick="pickRole(this)">Quality Eng.</div>
             <div class="rchip" data-r="manager" onclick="pickRole(this)">Manager</div>
           </div>
         </div>
-        <div class="span2"><label class="lbl">Project</label><select id="r-proj"></select></div>
-        <div><label class="lbl">Password</label><input id="r-pw" type="password" placeholder="Min 6 characters"></div>
-        <div><label class="lbl">Confirm Password</label><input id="r-pw2" type="password" placeholder="Repeat password"></div>
+        <div class="span2"><label class="lbl">Project *</label><select id="r-proj"></select></div>
+        <div><label class="lbl">Password *</label><input id="r-pw" type="password" placeholder="Min 6 characters"></div>
+        <div><label class="lbl">Confirm Password *</label><input id="r-pw2" type="password" placeholder="Repeat password"></div>
       </div>
       <div id="r-err"></div>
       <button class="btn btn-blue btn-w" onclick="doRegister()">CREATE ACCOUNT →</button>
@@ -539,14 +539,21 @@ tr:hover td{background:var(--surf2);}
           </div>
 
           <!-- Stage status filter chips -->
-          <div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:10px;border-top:1px solid var(--border);">
-            <span style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;padding-top:4px;margin-right:4px;">Status:</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;padding-top:10px;border-top:1px solid var(--border);align-items:center;">
+            <span style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-right:4px;">Status:</span>
             <button class="fchip on" data-f="all" onclick="setStageFilter('all',this)">All</button>
             <button class="fchip" data-f="pending" onclick="setStageFilter('pending',this)">○ Pending</button>
             <button class="fchip" data-f="offered" onclick="setStageFilter('offered',this)">⬆ Awaiting QC</button>
             <button class="fchip" data-f="accepted" onclick="setStageFilter('accepted',this)">✓ Accepted</button>
             <button class="fchip" data-f="rejected" onclick="setStageFilter('rejected',this)">✗ NCR</button>
             <button class="fchip" data-f="returned" onclick="setStageFilter('returned',this)">↩ Returned</button>
+            <!-- Group action buttons — shown based on role -->
+            <div id="btn-group-offer" style="display:none;margin-left:auto;">
+              <button class="btn btn-blue" style="width:auto;padding:6px 16px;font-size:12px;font-weight:700;" onclick="openGroupOffer()">📤 Group Offer</button>
+            </div>
+            <div id="btn-group-inspect" style="display:none;margin-left:auto;">
+              <button class="btn btn-green" style="width:auto;padding:6px 16px;font-size:12px;font-weight:700;" onclick="openGroupInspect()">🔍 Group Clearance</button>
+            </div>
           </div>
         </div>
 
@@ -722,13 +729,37 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── SUMMARY ── -->
       <div class="pg" id="pg-summary">
-        <div class="pgh"><div class="pgt">Print Summary</div><div class="pgs">Generate printable inspection report with signature blocks</div></div>
+        <div class="pgh"><div class="pgt">Inspection Traveller</div><div class="pgs">Horizontal stages · seams vertical · logo · signature on every page</div></div>
         <div class="card">
-          <div class="grid2" style="max-width:480px;">
-            <div><label class="lbl">Project</label><select id="print-proj" onchange="refreshPrintSecs()"></select></div>
-            <div><label class="lbl">Section Filter</label><select id="print-sec"><option value="">All Sections</option></select></div>
-            <div class="span2">
-              <button class="btn btn-blue" style="width:auto;padding:10px 24px;" onclick="doPrint()">🖨️ PRINT / SAVE AS PDF</button>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+            <div style="flex:1;min-width:170px;">
+              <label class="lbl">Project</label>
+              <select id="print-proj" onchange="onPrintProjChange()" style="width:100%;padding:8px 10px;font-size:13px;font-weight:600;background:var(--surf2);border:1.5px solid var(--border2);color:var(--blue2);border-radius:7px;"></select>
+            </div>
+            <div style="flex:1;min-width:140px;">
+              <label class="lbl">Tag Filter</label>
+              <select id="print-tag" onchange="buildPrintPreview()" style="width:100%;padding:8px 10px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
+                <option value="">All Tags</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:140px;">
+              <label class="lbl">Seam Status</label>
+              <select id="print-status" onchange="buildPrintPreview()" style="width:100%;padding:8px 10px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
+                <option value="">All Seams</option>
+                <option value="incomplete">Incomplete Only</option>
+                <option value="complete">Completed Only</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label class="lbl">Company Logo (for print)</label>
+              <label style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surf2);border:1.5px dashed var(--border2);border-radius:7px;cursor:pointer;font-size:12px;color:var(--text3);">
+                🖼 Upload Logo
+                <input type="file" id="logo-input" accept="image/*" onchange="onLogoUpload(this)" style="display:none;">
+              </label>
+              <div id="logo-preview" style="margin-top:4px;min-height:12px;"></div>
+            </div>
+            <div>
+              <button class="btn btn-blue" style="width:auto;padding:10px 22px;" onclick="doPrint()">🖨️ PRINT / PDF</button>
             </div>
           </div>
         </div>
@@ -769,52 +800,79 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── BACKUP & RESTORE ── -->
       <div class="pg" id="pg-backup">
-        <div class="pgh"><div class="pgt">Backup & Restore</div><div class="pgs">Export your data regularly — required for multi-device sync</div></div>
+        <div class="pgh"><div class="pgt">Backup & Restore</div><div class="pgs">Export regularly — JSON for full restore, Excel for historical data import</div></div>
 
         <!-- STORAGE EXPLAINER -->
-        <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:16px 18px;margin-bottom:18px;border-radius:10px;">
-          <div style="font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#92400e;margin-bottom:8px;">⚠️ Important — Read Before Proceeding</div>
-          <div style="font-size:13px;color:#78350f;line-height:1.8;">
-            <strong>Why data must be exported regularly:</strong> This system stores all data in your browser's local storage — it only exists on the device and browser you are currently using.<br>
-            <strong>Risk:</strong> Clearing browser cache, reinstalling the browser, or switching devices will <strong>permanently erase all data</strong>.<br>
-            <strong>Solution:</strong> Export a backup after every significant update and share it with the team via WhatsApp, Email or Google Drive.
-          </div>
+        <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:14px 18px;margin-bottom:16px;border-radius:10px;font-size:13px;color:#78350f;line-height:1.8;">
+          <strong>⚠️ Important:</strong> Data is stored in this browser only. Clearing cache or switching devices erases it.
+          Export a backup after every significant update and save to Google Drive / WhatsApp / Email.
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <!-- EXPORT -->
+        <!-- JSON BACKUP ROW -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
           <div class="card" style="border-top:4px solid var(--green);">
-            <div class="chead"><div class="ctitle" style="color:var(--green);">📤 Export Backup</div></div>
-            <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Download all project data, seams, inspection records, users and logs as a <strong>.json</strong> file. Save it somewhere safe — Google Drive, email, or WhatsApp to the team.</div>
-            <div id="backup-stats" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:14px;line-height:1.8;"></div>
-            <button class="btn btn-green btn-w" onclick="exportBackup()">⬇ Download Backup File</button>
+            <div class="chead"><div class="ctitle" style="color:var(--green);">📤 Export Full Backup (JSON)</div></div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Downloads everything — all projects, seams, users, logs. Use to restore to any device.</div>
+            <div id="backup-stats" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:12px;line-height:1.8;"></div>
+            <button class="btn btn-green btn-w" onclick="exportBackup()">⬇ Download JSON Backup</button>
             <div style="font-size:10px;color:var(--text4);margin-top:8px;text-align:center;" id="last-backup-time"></div>
           </div>
-
-          <!-- IMPORT -->
           <div class="card" style="border-top:4px solid var(--blue2);">
-            <div class="chead"><div class="ctitle" style="color:var(--blue2);">📥 Import / Restore</div></div>
-            <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">Load a previously exported <strong>.json</strong> backup file to restore data on this device. <strong style="color:var(--red);">This will replace all current data on this device.</strong></div>
-            <div style="background:var(--red-lt);border:1.5px solid #fca5a5;padding:9px 12px;font-size:12px;color:#991b1b;margin-bottom:14px;border-radius:7px;">
-              ⚠️ Current unsaved data will be overwritten. Export first if needed.
-            </div>
-            <label style="display:block;background:var(--blue2);color:#fff;padding:11px 20px;text-align:center;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
-              ⬆ Select Backup File
-              <input type="file" id="import-file" accept=".json" onchange="importBackup(this)" style="display:none;">
+            <div class="chead"><div class="ctitle" style="color:var(--blue2);">📥 Restore from JSON</div></div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Load a previously exported JSON file. <strong style="color:var(--red);">Replaces ALL current data.</strong></div>
+            <div style="background:var(--red-lt);border:1.5px solid #fca5a5;padding:8px 12px;font-size:12px;color:#991b1b;margin-bottom:12px;border-radius:7px;">⚠️ Export first if needed — current data will be overwritten.</div>
+            <label style="display:block;background:var(--blue2);color:#fff;padding:10px 20px;text-align:center;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
+              ⬆ Select JSON Backup File
+              <input type="file" accept=".json" onchange="importBackup(this)" style="display:none;">
             </label>
             <div id="import-msg" style="margin-top:10px;"></div>
           </div>
         </div>
 
-        <!-- DEVICE SYNC INSTRUCTIONS -->
+        <!-- EXCEL SECTION -->
+        <div class="card" style="border-top:4px solid var(--amber);">
+          <div class="chead"><div class="ctitle" style="color:var(--amber);">📊 Excel — Export & Historical Data Import</div></div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.8;">
+            <strong>Export to Excel:</strong> Downloads every seam with all its stages as a spreadsheet. Open in Excel or Google Sheets, fill in the Status column for previous work, then import.<br>
+            <strong>Import from Excel:</strong> Bulk-update stage statuses from your filled spreadsheet. Use a custom past timestamp so historical records appear with the correct dates — without going through the live offer/inspect flow.
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+            <!-- Export side -->
+            <div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;">① Export Template</div>
+              <label class="lbl">Project</label>
+              <select id="xl-proj" style="width:100%;padding:7px;font-size:12px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;margin-bottom:12px;"></select>
+              <button class="btn btn-amber btn-w" onclick="exportExcel()">📊 Download Excel / CSV</button>
+              <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.6;">Opens in Excel. Fill <strong>Status</strong> column with: <code>accepted</code>, <code>rejected</code>, <code>returned</code>, or leave blank to skip. Save as .csv then import below.</div>
+            </div>
+
+            <!-- Import side -->
+            <div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;">② Import Filled Excel / CSV</div>
+              <label class="lbl">Custom Date/Time for Historical Records</label>
+              <input id="xl-ts" type="datetime-local" style="width:100%;padding:7px;font-size:12px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;margin-bottom:10px;">
+              <label class="lbl">Inspected By (historical records)</label>
+              <input id="xl-by" placeholder="e.g. John Smith / Historical QE" style="margin-bottom:12px;">
+              <label style="display:block;background:var(--amber);color:#fff;padding:10px 16px;text-align:center;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
+                ⬆ Select CSV / Excel File
+                <input type="file" accept=".csv,.xlsx,.xls,.txt" onchange="importExcel(this)" style="display:none;">
+              </label>
+              <div id="xl-msg" style="margin-top:10px;"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- DEVICE SYNC -->
         <div class="card" style="margin-top:4px;">
           <div class="chead"><div class="ctitle">📱 How to Sync Across Devices</div></div>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
             ${[
-              ['1️⃣','Export Backup','Admin opens TQIMS → Backup & Restore → Download Backup File'],
-              ['2️⃣','Share the File','Send the .json file via WhatsApp, Email, or Google Drive to team members'],
-              ['3️⃣','Others Import','Each member opens TQIMS → Backup & Restore → Select Backup File → Import'],
-              ['4️⃣','Repeat Regularly','After every update (new seams, inspections), Admin exports and re-shares'],
+              ['1️⃣','Export JSON','Admin → Backup & Restore → Download JSON Backup'],
+              ['2️⃣','Share File','Send .json via WhatsApp, Email, or Google Drive'],
+              ['3️⃣','Others Import','Each device: Backup & Restore → Select JSON Backup File'],
+              ['4️⃣','Repeat Often','Export after every batch of new seams or inspections'],
             ].map(([n,t,d])=>`<div style="padding:12px;background:var(--surf2);border-radius:8px;border:1px solid var(--border);">
               <div style="font-size:22px;margin-bottom:6px;">${n}</div>
               <div style="font-weight:600;font-size:13px;margin-bottom:4px;color:var(--text);">${t}</div>
@@ -826,7 +884,7 @@ tr:hover td{background:var(--surf2);}
         <!-- DANGER ZONE -->
         <div class="card" style="border:1.5px solid #fca5a5;margin-top:4px;">
           <div class="chead"><div class="ctitle" style="color:var(--red);">🗑️ Danger Zone</div></div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Reset all data on this device back to demo defaults. This cannot be undone. Export a backup first.</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Reset all data on this device back to demo defaults. Export a backup first — this cannot be undone.</div>
           <button class="btn btn-red" style="width:auto;padding:9px 22px;" onclick="resetAllData()">Reset to Defaults (Danger)</button>
         </div>
       </div>
@@ -883,6 +941,94 @@ tr:hover td{background:var(--surf2);}
       <button class="btn btn-amber" style="width:auto;padding:9px 16px;" onclick="submitInspect('returned')" title="Return without NCR — Production can re-offer directly">↩ RETURN</button>
       <button class="btn btn-red" style="width:auto;padding:9px 16px;" onclick="prepareReject()">✗ REJECT (NCR)</button>
       <button class="btn btn-green" style="width:auto;padding:9px 16px;" onclick="submitInspect('accepted')">✓ ACCEPT</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GROUP OFFER MODAL (Production) ══ -->
+<div class="mbg" id="m-group-offer">
+  <div class="modal" style="max-width:640px;">
+    <div class="mhead"><div class="mtitle">📤 Group Offer to QC</div><button class="mclose" onclick="closeModal('m-group-offer')">✕</button></div>
+    <div class="mbody" style="max-height:72vh;overflow-y:auto;">
+      <div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);padding:9px 14px;border-radius:7px;margin-bottom:14px;">
+        Select stage type, then tick the seams you want to offer together in one action.
+      </div>
+      <div class="grid2" style="margin-bottom:14px;">
+        <div>
+          <label class="lbl">Project</label>
+          <select id="go-proj" onchange="goRefreshTags()" style="width:100%;padding:8px;font-size:13px;font-weight:600;background:var(--surf2);border:1.5px solid var(--border2);color:var(--blue2);border-radius:7px;"></select>
+        </div>
+        <div>
+          <label class="lbl">Tag Number</label>
+          <select id="go-tag" onchange="goRefreshSeams()" style="width:100%;padding:8px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
+            <option value="">All Tags</option>
+          </select>
+        </div>
+        <div class="span2">
+          <label class="lbl">Stage Type <span style="color:var(--red);">*</span></label>
+          <select id="go-stage" onchange="goRefreshSeams()" style="width:100%;padding:9px;font-size:13px;font-weight:700;background:var(--surf2);border:2px solid var(--blue2);color:var(--blue2);border-radius:7px;">
+            <option value="">— Select Stage to Offer —</option>
+          </select>
+        </div>
+        <div><label class="lbl">Location / Position</label><input id="go-loc" placeholder="Bay-3, Grid B-4 …"></div>
+        <div><label class="lbl">Drawing / Ref. No.</label><input id="go-drw" placeholder="DRG-1242-001"></div>
+        <div class="span2"><label class="lbl">Production Remarks (applied to all)</label><input id="go-rem" placeholder="Pre-heat done, joint cleaned …"></div>
+      </div>
+      <div id="go-list" style="min-height:60px;"></div>
+    </div>
+    <div class="mfoot" style="flex-wrap:wrap;">
+      <button class="btn btn-ghost" style="width:auto;padding:8px 14px;" onclick="goSelectAll(true)">☑ All</button>
+      <button class="btn btn-ghost" style="width:auto;padding:8px 14px;" onclick="goSelectAll(false)">☐ None</button>
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost" style="width:auto;padding:8px 14px;" onclick="closeModal('m-group-offer')">Cancel</button>
+      <button class="btn btn-blue" style="width:auto;padding:8px 20px;font-weight:700;" onclick="confirmGroupOffer()">⬆ OFFER SELECTED →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GROUP INSPECT MODAL (Quality) ══ -->
+<div class="mbg" id="m-group-inspect">
+  <div class="modal" style="max-width:660px;">
+    <div class="mhead"><div class="mtitle">🔍 Group Inspection Clearance</div><button class="mclose" onclick="closeModal('m-group-inspect')">✕</button></div>
+    <div class="mbody" style="max-height:72vh;overflow-y:auto;">
+      <div style="font-size:12px;color:var(--green);background:#f0fdf4;border:1px solid var(--green);padding:9px 14px;border-radius:7px;margin-bottom:14px;">
+        Select the offered stages to clear together. Set per-row action or use Bulk Action to apply to all ticked rows.
+      </div>
+      <div class="grid2" style="margin-bottom:14px;">
+        <div>
+          <label class="lbl">Project</label>
+          <select id="gi-proj" onchange="giRefreshTags()" style="width:100%;padding:8px;font-size:13px;font-weight:600;background:var(--surf2);border:1.5px solid var(--border2);color:var(--blue2);border-radius:7px;"></select>
+        </div>
+        <div>
+          <label class="lbl">Tag Number</label>
+          <select id="gi-tag" onchange="giRefreshSeams()" style="width:100%;padding:8px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
+            <option value="">All Tags</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Stage Type Filter</label>
+          <select id="gi-stage" onchange="giRefreshSeams()" style="width:100%;padding:8px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
+            <option value="">All Offered Stages</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Bulk Action (override per-row)</label>
+          <select id="gi-bulk" style="width:100%;padding:8px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
+            <option value="">— Use per-row action —</option>
+            <option value="accepted">✓ Accept All Selected</option>
+            <option value="returned">↩ Return All Selected</option>
+          </select>
+        </div>
+        <div class="span2"><label class="lbl">QE Remarks (applies to all selected)</label><input id="gi-rem" placeholder="Common remark for this batch …"></div>
+      </div>
+      <div id="gi-list" style="min-height:60px;"></div>
+    </div>
+    <div class="mfoot" style="flex-wrap:wrap;">
+      <button class="btn btn-ghost" style="width:auto;padding:8px 14px;" onclick="giSelectAll(true)">☑ All</button>
+      <button class="btn btn-ghost" style="width:auto;padding:8px 14px;" onclick="giSelectAll(false)">☐ None</button>
+      <div style="flex:1;"></div>
+      <button class="btn btn-ghost" style="width:auto;padding:8px 14px;" onclick="closeModal('m-group-inspect')">Cancel</button>
+      <button class="btn btn-green" style="width:auto;padding:8px 20px;font-weight:700;" onclick="confirmGroupInspect()">✓ SUBMIT CLEARANCE →</button>
     </div>
   </div>
 </div>
@@ -1210,10 +1356,12 @@ function showTab(t){
 function pickRole(el){document.querySelectorAll('.rchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
 
 function doLogin(){
-  const mob=$('l-mob').value.trim();
+  const id=$('l-mob').value.trim().toLowerCase();
   const pw=$('l-pw').value;
-  const u=DB.users.find(u=>u.mob===mob&&u.pw===pw);
-  if(!u){$('l-err').innerHTML='<div class="msg msg-err">Invalid mobile or password.</div>';return;}
+  if(!id||!pw){$('l-err').innerHTML='<div class="msg msg-err">Please enter your mobile/email and password.</div>';return;}
+  // Match by mobile OR email (case-insensitive)
+  const u=DB.users.find(u=>(u.mob===id || (u.email&&u.email.toLowerCase()===id)) && u.pw===pw);
+  if(!u){$('l-err').innerHTML='<div class="msg msg-err">Invalid mobile / email or password.</div>';return;}
   if(!u.approved){$('l-err').innerHTML='<div class="msg msg-err">Account pending admin approval.</div>';return;}
   loginAs(u);
 }
@@ -1223,7 +1371,7 @@ function doRegister(){
   const mob=$('r-mob').value.trim();
   const co=$('r-co').value.trim();
   const desig=$('r-desig').value.trim();
-  const email=$('r-email').value.trim();
+  const email=$('r-email').value.trim().toLowerCase();
   const pw=$('r-pw').value;
   const pw2=$('r-pw2').value;
   const pid=$('r-proj').value;
@@ -1234,9 +1382,10 @@ function doRegister(){
   if(pw!==pw2){err.innerHTML='<div class="msg msg-err">Passwords do not match.</div>';return;}
   if(pw.length<6){err.innerHTML='<div class="msg msg-err">Password must be at least 6 characters.</div>';return;}
   if(DB.users.find(u=>u.mob===mob)){err.innerHTML='<div class="msg msg-err">Mobile number already registered.</div>';return;}
+  if(email&&DB.users.find(u=>u.email&&u.email.toLowerCase()===email)){err.innerHTML='<div class="msg msg-err">Email already registered.</div>';return;}
   DB.users.push({id:'u'+Date.now(),name,mob,email,co,desig,role,pid,pw,approved:false});
   save();
-  err.innerHTML='<div class="msg msg-ok">✓ Account created! Awaiting admin approval.</div>';
+  err.innerHTML='<div class="msg msg-ok">✓ Account created! Awaiting admin approval. You can login with mobile or email.</div>';
   toast('Registration submitted');
 }
 
@@ -1273,6 +1422,10 @@ function loginAs(u){
   $('manager-nav').style.display=u.role==='manager'?'block':'none';
   const warnBtn=$('storage-warn-admin');
   if(warnBtn) warnBtn.style.display=u.role==='admin'?'block':'none';
+  // Group action buttons visibility
+  const goB=$('btn-group-offer'),giB=$('btn-group-inspect');
+  if(goB)goB.style.display=(u.role==='production')?'block':'none';
+  if(giB)giB.style.display=(u.role==='quality')?'block':'none';
   populateSelects();
   updateApprovalBadge();
   goPage('dashboard');
@@ -1319,7 +1472,7 @@ function populateSelects(){
   const opts=DB.projects.length
     ? DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}${p.eqType?' ['+p.eqType+']':''}</option>`).join('')
     : noOptHtml;
-  ['fp','print-proj','au-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
+  ['fp','print-proj','au-proj','xl-proj'].forEach(id=>{const el=$(id);if(el)el.innerHTML=opts;});
   // ns-proj (add seam form) — same options
   const nsp=$('ns-proj');
   if(nsp){
@@ -1328,17 +1481,13 @@ function populateSelects(){
       : '<option value="">— No projects yet —</option>';
   }
   // refreshNsTagComp called on demand
-  refreshPrintSecs();
+  // Summary page tags refreshed when page is opened via renderSummaryPage()
   refreshTmplSelect();
 }
 
 // refreshNsSections replaced by refreshNsTagComp
 
-function refreshPrintSecs(){
-  const pid=$('print-proj')&&$('print-proj').value||DB.projects[0]&&DB.projects[0].id;
-  const secs=getSections(pid);
-  const el=$('print-sec');if(el)el.innerHTML='<option value="">All Sections</option>'+secs.map(s=>`<option>${s}</option>`).join('');
-}
+// refreshPrintSecs removed — replaced by refreshPrintTags in buildPrintPreview
 
 function refreshTmplSelect(){
   const el=$('ns-tmpl');if(!el)return;
@@ -2567,97 +2716,261 @@ function renderLog(){
 // ══════════════════════════════════════════════════════════════
 // PRINT SUMMARY
 // ══════════════════════════════════════════════════════════════
-function renderSummaryPage(){
-  const opts=DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('');
-  $('print-proj').innerHTML=opts;
-  refreshPrintSecs();
+// ══════════════════════════════════════════════════════════════
+// PRINT SUMMARY — INSPECTION TRAVELLER (horizontal stages)
+// ══════════════════════════════════════════════════════════════
+let _logoDataUrl='';
+
+function onLogoUpload(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    _logoDataUrl=e.target.result;
+    $('logo-preview').innerHTML=`<img src="${_logoDataUrl}" style="max-height:40px;max-width:120px;object-fit:contain;border:1px solid var(--border);border-radius:4px;padding:2px;">`;
+    buildPrintPreview();
+  };
+  r.readAsDataURL(file);
+}
+
+function onPrintProjChange(){
+  const pid=$('print-proj').value;
+  refreshPrintTags(pid);
   buildPrintPreview();
 }
 
-function buildPrintPreview(){
-  const pid=$('print-proj')&&$('print-proj').value||DB.projects[0]?.id;
-  const filterSec=$('print-sec')&&$('print-sec').value||'';
-  const p=getProj(pid);if(!p){$('print-preview').innerHTML=empty('Select a project');return;}
-  const st=overallStats(pid);
-  const today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
-  const sections=filterSec?[filterSec]:getSections(pid);
+function renderSummaryPage(){
+  const opts=DB.projects.map(p=>`<option value="${p.id}">Project #${p.number} — ${p.equipment}</option>`).join('');
+  $('print-proj').innerHTML=opts;
+  const pid=DB.projects[0]?.id;
+  refreshPrintTags(pid);
+  buildPrintPreview();
+}
 
-  let html=`<div id="printable">
-  <div style="text-align:center;padding-bottom:14px;margin-bottom:16px;border-bottom:2px solid var(--blue);">
-    <div style="font-family:'DM Sans',sans-serif;font-size:30px;font-weight:800;letter-spacing:5px;color:var(--blue2);">TQIMS</div>
-    <div style="font-size:11px;letter-spacing:2px;color:var(--text2);text-transform:uppercase;">Quality Inspection Management System</div>
-    <div style="font-size:12px;color:var(--text3);margin-top:4px;">Inspection Summary Report</div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;margin-bottom:14px;">
-    <div><b>Project No.:</b> ${p.number}</div><div><b>Equipment:</b> ${p.equipment}</div>
-    ${p.eqType?`<div><b>Type:</b> ${p.eqType}</div><div><b>Sub-Type:</b> ${p.subtype||'—'}</div>`:''}
-    <div><b>Client:</b> ${p.client||'—'}</div><div><b>Process:</b> ${p.process||'—'}</div>
-    <div><b>Code/Standard:</b> ${p.code||'—'}</div><div><b>Report Date:</b> ${today}</div>
-    <div><b>Total Seams:</b> ${st.seams}</div><div><b>Completion:</b> ${st.p}%</div>
-  </div>
-  <div style="font-size:12px;margin-bottom:16px;display:flex;gap:16px;flex-wrap:wrap;">
-    <span style="color:var(--green)">✓ Accepted: ${st.a}</span>
-    <span style="color:var(--amber)">⬆ Awaiting QC: ${st.o}</span>
-    <span style="color:var(--red)">✗ Rejected: ${st.r}</span>
-    <span style="color:var(--text3)">○ Pending: ${st.t-st.a-st.o-st.r}</span>
+function refreshPrintTags(pid){
+  const el=$('print-tag');if(!el)return;
+  el.innerHTML='<option value="">All Tags</option>'+getTags(pid||$('print-proj').value).map(t=>`<option>${t}</option>`).join('');
+}
+
+function _sigBlock(){
+  return`<table style="width:100%;border-collapse:collapse;margin-top:14px;border-top:1.5px solid #999;">
+    <tr>
+      ${['Production Representative','Quality Engineer (QE)','Client / CTR Representative'].map(role=>`
+      <td style="padding:10px 12px;border:1px solid #ccc;vertical-align:top;width:33%;">
+        <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:26px;">${role}</div>
+        <div style="border-top:1px solid #888;margin-bottom:5px;"></div>
+        <div style="font-size:8px;color:#777;">Name: ____________________________</div>
+        <div style="font-size:8px;color:#777;margin-top:4px;">Date: ___________________________</div>
+      </td>`).join('')}
+    </tr>
+  </table>`;
+}
+
+function _pageHeader(proj,today,tagLabel=''){
+  const logo=_logoDataUrl
+    ?`<img src="${_logoDataUrl}" style="max-height:52px;max-width:140px;object-fit:contain;">`
+    :`<div style="border:2px dashed #bbb;padding:8px 14px;font-size:9px;color:#aaa;border-radius:4px;text-align:center;">COMPANY LOGO</div>`;
+  return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:2.5px solid #1d4ed8;">
+    ${logo}
+    <div style="flex:1;text-align:center;padding:0 10px;">
+      <div style="font-size:20px;font-weight:800;letter-spacing:4px;color:#1d4ed8;">TQIMS</div>
+      <div style="font-size:8px;letter-spacing:2px;color:#555;text-transform:uppercase;">Inspection Traveller</div>
+      ${tagLabel?`<div style="font-size:11px;font-weight:700;color:#1d4ed8;margin-top:2px;">TAG: ${tagLabel}</div>`:''}
+    </div>
+    <div style="text-align:right;font-size:8.5px;color:#555;line-height:1.9;">
+      <div><b>Project:</b> #${proj.number}</div>
+      <div><b>Equipment:</b> ${proj.equipment}</div>
+      <div><b>Code:</b> ${proj.code||'—'}</div>
+      <div><b>Date:</b> ${today}</div>
+    </div>
+  </div>`;
+}
+
+function buildPrintPreview(){
+  const pid=$('print-proj')?.value||DB.projects[0]?.id;
+  const filterTag=$('print-tag')?.value||'';
+  const filterStatus=$('print-status')?.value||'';
+  const p=getProj(pid);
+  if(!p){$('print-preview').innerHTML=empty('Select a project');return;}
+  refreshPrintTags(pid);
+
+  const today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  const allSeams=DB.seams.filter(s=>s.pid===pid);
+  const nT=s=>(s.tag||s.sec||'').trim()||'(untagged)';
+  const nC=s=>(s.comp||s.sec||'').trim()||'(general)';
+  let tags=getTags(pid);
+  if(filterTag) tags=tags.filter(t=>t===filterTag);
+
+  const totSt=allSeams.reduce((a,s)=>a+s.stages.length,0);
+  const donSt=allSeams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
+  const pct=totSt?Math.round(donSt/totSt*100):0;
+
+  // ── Cover page ──
+  let html=`<div id="printable" style="font-family:Arial,sans-serif;font-size:9pt;color:#111;">
+  <div style="page-break-after:always;padding:14px;">
+    ${_pageHeader(p,today)}
+    <!-- Project info grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:9px;margin-bottom:14px;padding:10px 12px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;">
+      <div><b>Project No.:</b> ${p.number}</div><div><b>Equipment:</b> ${p.equipment}</div><div><b>Type:</b> ${p.eqType||'—'}</div>
+      <div><b>Client:</b> ${p.client||'—'}</div><div><b>Process:</b> ${p.process||'—'}</div><div><b>Code/Std:</b> ${p.code||'—'}</div>
+      <div><b>Total Seams:</b> ${allSeams.length}</div><div><b>Total Stages:</b> ${totSt}</div>
+      <div><b>Progress:</b> <span style="font-weight:700;color:#1d4ed8;">${donSt}/${totSt} (${pct}%)</span></div>
+    </div>
+    <!-- Tag summary table -->
+    <table style="width:100%;border-collapse:collapse;font-size:8.5px;margin-bottom:14px;">
+      <thead><tr style="background:#1d4ed8;color:#fff;">
+        <th style="padding:6px 8px;border:1px solid #93c5fd;text-align:left;">Tag Number</th>
+        <th style="padding:6px 8px;border:1px solid #93c5fd;text-align:center;">Seams</th>
+        <th style="padding:6px 8px;border:1px solid #93c5fd;text-align:center;">Total Stages</th>
+        <th style="padding:6px 8px;border:1px solid #93c5fd;text-align:center;">Accepted</th>
+        <th style="padding:6px 8px;border:1px solid #93c5fd;text-align:center;">Balance</th>
+        <th style="padding:6px 8px;border:1px solid #93c5fd;text-align:center;">Progress</th>
+        <th style="padding:6px 8px;border:1px solid #93c5fd;text-align:center;">NCR</th>
+      </tr></thead>
+      <tbody>
+      ${tags.map((tag,ti)=>{
+        const tSeams=allSeams.filter(s=>nT(s)===tag);
+        const tTot=tSeams.reduce((a,s)=>a+s.stages.length,0);
+        const tDon=tSeams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
+        const tPct=tTot?Math.round(tDon/tTot*100):0;
+        const tNcr=tSeams.some(s=>hasNCR(s));
+        return`<tr style="background:${ti%2===0?'#fff':'#f8fafc'};">
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;font-weight:700;color:#1d4ed8;font-family:monospace;">${tag}</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center;">${tSeams.length}</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center;">${tTot}</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center;color:#059669;font-weight:700;">${tDon}</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center;color:#d97706;font-weight:700;">${tTot-tDon}</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:700;color:${tPct===100?'#059669':'#1d4ed8'};">${tPct}%</td>
+          <td style="padding:5px 8px;border:1px solid #e2e8f0;text-align:center;color:#dc2626;">${tNcr?'YES':'—'}</td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>
+    ${_sigBlock()}
   </div>`;
 
-  sections.forEach(sec=>{
-    const seams=getSeams(pid,sec);if(!seams.length)return;
-    html+=`<div style="margin-bottom:18px;">
-      <div style="font-family:'DM Sans',sans-serif;font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue2);border-bottom:1px solid var(--border2);padding-bottom:5px;margin-bottom:10px;">SECTION: ${sec}</div>`;
-    seams.forEach(seam=>{
-      const ss=stageStats(seam);const ncr=hasNCR(seam);
-      html+=`<div style="margin-bottom:12px;border:1px solid var(--border2);overflow:hidden;border-radius:2px;">
-        <div style="background:var(--surf2);padding:8px 12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;">
-          <div>
-            <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--blue2);">${seam.num}${ncr?' <span style="color:var(--red);border:1px solid var(--red);padding:1px 4px;font-size:8px;">NCR</span>':''}</div>
-            <div style="font-size:11px;color:var(--text2);">${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm · WPS: ${seam.wps||'—'}</div>
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--cyan);">${ss.a}/${ss.t} · ${ss.pct}%</div>
-        </div>
-        <table style="width:100%;border-collapse:collapse;font-size:10px;">
-          <thead><tr>
-            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">#</th>
-            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Stage</th>
-            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Status</th>
-            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Offered By / Company</th>
-            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Location</th>
-            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">Inspected By</th>
-            <th style="background:rgba(22,27,34,.8);padding:5px 8px;text-align:left;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:var(--text3);">QE Remarks</th>
-          </tr></thead>
-          <tbody>${seam.stages.map((st,i)=>{
-            const sc=st.status==='accepted'?'var(--green)':st.status==='rejected'?'var(--red)':st.status==='offered'?'var(--amber)':st.status==='returned'?'#79c0ff':'var(--text3)';
-            const stLabel=st.status==='returned'?'RETURNED':st.status.toUpperCase();
-            return`<tr><td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-family:'DM Mono',monospace;">${i+1}</td>
-              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.name}</td>
-              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);color:${sc};font-weight:600;text-transform:uppercase;font-size:9px;">${stLabel}${st.ncrNumber?`<br><span style="color:var(--red);font-size:8px;">NCR: ${st.ncrNumber}</span>`:''}</td>
-              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-size:10px;">${st.offeredBy?st.offeredBy+'<br><span style="color:var(--text3);font-size:9px;">'+st.offeredByCo+'</span><br><span style="color:var(--text3);font-size:9px;">'+st.offeredAt+'</span>':'—'}</td>
-              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.location||'—'}</td>
-              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);font-size:10px;">${st.inspectedBy?st.inspectedBy+'<br><span style="color:var(--text3);font-size:9px;">'+st.inspectedAt+'</span>':'—'}</td>
-              <td style="padding:4px 8px;border-bottom:1px solid rgba(33,38,45,.5);">${st.qeRem||'—'}</td>
-            </tr>`;
-          }).join('')}</tbody>
-        </table></div>`;
+  // ── One section per TAG (can span multiple print pages) ──
+  tags.forEach(tag=>{
+    const tagSeams=allSeams.filter(s=>nT(s)===tag);
+    const visSeams=tagSeams.filter(seam=>{
+      const ss=stageStats(seam);
+      if(filterStatus==='complete') return ss.pct===100;
+      if(filterStatus==='incomplete') return ss.pct<100;
+      return true;
     });
-    html+='</div>';
+    if(!visSeams.length) return;
+
+    // All unique stage names for this tag (preserve definition order)
+    const stageNames=[...new Set(visSeams.flatMap(s=>s.stages.map(st=>st.name)))];
+    const tTot=visSeams.reduce((a,s)=>a+s.stages.length,0);
+    const tDon=visSeams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
+    const tPct=tTot?Math.round(tDon/tTot*100):0;
+
+    html+=`<div style="page-break-before:always;padding:14px;">
+      ${_pageHeader(p,today,tag)}
+
+      <!-- Tag stats bar -->
+      <div style="display:flex;gap:18px;flex-wrap:wrap;padding:7px 12px;background:#eff6ff;border:1px solid #93c5fd;border-radius:6px;font-size:8.5px;margin-bottom:10px;">
+        <span><b>Tag:</b> <span style="font-family:monospace;font-weight:700;color:#1d4ed8;">${tag}</span></span>
+        <span><b>Seams:</b> ${visSeams.length}</span>
+        <span><b>Done:</b> <span style="color:#059669;font-weight:700;">${tDon}/${tTot}</span></span>
+        <span><b>Progress:</b> <span style="font-weight:700;color:#1d4ed8;">${tPct}%</span></span>
+        <span><b>Balance:</b> <span style="color:#d97706;font-weight:700;">${tTot-tDon} stages</span></span>
+      </div>
+
+      <!-- MAIN TABLE: seams = rows, stages = columns -->
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:8px;">
+        <thead>
+          <tr style="background:#1d4ed8;color:#fff;">
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:left;min-width:55px;font-family:monospace;">Seam No.</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:left;min-width:55px;">Component</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:left;min-width:90px;">Description</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:35px;">Type</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:35px;">Mat.</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:32px;">THK</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:38px;">WPS</th>
+            ${stageNames.map(n=>`<th style="padding:4px 3px;border:1px solid #93c5fd;text-align:center;min-width:52px;font-size:7px;white-space:normal;max-width:60px;">${n}</th>`).join('')}
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:32px;">%</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:left;min-width:80px;">NCR / Remarks</th>
+            <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:50px;">Sign</th>
+          </tr>
+        </thead>
+        <tbody>
+        ${visSeams.map((seam,ri)=>{
+          const ss=stageStats(seam);
+          const ncr=hasNCR(seam);
+          const ncrNums=seam.stages.filter(st=>st.ncrNumber).map(st=>st.ncrNumber).join(', ');
+          const allRem=seam.stages.filter(st=>st.qeRem).map(st=>st.qeRem).join('; ');
+          return`<tr style="background:${ri%2===0?'#fff':'#f8fafc'};">
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;font-family:monospace;font-weight:700;color:#1d4ed8;white-space:nowrap;">${seam.num}${ncr?'<span style="color:#dc2626;font-size:6.5px;"> [NCR]</span>':''}</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;font-size:7.5px;">${nC(seam)}</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;font-size:7.5px;">${seam.desc}</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;">${seam.type}</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;">${seam.mat}</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;">${seam.thk}</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;">${seam.wps||'—'}</td>
+            ${stageNames.map(n=>{
+              const st=seam.stages.find(s=>s.name===n);
+              if(!st) return`<td style="padding:3px;border:1px solid #e2e8f0;text-align:center;background:#f1f5f9;color:#94a3b8;font-size:7px;">N/A</td>`;
+              const bgC=st.status==='accepted'?'#f0fdf4':st.status==='rejected'?'#fef2f2':st.status==='offered'?'#fffbeb':st.status==='returned'?'#eff6ff':'#fff';
+              const txtC=st.status==='accepted'?'#059669':st.status==='rejected'?'#dc2626':st.status==='offered'?'#d97706':st.status==='returned'?'#2563eb':'#6b7280';
+              const lbl=st.status==='accepted'?'✓ ACC':st.status==='rejected'?'✗ NCR':st.status==='offered'?'⬆ QC':st.status==='returned'?'↩ RET':'○ PND';
+              const dt=st.inspectedAt||st.offeredAt||'';
+              return`<td style="padding:3px 2px;border:1px solid #e2e8f0;text-align:center;background:${bgC};">
+                <div style="font-weight:700;color:${txtC};font-size:7px;">${lbl}</div>
+                ${dt?`<div style="font-size:6px;color:#94a3b8;margin-top:1px;">${dt.split(',')[0]}</div>`:''}
+              </td>`;
+            }).join('')}
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;font-weight:700;font-size:8px;color:${ss.pct===100?'#059669':'#d97706'};">${ss.pct}%</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;font-size:7px;color:#374151;">${ncrNums||allRem||'—'}</td>
+            <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;font-size:7px;color:#94a3b8;">________</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>
+      </div>
+
+      <!-- Balance summary for this tag -->
+      ${(()=>{
+        const bal=visSeams.flatMap(seam=>seam.stages.filter(st=>st.status!=='accepted').map(st=>({seam,st})));
+        if(!bal.length) return`<div style="margin-top:10px;padding:6px 10px;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;font-size:8.5px;color:#065f46;font-weight:700;">✅ All stages complete for this tag.</div>`;
+        return`<div style="margin-top:12px;">
+          <div style="font-size:8.5px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">⏳ Balance / Pending (${bal.length} stages)</div>
+          <table style="width:100%;border-collapse:collapse;font-size:8px;">
+            <thead><tr style="background:#fef3c7;">
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;font-family:monospace;">Seam No.</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Component</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Pending Stage</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:center;">Status</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">NCR No.</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Remarks</th>
+              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:center;">Expected Date</th>
+            </tr></thead>
+            <tbody>
+            ${bal.map(({seam,st},i)=>{
+              const sc=st.status==='offered'?'#d97706':st.status==='rejected'?'#dc2626':st.status==='returned'?'#2563eb':'#6b7280';
+              const sl=st.status==='offered'?'AWAITING QC':st.status==='rejected'?'NCR/REJECTED':st.status==='returned'?'RETURNED':'PENDING';
+              return`<tr style="background:${i%2===0?'#fff':'#fefce8'};">
+                <td style="padding:3px 6px;border:1px solid #fde68a;font-family:monospace;font-weight:700;color:#1d4ed8;">${seam.num}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;">${nC(seam)}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;font-weight:600;">${st.name}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;text-align:center;color:${sc};font-weight:700;font-size:7.5px;">${sl}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;color:#dc2626;">${st.ncrNumber||'—'}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;">${st.qeRem||'—'}</td>
+                <td style="padding:3px 6px;border:1px solid #fde68a;"></td>
+              </tr>`;
+            }).join('')}
+            </tbody>
+          </table>
+        </div>`;
+      })()}
+
+      ${_sigBlock()}
+    </div>`;
   });
 
-  // Signature block
-  html+=`<div style="margin-top:28px;border-top:1px solid var(--border2);padding-top:18px;">
-    <div style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:18px;">AUTHORIZATIONS & SIGNATURES</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
-      ${['Quality Engineer (QE)','CTR Representative','CPY (Company)'].map(r=>`
-      <div style="border:1px solid var(--border2);padding:14px;">
-        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:36px;">${r}</div>
-        <div style="border-top:1px solid var(--text3);margin-bottom:6px;"></div>
-        <div style="font-size:10px;color:var(--text3);">Name: ________________________</div>
-        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Date: _________________________</div>
-      </div>`).join('')}
-    </div>
-  </div>
-  <div style="margin-top:16px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);border-top:1px solid var(--border2);padding-top:10px;">
-    TQIMS · Quality Inspection Management System · Designed by Ujval Dharawaparmar · Generated: ${today}
+  html+=`<div style="text-align:center;font-size:7px;color:#9ca3af;padding:8px;border-top:1px solid #e5e7eb;margin:8px 0;">
+    TQIMS · Inspection Traveller · Generated: ${today}
   </div></div>`;
 
   $('print-preview').innerHTML=html;
@@ -2668,22 +2981,21 @@ function doPrint(){
   setTimeout(()=>{
     const c=$('printable');if(!c)return;
     const w=window.open('','_blank');
-    w.document.write(`<!DOCTYPE html><html><head><title>TQIMS Report</title>
-    <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Arial,sans-serif;background:#fff;color:#111;padding:12mm;font-size:10pt;}@media print{@page{size:A4;margin:10mm;}body{padding:0;}}</style>
-    </head><body>`);
-    // Write a clean light-theme version
-    const clone=c.innerHTML
-      .replace(/var\(--blue2\)/g,'#1f6feb').replace(/var\(--blue\)/g,'#1f6feb')
-      .replace(/var\(--cyan\)/g,'#0891b2').replace(/var\(--green\)/g,'#059669')
-      .replace(/var\(--red\)/g,'#dc2626').replace(/var\(--amber\)/g,'#d97706')
-      .replace(/var\(--text\)/g,'#111').replace(/var\(--text2\)/g,'#374151')
-      .replace(/var\(--text3\)/g,'#6b7280').replace(/var\(--border2\)/g,'#d1d5db')
-      .replace(/var\(--border\)/g,'#e5e7eb').replace(/var\(--surf2\)/g,'#f3f4f6')
-      .replace(/var\(--surf\)/g,'#fff').replace(/rgba\(22,27,34,\.8\)/g,'#f3f4f6')
-      .replace(/rgba\(33,38,45,.*/g,'#e5e7eb)').replace(/rgba\(22,27,34.*?\)/g,'#f3f4f6');
-    w.document.write(clone);
-    w.document.write('</body></html>');w.document.close();w.focus();
-    setTimeout(()=>w.print(),600);
+    w.document.write(`<!DOCTYPE html><html><head><title>TQIMS Traveller</title>
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0;}
+      body{font-family:Arial,sans-serif;background:#fff;color:#111;font-size:8.5pt;}
+      @media print{
+        @page{size:A4 landscape;margin:8mm;}
+        body{padding:0;}
+        div[style*="page-break-after:always"]{page-break-after:always;}
+        div[style*="page-break-before:always"]{page-break-before:always;}
+      }
+    </style></head><body>`);
+    w.document.write(c.outerHTML);
+    w.document.write('</body></html>');
+    w.document.close();w.focus();
+    setTimeout(()=>w.print(),700);
   },200);
 }
 
@@ -2749,6 +3061,279 @@ function renderBackupPage(){
   `;
   const last=localStorage.getItem('tqims3_last_backup');
   $('last-backup-time').textContent=last?`Last backup: ${last}`:'No backup taken yet on this device';
+}
+
+// ══════════════════════════════════════════════════════════════
+// GROUP OFFER (Production) — offer one stage type across many seams
+// ══════════════════════════════════════════════════════════════
+function openGroupOffer(){
+  // Populate projects
+  $('go-proj').innerHTML=DB.projects.map(p=>`<option value="${p.id}">#${p.number} — ${p.equipment}</option>`).join('');
+  // Pre-select from inspection filter
+  const pid=$('insp-proj')?.value; if(pid) $('go-proj').value=pid;
+  goRefreshTags();
+  const tag=$('insp-tag')?.value; if(tag) $('go-tag').value=tag;
+  // Stage types from templates + existing seam stages
+  const names=new Set();
+  DB.templates.forEach(t=>t.stages.forEach(s=>names.add(s)));
+  DB.seams.forEach(s=>s.stages.forEach(st=>names.add(st.name)));
+  $('go-stage').innerHTML='<option value="">— Select Stage to Offer —</option>'+[...names].map(n=>`<option>${n}</option>`).join('');
+  goRefreshSeams();
+  openModal('m-group-offer');
+}
+function goRefreshTags(){
+  const pid=$('go-proj').value;
+  $('go-tag').innerHTML='<option value="">All Tags</option>'+getTags(pid).map(t=>`<option>${t}</option>`).join('');
+  goRefreshSeams();
+}
+function goRefreshSeams(){
+  const pid=$('go-proj').value;
+  const tag=$('go-tag').value;
+  const stageName=$('go-stage').value;
+  const listEl=$('go-list');
+  if(!stageName){listEl.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px;">Select a Stage Type above to see eligible seams.</div>';return;}
+  const nT=s=>(s.tag||s.sec||'').trim()||'(untagged)';
+  const nC=s=>(s.comp||s.sec||'').trim()||'(general)';
+  let seams=DB.seams.filter(s=>s.pid===pid);
+  if(tag) seams=seams.filter(s=>nT(s)===tag);
+  // Find eligible: stage exists, status pending or returned, stage unlocked
+  const eligible=[];
+  seams.forEach(seam=>{
+    seam.stages.forEach((st,i)=>{
+      if(st.name!==stageName) return;
+      if(st.status!=='pending'&&st.status!=='returned') return;
+      if(i>0 && seam.stages[i-1].status!=='accepted') return; // locked
+      eligible.push({seam,st,stIdx:i});
+    });
+  });
+  if(!eligible.length){listEl.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No eligible seams — all are locked, already offered/accepted, or this stage is not defined on any seam.</div>';return;}
+  listEl.innerHTML=`<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">${eligible.length} seam${eligible.length!==1?'s':''} eligible for "${stageName}"</div>
+  <div style="display:flex;flex-direction:column;gap:5px;">
+  ${eligible.map(({seam,st,stIdx})=>`
+    <label style="display:flex;align-items:center;gap:12px;padding:9px 14px;background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--blue2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <input type="checkbox" class="go-cb" data-sid="${seam.id}" data-idx="${stIdx}" checked style="width:16px;height:16px;accent-color:var(--blue2);flex-shrink:0;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--blue2);">${seam.num}</span>
+          <span style="font-size:10px;color:var(--text3);">${nT(seam)} › ${nC(seam)}</span>
+          ${st.status==='returned'?'<span class="chip ch-ret" style="font-size:9px;padding:2px 6px;">Returned</span>':''}
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;">${seam.desc} · ${seam.type} · ${seam.mat} · ${seam.thk}mm</div>
+      </div>
+    </label>`).join('')}
+  </div>`;
+}
+function goSelectAll(v){document.querySelectorAll('.go-cb').forEach(cb=>cb.checked=v);}
+function confirmGroupOffer(){
+  const stageName=$('go-stage').value;
+  if(!stageName){toast('Please select a Stage Type','err');return;}
+  const cbs=[...document.querySelectorAll('.go-cb:checked')];
+  if(!cbs.length){toast('No seams selected','err');return;}
+  const loc=$('go-loc').value.trim(), drw=$('go-drw').value.trim(), rem=$('go-rem').value.trim();
+  let count=0;
+  cbs.forEach(cb=>{
+    const seam=getSeam(cb.dataset.sid), idx=+cb.dataset.idx;
+    if(!seam||isNaN(idx))return;
+    const st=seam.stages[idx]; if(!st)return;
+    st.status='offered'; st.offeredBy=CU.name; st.offeredByMob=CU.mob; st.offeredByCo=CU.co;
+    st.offeredAt=now(); st.location=loc; st.drawing=drw; st.prodRem=rem;
+    st.inspectedBy=''; st.inspectedAt=''; st.qeRem='';
+    log(`📤 GROUP OFFERED — ${seam.num} · ${st.name}${loc?' 📍'+loc:''} by ${CU.name}`);
+    count++;
+  });
+  save(); closeModal('m-group-offer'); refreshCurrentView();
+  toast(`✓ ${count} stage${count!==1?'s':''} offered to QC`,'ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// GROUP INSPECT (Quality) — clear multiple offered stages at once
+// ══════════════════════════════════════════════════════════════
+function openGroupInspect(){
+  $('gi-proj').innerHTML=DB.projects.map(p=>`<option value="${p.id}">#${p.number} — ${p.equipment}</option>`).join('');
+  const pid=$('insp-proj')?.value; if(pid) $('gi-proj').value=pid;
+  giRefreshTags();
+  const tag=$('insp-tag')?.value; if(tag) $('gi-tag').value=tag;
+  // Offered stage names for filter
+  const names=new Set();
+  DB.seams.forEach(s=>s.stages.filter(st=>st.status==='offered').forEach(st=>names.add(st.name)));
+  $('gi-stage').innerHTML='<option value="">All Offered Stages</option>'+[...names].map(n=>`<option>${n}</option>`).join('');
+  giRefreshSeams();
+  openModal('m-group-inspect');
+}
+function giRefreshTags(){
+  const pid=$('gi-proj').value;
+  $('gi-tag').innerHTML='<option value="">All Tags</option>'+getTags(pid).map(t=>`<option>${t}</option>`).join('');
+  giRefreshSeams();
+}
+function giRefreshSeams(){
+  const pid=$('gi-proj').value;
+  const tag=$('gi-tag').value;
+  const stageName=$('gi-stage').value;
+  const nT=s=>(s.tag||s.sec||'').trim()||'(untagged)';
+  const nC=s=>(s.comp||s.sec||'').trim()||'(general)';
+  let seams=DB.seams.filter(s=>(!pid||s.pid===pid));
+  if(tag) seams=seams.filter(s=>nT(s)===tag);
+  const eligible=[];
+  seams.forEach(seam=>{
+    seam.stages.forEach((st,i)=>{
+      if(st.status!=='offered') return;
+      if(stageName&&st.name!==stageName) return;
+      eligible.push({seam,st,stIdx:i});
+    });
+  });
+  const listEl=$('gi-list');
+  if(!eligible.length){listEl.innerHTML='<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No offered stages found for current filter.</div>';return;}
+  listEl.innerHTML=`<div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;">${eligible.length} offered stage${eligible.length!==1?'s':''}</div>
+  <div style="display:flex;flex-direction:column;gap:5px;">
+  ${eligible.map(({seam,st,stIdx})=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;">
+      <input type="checkbox" class="gi-cb" data-sid="${seam.id}" data-idx="${stIdx}" checked style="width:16px;height:16px;accent-color:var(--green);flex-shrink:0;">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:var(--blue2);">${seam.num}</span>
+          <span class="chip ch-off" style="font-size:9px;padding:2px 6px;">${st.name}</span>
+          <span style="font-size:10px;color:var(--text3);">${nT(seam)} › ${nC(seam)}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;">Offered by ${st.offeredBy||'?'} · ${st.offeredAt||''}${st.location?' · 📍'+st.location:''}</div>
+      </div>
+      <select class="gi-act" data-sid="${seam.id}" data-idx="${stIdx}" style="padding:5px 8px;font-size:12px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;flex-shrink:0;">
+        <option value="accepted">✓ Accept</option>
+        <option value="returned">↩ Return</option>
+      </select>
+    </div>`).join('')}
+  </div>`;
+}
+function giSelectAll(v){document.querySelectorAll('.gi-cb').forEach(cb=>cb.checked=v);}
+function confirmGroupInspect(){
+  const cbs=[...document.querySelectorAll('.gi-cb:checked')];
+  if(!cbs.length){toast('No stages selected','err');return;}
+  const bulk=$('gi-bulk').value, rem=$('gi-rem').value.trim();
+  let count=0;
+  cbs.forEach(cb=>{
+    const seam=getSeam(cb.dataset.sid), idx=+cb.dataset.idx;
+    if(!seam||isNaN(idx))return;
+    const st=seam.stages[idx]; if(!st||st.status!=='offered')return;
+    const act=bulk||(document.querySelector(`.gi-act[data-sid="${seam.id}"][data-idx="${idx}"]`)?.value)||'accepted';
+    st.status=act; st.inspectedBy=CU.name; st.inspectedAt=now(); st.qeRem=rem;
+    if(act==='returned') st.ncrNumber='';
+    log(`${act==='accepted'?'✅':'↩'} GROUP ${act.toUpperCase()} — ${seam.num} · ${st.name} by ${CU.name}${rem?' — '+rem:''}`);
+    count++;
+  });
+  save(); closeModal('m-group-inspect'); refreshCurrentView();
+  toast(`✓ ${count} stage${count!==1?'s':''} cleared`,'ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// EXCEL EXPORT & CSV IMPORT (historical data)
+// ══════════════════════════════════════════════════════════════
+function exportExcel(){
+  const pid=$('xl-proj')?.value||DB.projects[0]?.id;
+  const proj=getProj(pid); if(!proj){toast('Select a project','err');return;}
+  const seams=DB.seams.filter(s=>s.pid===pid);
+  if(!seams.length){toast('No seams in this project','err');return;}
+  // All unique stage names in order
+  const stageOrder=[...new Set(seams.flatMap(s=>s.stages.map(st=>st.name)))];
+  const esc=v=>{const s=String(v??'');return(s.includes(',')||s.includes('"')||s.includes('\n'))?`"${s.replace(/"/g,'""')}"`:s;};
+  const nT=s=>(s.tag||s.sec||'').trim()||'';
+  const nC=s=>(s.comp||s.sec||'').trim()||'';
+  // Build header
+  const fixedHdr=['Project','Tag No.','Component','Seam No.','Description','Type','Material','Thickness(mm)','WPS'];
+  const stageHdr=stageOrder.flatMap(n=>[`${n}|Status`,`${n}|OfferedBy`,`${n}|OfferedDate`,`${n}|InspectedBy`,`${n}|InspectedDate`,`${n}|NCR_No`,`${n}|Remarks`]);
+  const rows=[[...fixedHdr,...stageHdr].map(esc).join(',')];
+  // INSTRUCTIONS row
+  rows.push(['"[Fill Status column: accepted / rejected / returned — leave blank to skip]"'].concat(Array(fixedHdr.length+stageHdr.length-1).fill('')).join(','));
+  seams.forEach(seam=>{
+    const row=[proj.number,nT(seam),nC(seam),seam.num,seam.desc,seam.type,seam.mat,seam.thk,seam.wps||''];
+    stageOrder.forEach(n=>{
+      const st=seam.stages.find(st=>st.name===n);
+      if(st){row.push(st.status||'pending',st.offeredBy||'',st.offeredAt||'',st.inspectedBy||'',st.inspectedAt||'',st.ncrNumber||'',st.qeRem||st.prodRem||'');}
+      else{row.push('N/A','','','','','','');}
+    });
+    rows.push(row.map(esc).join(','));
+  });
+  const bom='\uFEFF';
+  const blob=new Blob([bom+rows.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const ts=new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
+  a.href=url; a.download=`TQIMS-${proj.number}-${ts}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  log(`📊 EXCEL EXPORTED — Project #${proj.number} by ${CU.name}`); save();
+  toast('✓ CSV downloaded — open in Excel, fill Status column, re-import','ok');
+}
+
+function importExcel(input){
+  const file=input.files[0]; if(!file)return;
+  const tsVal=$('xl-ts').value;
+  const by=$('xl-by').value.trim()||CU.name;
+  const msgEl=$('xl-msg');
+  msgEl.innerHTML='<div class="msg" style="color:var(--text3);">Reading file…</div>';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      let text=e.target.result;
+      if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+      const lines=text.split(/\r?\n/).filter(l=>l.trim());
+      if(lines.length<2){msgEl.innerHTML='<div class="msg msg-err">File appears empty.</div>';return;}
+      // CSV parser
+      const parseRow=line=>{
+        const cells=[];let cur='';let inQ=false;
+        for(let i=0;i<line.length;i++){
+          const ch=line[i];
+          if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+          else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}
+          else cur+=ch;
+        }
+        cells.push(cur.trim()); return cells;
+      };
+      const headers=parseRow(lines[0]);
+      // Map "StageName|Status" header col → stage name
+      const stageCols={};
+      headers.forEach((h,i)=>{
+        const m=h.match(/^(.+)\|Status$/i);
+        if(m) stageCols[m[1].trim()]=i;
+      });
+      if(!Object.keys(stageCols).length){
+        msgEl.innerHTML='<div class="msg msg-err">❌ No stage columns found. Export from TQIMS first and do not rename headers.</div>';return;
+      }
+      const importTime=tsVal?new Date(tsVal).toLocaleString('en-IN'):now();
+      let updated=0,notFound=0,skipped=0;
+      for(let r=1;r<lines.length;r++){
+        const row=parseRow(lines[r]);
+        const seamNum=(row[3]||'').trim();
+        if(!seamNum||seamNum.startsWith('['))continue;
+        const projNum=(row[0]||'').trim();
+        const seam=DB.seams.find(s=>{
+          const pp=getProj(s.pid);
+          return s.num===seamNum&&(!projNum||pp?.number===projNum);
+        });
+        if(!seam){notFound++;continue;}
+        let rowUpdated=false;
+        Object.entries(stageCols).forEach(([stageName,sCol])=>{
+          const sv=(row[sCol]||'').trim().toLowerCase();
+          if(!sv||sv==='pending'||sv==='n/a'||sv==='offered')return;
+          if(!['accepted','rejected','returned'].includes(sv))return;
+          const st=seam.stages.find(s=>s.name===stageName);
+          if(!st)return;
+          // Don't overwrite already-accepted unless explicit
+          st.status=sv;
+          st.offeredBy=row[sCol+1]||by; st.offeredByCo='Historical'; st.offeredAt=row[sCol+2]||importTime;
+          st.inspectedBy=row[sCol+3]||by; st.inspectedAt=row[sCol+4]||importTime;
+          st.ncrNumber=row[sCol+5]||''; st.qeRem=row[sCol+6]||'Historical import';
+          updated++; rowUpdated=true;
+        });
+        if(!rowUpdated) skipped++;
+      }
+      save();
+      msgEl.innerHTML=`<div class="msg msg-ok">✓ Import complete — <strong>${updated}</strong> stage${updated!==1?'s':''} updated${notFound?' · '+notFound+' seam(s) not found in TQIMS':''}${skipped?' · '+skipped+' rows unchanged':''}.</div>`;
+      log(`📥 CSV IMPORT — ${updated} stages updated by ${CU.name}`); save();
+      refreshCurrentView(); toast(`✓ ${updated} stages imported`,'ok');
+    }catch(err){
+      msgEl.innerHTML=`<div class="msg msg-err">❌ Error: ${err.message}</div>`;
+    }
+    input.value='';
+  };
+  reader.readAsText(file,'UTF-8');
 }
 
 function exportBackup(){
