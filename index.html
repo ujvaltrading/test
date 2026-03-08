@@ -2916,9 +2916,14 @@ function buildPrintPreview(){
               const txtC=st.status==='accepted'?'#059669':st.status==='rejected'?'#dc2626':st.status==='offered'?'#d97706':st.status==='returned'?'#2563eb':'#6b7280';
               const lbl=st.status==='accepted'?'✓ ACC':st.status==='rejected'?'✗ NCR':st.status==='offered'?'⬆ QC':st.status==='returned'?'↩ RET':'○ PND';
               const dt=st.inspectedAt||st.offeredAt||'';
+              // Show full date + time for each stage cell
+              const dtParts=dt?dt.split(', '):'';
+              const dtDate=dtParts&&dtParts.length>=1?dtParts[0]:'';
+              const dtTime=dtParts&&dtParts.length>=2?dtParts[1]:'';
               return`<td style="padding:3px 2px;border:1px solid #e2e8f0;text-align:center;background:${bgC};">
                 <div style="font-weight:700;color:${txtC};font-size:7px;">${lbl}</div>
-                ${dt?`<div style="font-size:6px;color:#94a3b8;margin-top:1px;">${dt.split(',')[0]}</div>`:''}
+                ${dtDate?`<div style="font-size:6px;color:#64748b;margin-top:1px;font-weight:600;">${dtDate}</div>`:''}
+                ${dtTime?`<div style="font-size:6px;color:#94a3b8;margin-top:1px;">${dtTime}</div>`:''}
               </td>`;
             }).join('')}
             <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;font-weight:700;font-size:8px;color:${ss.pct===100?'#059669':'#d97706'};">${ss.pct}%</td>
@@ -2930,40 +2935,7 @@ function buildPrintPreview(){
       </table>
       </div>
 
-      <!-- Balance summary for this tag -->
-      ${(()=>{
-        const bal=visSeams.flatMap(seam=>seam.stages.filter(st=>st.status!=='accepted').map(st=>({seam,st})));
-        if(!bal.length) return`<div style="margin-top:10px;padding:6px 10px;background:#f0fdf4;border:1px solid #86efac;border-radius:4px;font-size:8.5px;color:#065f46;font-weight:700;">✅ All stages complete for this tag.</div>`;
-        return`<div style="margin-top:12px;">
-          <div style="font-size:8.5px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;">⏳ Balance / Pending (${bal.length} stages)</div>
-          <table style="width:100%;border-collapse:collapse;font-size:8px;">
-            <thead><tr style="background:#fef3c7;">
-              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;font-family:monospace;">Seam No.</th>
-              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Component</th>
-              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Pending Stage</th>
-              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:center;">Status</th>
-              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">NCR No.</th>
-              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:left;">Remarks</th>
-              <th style="padding:4px 6px;border:1px solid #fde68a;text-align:center;">Expected Date</th>
-            </tr></thead>
-            <tbody>
-            ${bal.map(({seam,st},i)=>{
-              const sc=st.status==='offered'?'#d97706':st.status==='rejected'?'#dc2626':st.status==='returned'?'#2563eb':'#6b7280';
-              const sl=st.status==='offered'?'AWAITING QC':st.status==='rejected'?'NCR/REJECTED':st.status==='returned'?'RETURNED':'PENDING';
-              return`<tr style="background:${i%2===0?'#fff':'#fefce8'};">
-                <td style="padding:3px 6px;border:1px solid #fde68a;font-family:monospace;font-weight:700;color:#1d4ed8;">${seam.num}</td>
-                <td style="padding:3px 6px;border:1px solid #fde68a;">${nC(seam)}</td>
-                <td style="padding:3px 6px;border:1px solid #fde68a;font-weight:600;">${st.name}</td>
-                <td style="padding:3px 6px;border:1px solid #fde68a;text-align:center;color:${sc};font-weight:700;font-size:7.5px;">${sl}</td>
-                <td style="padding:3px 6px;border:1px solid #fde68a;color:#dc2626;">${st.ncrNumber||'—'}</td>
-                <td style="padding:3px 6px;border:1px solid #fde68a;">${st.qeRem||'—'}</td>
-                <td style="padding:3px 6px;border:1px solid #fde68a;"></td>
-              </tr>`;
-            }).join('')}
-            </tbody>
-          </table>
-        </div>`;
-      })()}
+      <!-- Balance summary inline in main table above; no separate section needed -->
 
       ${_sigBlock()}
     </div>`;
@@ -3383,13 +3355,31 @@ function importBackup(input){
 }
 
 function resetAllData(){
-  if(!confirm('⚠ This will DELETE ALL DATA and reset to defaults.\n\nAre you absolutely sure?'))return;
-  if(!confirm('FINAL WARNING: All seams, inspection records, users and logs will be lost. Continue?'))return;
-  localStorage.removeItem('tqims3');
-  DB=defaultDB();save();
-  log(`🔄 SYSTEM RESET TO DEFAULTS by ${CU.name}`);save();
-  populateSelects();renderBackupPage();renderDashboard();
-  toast('System reset to defaults');
+  if(CU && CU.role==='manager'){
+    // Manager can approve their own reset request directly
+    if(!confirm('⚠ This will DELETE ALL DATA and reset to defaults.\n\nAre you absolutely sure?'))return;
+    if(!confirm('FINAL WARNING: All seams, inspection records, users and logs will be lost. Continue?'))return;
+    localStorage.removeItem('tqims3');
+    DB=defaultDB();save();
+    log(`🔄 SYSTEM RESET TO DEFAULTS by ${CU.name}`);save();
+    populateSelects();renderBackupPage();renderDashboard();
+    toast('System reset to defaults');
+  } else {
+    // Non-manager roles must submit for Manager approval
+    if(!confirm('⚠ Reset to Defaults requires Manager approval.\n\nYour request will be sent to the Manager. Continue?'))return;
+    DB.pendingActions.push({
+      id:'pa'+Date.now(),
+      type:'reset_defaults',
+      data:{requestedBy:CU.name,requestedAt:now()},
+      requestedBy:CU.name,
+      requestedAt:now(),
+      desc:`🔄 RESET TO DEFAULTS requested by ${CU.name} (${CU.role}) — Will erase all data`
+    });
+    log(`🔄 RESET REQUEST PENDING — Reset to defaults requested by ${CU.name} (${CU.co}) — Awaiting Manager Approval`);
+    save();
+    updateApprovalBadge();
+    toast('Reset request sent to Manager for approval','ok');
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3454,6 +3444,7 @@ function renderApprovals(){
               a.type==='add_proj'?`<span class="chip ch-off" style="font-size:8px;">NEW PROJECT</span>`:
               a.type==='edit_proj'?`<span class="chip ch-off" style="font-size:8px;">EDIT PROJECT</span>`:
               a.type==='ncr_reoffer'?`<span class="chip ch-ncr" style="font-size:8px;">🔴 NCR RE-OFFER</span>`:
+              a.type==='reset_defaults'?`<span class="chip ch-rej" style="font-size:8px;">⚠️ RESET TO DEFAULTS</span>`:
               `<span class="chip ch-rej" style="font-size:8px;">DELETE PROJECT</span>`}
           </div>
         </div>
@@ -3479,6 +3470,16 @@ function approveAction(id){
   }
   else if(a.type==='edit_proj'){const p=getProj(a.data.id);if(p){Object.assign(p,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='del_proj'){DB.projects=DB.projects.filter(p=>p.id!==a.data.id);DB.seams=DB.seams.filter(s=>s.pid!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
+  else if(a.type==='reset_defaults'){
+    localStorage.removeItem('tqims3');
+    DB=defaultDB();save();
+    log(`🔄 SYSTEM RESET TO DEFAULTS — approved by ${CU.name} (requested by ${a.requestedBy})`);save();
+    populateSelects();renderBackupPage();renderDashboard();
+    DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+    save();renderApprovals();updateApprovalBadge();updateBadge();
+    toast('System reset to defaults','ok');
+    return;
+  }
   else if(a.type==='ncr_reoffer'){
     const d=a.data;
     const seam=getSeam(d.seamId);
