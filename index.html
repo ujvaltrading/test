@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1d4ed8">
 <title>TQIMS — Quality Inspection Management System</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -51,6 +55,17 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+*{box-sizing:border-box;}
+/* Touch friendly — minimum 44px tap targets, no 300ms delay */
+button,select,input,textarea,a{touch-action:manipulation;}
+/* Prevent iOS zoom on input focus */
+input,select,textarea{font-size:16px;}
+@media(min-width:721px){input,select,textarea{font-size:14px;}}
+/* Smooth scroll everywhere */
+html{scroll-behavior:smooth;}
+/* Safe area padding for notched phones */
+.topbar{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));}
+.main{padding-bottom:max(24px,env(safe-area-inset-bottom));}
 
 /* ── SCREENS ── */
 .scr{display:none;}
@@ -276,25 +291,92 @@ tr:hover td{background:var(--surf2);}
 
 /* ── RESPONSIVE ── */
 @media(max-width:720px){
+  /* ── Layout ── */
   .ham{display:block;}
-  .sidebar{position:fixed;top:56px;left:0;height:calc(100vh - 56px);z-index:300;transform:translateX(-100%);width:250px;box-shadow:var(--shadow-lg);}
+  .sidebar{position:fixed;top:56px;left:0;height:calc(100vh - 56px);z-index:300;transform:translateX(-100%);width:260px;box-shadow:var(--shadow-lg);}
   .sidebar.open{transform:translateX(0);}
   .sov.on{display:block;}
-  .main{padding:14px;}
+  .main{padding:10px;}
+
+  /* ── Grids collapse to single column ── */
   .grid2{grid-template-columns:1fr;}
+  .grid2 .span2{grid-column:1;}
   .seam-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+  .tag-grid{grid-template-columns:1fr 1fr;}
+  .comp-grid{grid-template-columns:1fr 1fr;}
+  .proj-cards{grid-template-columns:1fr;}
+
+  /* ── Tables — hide non-essential columns ── */
   .tb-user{display:none;}
   .profile-grid{grid-template-columns:1fr;}
-  /* Group inspect card — on mobile stack checkbox+info above dropdown */
+
+  /* ── Cards ── */
+  .card{border-radius:10px;padding:14px;}
+  .chead{flex-wrap:wrap;gap:8px;}
+
+  /* ── Modals — full screen on mobile ── */
+  .modal{width:100%!important;max-width:100%!important;border-radius:0!important;max-height:100dvh!important;margin:0!important;}
+  .mbg{align-items:flex-end!important;}
+  .mbody{max-height:65dvh;overflow-y:auto;}
+
+  /* ── Stage rows — stack actions below info ── */
+  .stage-row{flex-direction:column;gap:8px;align-items:stretch;}
+  .sr-num{min-width:auto;align-self:flex-start;}
+  .sr-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .sr-actions .chip{font-size:10px;}
+  .abtn{padding:8px 14px!important;font-size:12px!important;}
+
+  /* ── Group inspect card ── */
   #gi-list [style*="grid-template-columns:28px 1fr auto"]{
     grid-template-columns:28px 1fr;
     grid-template-rows:auto auto;
   }
   #gi-list [style*="grid-template-columns:28px 1fr auto"] select.gi-act{
     grid-column:1 / -1;
-    min-width:0;
-    width:100%;
+    min-width:0;width:100%;
   }
+
+  /* ── Print page controls ── */
+  .print-controls{flex-direction:column!important;gap:8px!important;}
+  .print-controls select,.print-controls button{width:100%!important;}
+
+  /* ── Buttons in header / page header ── */
+  .pgh{flex-direction:column;align-items:flex-start;gap:6px;}
+  .btn{font-size:13px;padding:10px 14px;}
+
+  /* ── Offer modal RT/UT fields ── */
+  #of-rtut-fields .grid2{grid-template-columns:1fr;}
+
+  /* ── Print modals ── */
+  #m-print-modal > div > div:first-child,
+  #m-rtut-modal > div > div:first-child{
+    flex-wrap:wrap;gap:8px;padding:10px 12px;
+  }
+  #m-print-modal > div > div:first-child button,
+  #m-rtut-modal > div > div:first-child button{
+    font-size:12px!important;padding:7px 12px!important;
+  }
+
+  /* ── Seam detail header ── */
+  .sdh-inner{flex-direction:column;gap:6px;}
+
+  /* ── Breadcrumb ── */
+  .breadcrumb{font-size:12px;padding:6px 10px;}
+
+  /* ── ITP catalog list ── */
+  #ns-catalog-list{grid-template-columns:1fr!important;}
+
+  /* ── Topbar ── */
+  .topbar{padding:0 12px;gap:8px;}
+  .topbar .btn{padding:6px 10px;font-size:12px;}
+}
+
+/* Tablets */
+@media(max-width:1024px) and (min-width:721px){
+  .main{padding:16px;}
+  .grid2{grid-template-columns:1fr 1fr;}
+  .proj-cards{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
+  .tag-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
 }
 
 /* ── BREADCRUMB ── */
@@ -338,6 +420,16 @@ tr:hover td{background:var(--surf2);}
 .sdh-caret.open{background:var(--blue-lt);border-color:var(--blue2);color:var(--blue2);transform:rotate(90deg);}
 .stages-body{overflow:hidden;transition:max-height .28s ease-out;max-height:0;}
 .stages-body.open{max-height:6000px;transition:max-height .38s ease-in;}
+/* ── PRINT FRAME — always in DOM, only visible during print ── */
+#print-frame{display:none;}
+@media print{
+  /* Hide everything except the print frame */
+  body > *{display:none!important;}
+  #print-frame{display:block!important;position:fixed;inset:0;background:#fff;z-index:99999;}
+  #print-frame.landscape{writing-mode:horizontal-tb;}
+}
+@page .landscape{size:A4 landscape;margin:8mm;}
+@page .portrait{size:A4 portrait;margin:10mm;}
 </style>
 </head>
 <body>
@@ -635,46 +727,51 @@ tr:hover td{background:var(--surf2);}
               <div><label class="lbl">Seam / Joint Number <span style="color:var(--red);">*</span></label><input id="ns-num" placeholder="e.g. CS-101, LS-205"></div>
               <div><label class="lbl">Description <span style="color:var(--red);">*</span></label><input id="ns-desc" placeholder="e.g. Shell Circ. Seam No.1"></div>
               <div><label class="lbl">Joint Type</label>
-                <select id="ns-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select>
+                <select id="ns-type"><option>Groove</option><option>Fillet</option><option>Shield Run</option><option>Weld Overlay</option><option>TTJ</option></select>
               </div>
               <div><label class="lbl">Material</label><input id="ns-mat" placeholder="SA516 Gr.70"></div>
               <div><label class="lbl">Thickness (mm)</label><input id="ns-thk" placeholder="20"></div>
               <div><label class="lbl">WPS No.</label><input id="ns-wps" placeholder="WPS-001"></div>
             </div>
-            <!-- ITP Reference fields -->
+            <!-- ITP Doc No. only — Table/Clause/Seq are per-stage and entered at time of offering -->
             <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--border2);">
-              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">ITP / Test Plan Reference <span style="font-weight:400;color:var(--text4);">(optional — tracks stage sequence in Inspection Test Plan)</span></div>
-              <div class="grid2" style="gap:10px;">
-                <div>
-                  <label class="lbl">ITP Table No. <span style="color:var(--text3);font-weight:400;">(enter manually)</span></label>
-                  <input id="ns-itp-table" placeholder="e.g. Table-3, Annex-B, Clause 5.2">
-                </div>
-                <div>
-                  <label class="lbl">ITP Group <span style="color:var(--text3);font-weight:400;">(A – Z)</span></label>
-                  <select id="ns-itp-group">
-                    <option value="">— Select Group —</option>
-                    ${Array.from({length:26},(_,i)=>String.fromCharCode(65+i)).map(l=>`<option value="${l}">${l}</option>`).join('')}
-                  </select>
-                </div>
-                <div>
-                  <label class="lbl">Stage Seq. No. <span style="color:var(--text3);font-weight:400;">(enter manually)</span></label>
-                  <input id="ns-itp-seq" placeholder="e.g. 1, 2, 3 …" type="text" inputmode="numeric">
-                </div>
-                <div>
-                  <label class="lbl">ITP Document No. <span style="color:var(--text3);font-weight:400;">(for this Tag)</span></label>
-                  <input id="ns-itp-doc" placeholder="e.g. ITP-2024-001">
-                </div>
+              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">ITP Document Reference <span style="font-weight:400;color:var(--text4);">(optional)</span></div>
+              <div style="max-width:400px;">
+                <label class="lbl">ITP Document No. <span style="color:var(--text3);font-weight:400;">(for this Tag — e.g. ITP-2024-001)</span></label>
+                <input id="ns-itp-doc" placeholder="e.g. ITP-2024-001">
+                <div style="font-size:11px;color:var(--text3);margin-top:5px;">💡 ITP Table No., Annexure and Clause are entered <strong>per stage</strong> at the time of offering — each stage has its own reference.</div>
               </div>
             </div>
           </div>
 
           <!-- Step 3: Stages -->
           <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
-            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 3 — Inspection Stage Template</div>
-            <div>
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 3 — Inspection Stage Configuration</div>
+            <div style="margin-bottom:12px;">
+              <label class="lbl">Stage Source</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:7px 12px;border:1.5px solid var(--border2);border-radius:7px;background:var(--surf);">
+                  <input type="radio" name="ns-stage-src" value="template" checked onchange="nsStageSourceChange()" style="accent-color:var(--blue2);"> Use Template
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;padding:7px 12px;border:1.5px solid var(--border2);border-radius:7px;background:var(--surf);">
+                  <input type="radio" name="ns-stage-src" value="catalog" onchange="nsStageSourceChange()" style="accent-color:var(--blue2);"> Pick from ITP Catalog
+                </label>
+              </div>
+            </div>
+            <!-- Template picker -->
+            <div id="ns-tmpl-wrap">
               <label class="lbl">Stage Template <span style="color:var(--text3);font-weight:400;">(auto-assigned — customise after approval)</span></label>
               <select id="ns-tmpl" style="max-width:400px;"></select>
               <div style="font-size:12px;color:var(--text3);margin-top:6px;">💡 Use <strong>⚙ STAGES</strong> button in the seam table to customise stages per seam after approval.</div>
+            </div>
+            <!-- ITP Catalog picker -->
+            <div id="ns-catalog-wrap" style="display:none;">
+              <div style="font-size:12px;color:var(--text3);margin-bottom:8px;">Select the ITP stages applicable for this seam. Stages in the same Parallel Group (∥) can be offered simultaneously.</div>
+              <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+                <button type="button" onclick="nsSelectAllCatalog(true)" style="font-size:11px;padding:4px 10px;border:1.5px solid var(--border2);background:var(--surf);border-radius:6px;cursor:pointer;color:var(--blue2);font-weight:600;">☑ All</button>
+                <button type="button" onclick="nsSelectAllCatalog(false)" style="font-size:11px;padding:4px 10px;border:1.5px solid var(--border2);background:var(--surf);border-radius:6px;cursor:pointer;color:var(--text3);font-weight:600;">☐ None</button>
+              </div>
+              <div id="ns-catalog-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px;max-height:320px;overflow-y:auto;padding:2px;"></div>
             </div>
           </div>
 
@@ -766,7 +863,7 @@ tr:hover td{background:var(--surf2);}
       <div class="pg" id="pg-summary">
         <div class="pgh"><div class="pgt">Inspection Traveller</div><div class="pgs">Horizontal stages · seams vertical · logo · signature on every page</div></div>
         <div class="card">
-          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+          <div class="print-controls" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
             <div style="flex:1;min-width:170px;">
               <label class="lbl">Project</label>
               <select id="print-proj" onchange="onPrintProjChange()" style="width:100%;padding:8px 10px;font-size:13px;font-weight:600;background:var(--surf2);border:1.5px solid var(--border2);color:var(--blue2);border-radius:7px;"></select>
@@ -784,6 +881,10 @@ tr:hover td{background:var(--surf2);}
                 <option value="incomplete">Incomplete Only</option>
                 <option value="complete">Completed Only</option>
               </select>
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label class="lbl">Company Name (for print)</label>
+              <input id="print-company" placeholder="e.g. ABC Engineering Pvt. Ltd." oninput="buildPrintPreview()" style="width:100%;padding:8px 10px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
             </div>
             <div style="flex:1;min-width:160px;">
               <label class="lbl">Company Logo (for print)</label>
@@ -939,14 +1040,116 @@ tr:hover td{background:var(--surf2);}
 
 <!-- Offer Modal -->
 <div class="mbg" id="m-offer">
-  <div class="modal">
+  <div class="modal" style="max-width:640px;">
     <div class="mhead"><div class="mtitle">📤 Offer for Inspection</div><button class="mclose" onclick="closeModal('m-offer')">✕</button></div>
     <div class="mbody">
       <div id="offer-info"></div>
-      <div class="grid2" style="margin-top:14px;">
+      <!-- Standard fields -->
+      <div class="grid2" style="margin-top:14px;" id="of-std-fields">
         <div><label class="lbl">Location / Position</label><input id="of-loc" placeholder="Bay-3, Grid B-4, Bottom NW"></div>
         <div><label class="lbl">Drawing / Ref. No.</label><input id="of-drw" placeholder="DRG-1242-001"></div>
-        <div class="span2"><label class="lbl">Production Remarks</label><textarea id="of-rem" placeholder="e.g. Pre-heat done, joint cleaned..."></textarea></div>
+        <div><label class="lbl">Drawing Revision</label><input id="of-drw-rev" placeholder="Rev. 0, Rev. A"></div>
+        <div><label class="lbl">Production Remarks</label><input id="of-rem" placeholder="e.g. Pre-heat done, joint cleaned..."></div>
+        <!-- ITP Stage Reference — per stage, entered at time of offering -->
+        <div>
+          <label class="lbl">ITP Table No.</label>
+          <input id="of-itp-table" placeholder="e.g. Table-3, Table A">
+        </div>
+        <div>
+          <label class="lbl">ITP Annexure No.</label>
+          <input id="of-itp-annex" placeholder="e.g. Annex-B, Annexure-2">
+        </div>
+        <div class="span2">
+          <label class="lbl">ITP Clause No.</label>
+          <input id="of-itp-clause" placeholder="e.g. Clause 5.2, 6.1.3">
+        </div>
+      </div>
+      <!-- RT / UT extended fields — shown only for RT/UT stages -->
+      <div id="of-rtut-fields" style="display:none;margin-top:10px;border-top:2px solid var(--amber);padding-top:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">🔬 RT / UT Details</div>
+        <div class="grid2" style="gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--border2);">
+          <div>
+            <label class="lbl">Company Name (for RT/UT Report)</label>
+            <input id="of-rtut-company" placeholder="e.g. ABC Engineering Pvt. Ltd.">
+          </div>
+          <div>
+            <label class="lbl">Company Logo (for RT/UT Report)</label>
+            <label style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surf2);border:1.5px dashed var(--border2);border-radius:7px;cursor:pointer;font-size:12px;color:var(--text3);">
+              🖼 Upload Logo
+              <input type="file" id="of-rtut-logo" accept="image/*" onchange="onRTUTLogoUpload(this)" style="display:none;">
+            </label>
+            <div id="of-rtut-logo-preview" style="margin-top:4px;min-height:12px;font-size:11px;color:var(--green);"></div>
+          </div>
+        </div>
+        <div class="grid2" style="gap:10px;">
+          <div>
+            <label class="lbl">NDT Type</label>
+            <select id="of-ndt-type">
+              <option value="RT">RT — Radiographic Test</option>
+              <option value="UT">UT — Ultrasonic Test</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">Sub-Type / Scope</label>
+            <select id="of-ndt-subtype">
+              <option value="Root Run">Root Run RT/UT</option>
+              <option value="Gouge RT">Gouge RT</option>
+              <option value="Complete Weld">Complete Weld</option>
+              <option value="Overlay">Overlay</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">Iteration</label>
+            <select id="of-ndt-iter">
+              <option value="R0">R0 — First Offer</option>
+              <option value="R1">R1 — After Repair (1st)</option>
+              <option value="R2">R2 — After Repair (2nd)</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">Weld Process</label>
+            <select id="of-weld-proc">
+              <option value="">— Select —</option>
+              <option>SMAW</option><option>GTAW</option><option>SAW</option><option>GMAW</option><option>FCAW</option>
+              <option>GTAW+SMAW</option><option>GTAW+SAW</option><option>GTAW+SMAW+SAW</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">Welder No.</label>
+            <input id="of-welder-no" placeholder="e.g. 630">
+          </div>
+          <div>
+            <label class="lbl">Spot No. / Coverage</label>
+            <input id="of-spot-no" placeholder="e.g. Spot-3, 100%">
+          </div>
+          <div>
+            <label class="lbl">Thickness incl. Reinf. (mm)</label>
+            <input id="of-thk-total" placeholder="e.g. 25 mm" type="text">
+          </div>
+          <div>
+            <label class="lbl">Weld Length (mm)</label>
+            <input id="of-weld-length" placeholder="e.g. 1440 mm" type="text">
+          </div>
+          <div class="span2">
+            <label class="lbl">Material Grade</label>
+            <input id="of-mat-grade" placeholder="e.g. SA 516 GR.70">
+          </div>
+          <div id="of-r2-warn" style="display:none;" class="span2">
+            <div style="background:#fef2f2;border:2px solid #f87171;border-radius:8px;padding:10px 14px;">
+              <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:4px;">⚠ R2 — Manager Approval Required</div>
+              <div style="font-size:11px;color:#7f1d1d;line-height:1.6;">This is a 2nd repair offer (R2). It will be submitted to the Manager for approval before QC is notified. The stage will not be visible to QC until the Manager approves.</div>
+            </div>
+          </div>
+          <div class="span2" style="display:flex;align-items:center;gap:20px;padding:8px 12px;background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;">
+            <div style="font-size:12px;font-weight:600;color:var(--text2);">PT / MT performed before RT/UT?</div>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
+              <input type="checkbox" id="of-pt-done" style="width:16px;height:16px;accent-color:var(--blue2);"> PT — Found OK
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
+              <input type="checkbox" id="of-mt-done" style="width:16px;height:16px;accent-color:var(--blue2);"> MT — Found OK
+            </label>
+          </div>
+        </div>
       </div>
     </div>
     <div class="mfoot">
@@ -962,6 +1165,12 @@ tr:hover td{background:var(--surf2);}
     <div class="mhead"><div class="mtitle">🔍 Quality Inspection</div><button class="mclose" onclick="closeModal('m-inspect')">✕</button></div>
     <div class="mbody">
       <div id="inspect-info"></div>
+      <!-- Overdue justification — shown only when >24h -->
+      <div id="overdue-field" style="display:none;margin-top:12px;background:#fef2f2;border:2px solid #f87171;border-radius:8px;padding:10px 14px;">
+        <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:6px;">🔴 OVERDUE — Mandatory Justification Required</div>
+        <label class="lbl" style="color:#dc2626;">Why was this not cleared on the same day? <span style="color:var(--red);">*</span></label>
+        <textarea id="ins-overdue-rem" placeholder="e.g. Film processing delay, radiographer unavailable, safety shutdown..." style="border-color:#f87171;"></textarea>
+      </div>
       <div style="margin-top:14px;">
         <label class="lbl">Quality Remarks</label>
         <textarea id="ins-rem" placeholder="Enter remarks or HOLD reason..."></textarea>
@@ -1131,7 +1340,7 @@ tr:hover td{background:var(--surf2);}
         <div><label class="lbl">Component</label><input id="es-comp" placeholder="e.g. Shell Section"></div>
         <div><label class="lbl">Seam Number</label><input id="es-num"></div>
         <div class="span2"><label class="lbl">Description</label><input id="es-desc"></div>
-        <div><label class="lbl">Joint Type</label><select id="es-type"><option>Butt Joint</option><option>Fillet Joint</option><option>Nozzle Weld</option><option>Corner Joint</option><option>T-Joint</option><option>Lap Joint</option></select></div>
+        <div><label class="lbl">Joint Type</label><select id="es-type"><option>Groove</option><option>Fillet</option><option>Shield Run</option><option>Weld Overlay</option><option>TTJ</option></select></div>
         <div><label class="lbl">Material</label><input id="es-mat"></div>
         <div><label class="lbl">Thickness (mm)</label><input id="es-thk"></div>
         <div><label class="lbl">WPS No.</label><input id="es-wps"></div>
@@ -1260,6 +1469,68 @@ tr:hover td{background:var(--surf2);}
 // ══════════════════════════════════════════════════════════════
 const DEFAULT_STAGES = ['WEP PT/MT','Fit-up Inspection','Root Run / Back Chip PT/MT','Complete Weld Dimension Inspection','Complete Weld PT/MT','Hardness Test','RT (Radiographic Test)','UT (Ultrasonic Test)'];
 
+// ── ITP STAGE CATALOG — Standard fabrication QC stages for pressure vessels / heat exchangers ──
+const ITP_STAGES=[
+  {sid:'S-01',pg:'PG-01',name:'MI'},
+  {sid:'S-02',pg:'PG-02',name:'PMI'},
+  {sid:'S-03',pg:'PG-03',name:'After forming dimensions'},
+  {sid:'S-04',pg:'PG-04',name:'After forming PT'},
+  {sid:'S-05',pg:'PG-04',name:'After forming MT'},
+  {sid:'S-06',pg:'PG-04.1',name:'Reference line verification'},
+  {sid:'S-07',pg:'PG-04.1',name:'Cut-out trimming line marking'},
+  {sid:'S-08',pg:'PG-05',name:'WEP PT'},
+  {sid:'S-09',pg:'PG-05',name:'WEP MT'},
+  {sid:'S-10',pg:'PG-06',name:'Fit-up Inspection'},
+  {sid:'S-11',pg:'PG-07',name:'Root-Run PT'},
+  {sid:'S-12',pg:'PG-07',name:'Root-Run MT'},
+  {sid:'S-13',pg:'PG-08',name:'Chip Back PT'},
+  {sid:'S-14',pg:'PG-08',name:'Chip Back MT'},
+  {sid:'S-15',pg:'PG-09',name:'Complete Weld Dimensions Inspection'},
+  {sid:'S-16',pg:'PG-10',name:'Complete Weld Visual Insp.'},
+  {sid:'S-17',pg:'PG-10',name:'Complete weld PT'},
+  {sid:'S-18',pg:'PG-10',name:'Complete Weld MT'},
+  {sid:'S-19',pg:'PG-12',name:'Hardness before PWHT'},
+  {sid:'S-20',pg:'PG-12',name:'WFMT before PWHT'},
+  {sid:'S-21',pg:'PG-13',name:'RT'},
+  {sid:'S-22',pg:'PG-13.1',name:'UT'},
+  {sid:'S-23',pg:'PG-14',name:'Pneumatic test of RF Pad'},
+  {sid:'S-24',pg:'PG-15',name:'PWHT'},
+  {sid:'S-25',pg:'PG-16',name:'WFMT after PWHT'},
+  {sid:'S-26',pg:'PG-16',name:'PT after PWHT'},
+  {sid:'S-27',pg:'PG-16',name:'MT after PWHT'},
+  {sid:'S-28',pg:'PG-17',name:'RT after PWHT'},
+  {sid:'S-29',pg:'PG-17.1',name:'UT after PWHT'},
+  {sid:'S-30',pg:'PG-18',name:'Hardness'},
+  {sid:'S-31',pg:'PG-19',name:'Recordable UT'},
+  {sid:'S-32',pg:'PG-20',name:'Pickling passivation (SS)'},
+  {sid:'S-33',pg:'PG-25',name:'Cleaning (Draining & Drying after Hydrotest)'},
+  {sid:'S-34',pg:'PG-21',name:'Raised / Flange face Insp. Before Hydrotest'},
+  {sid:'S-35',pg:'PG-22',name:'Torquing'},
+  {sid:'S-36',pg:'PG-23',name:'Release for Hydrotest'},
+  {sid:'S-37',pg:'PG-24',name:'Hydrotest'},
+  {sid:'S-38',pg:'PG-26',name:'Blasting'},
+  {sid:'S-39',pg:'PG-27',name:'Surface Visual Insp. After Blasting'},
+  {sid:'S-40',pg:'PG-28',name:'Painting Insp.'},
+  {sid:'S-41',pg:'PG-29',name:'Release for Transportation'},
+];
+// Parallel groups where stages within the same PG can be offered simultaneously
+const PARALLEL_GROUPS=['PG-04','PG-04.1','PG-05','PG-07','PG-08','PG-10','PG-12','PG-16'];
+const isParallelPG=pg=>PARALLEL_GROUPS.includes(pg);
+// RT/UT stage names — these get the extended offer form
+const RT_UT_STAGES=['RT','UT','RT after PWHT','UT after PWHT','Recordable','UT (Recordable)'];
+const isRTUT=name=>RT_UT_STAGES.some(s=>name===s||name.includes('(Radiographic')||name.includes('(Ultrasonic'));
+// Report number counter stored in DB
+function nextRTUTReportNo(pid,tag){
+  if(!DB.rtutReports) DB.rtutReports={};
+  const key=`${pid}::${tag||'ALL'}`;
+  const n=(DB.rtutReports[key]||0)+1;
+  DB.rtutReports[key]=n;
+  const proj=getProj(pid);
+  const pNum=proj?proj.number:'000';
+  const tagClean=(tag||'TAG').replace(/[^A-Z0-9]/gi,'-');
+  return `RT-${pNum}-${tagClean}-${String(n).padStart(3,'0')}`;
+}
+
 
 // ── Equipment Type Catalog (no subtypes — simple & clean) ──
 const EQUIPMENT_CATALOG = {
@@ -1290,7 +1561,16 @@ function eqColor(t){ return (EQUIPMENT_CATALOG[t]||{}).color||'#374151'; }
 function eqBg(t){ return (EQUIPMENT_CATALOG[t]||{}).bg||'#f3f4f6'; }
 
 function mkStages(names) {
-  return (names||DEFAULT_STAGES).map(n=>({name:n,status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',location:'',drawing:'',prodRem:'',inspectedBy:'',inspectedAt:'',qeRem:'',ncrNumber:'',returnRem:''}));
+  return (names||DEFAULT_STAGES).map(n=>{
+    const catalog=ITP_STAGES.find(s=>s.name===n);
+    return {name:n,sid:catalog?catalog.sid:'',pg:catalog?catalog.pg:'',
+      status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',
+      location:'',drawing:'',drawingRev:'',prodRem:'',
+      inspectedBy:'',inspectedAt:'',qeRem:'',ncrNumber:'',returnRem:'',
+      // RT/UT specific fields
+      welderNo:'',thkTotal:'',weldLength:'',matGrade:'',spotNo:'',weldProcess:'',
+      ndtType:'',ndtIteration:'R0',ptMtDone:'',ptMtResult:'',reportNo:''};
+  });
 }
 
 function defaultDB() {
@@ -1301,11 +1581,12 @@ function defaultDB() {
     templates:[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}],
     log:[],
     pendingActions:[],
+    rtutReports:{},
     secretKey:'TQIMS@Admin2024'
   };
 }
 
-let DB = (()=>{try{const d=localStorage.getItem('tqims3');if(d){const p=JSON.parse(d);if(!p.templates)p.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];if(!p.secretKey)p.secretKey='TQIMS@Admin2024';if(!p.pendingActions)p.pendingActions=[];return p;}}catch(e){}return defaultDB();})();
+let DB = (()=>{try{const d=localStorage.getItem('tqims3');if(d){const p=JSON.parse(d);if(!p.templates)p.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];if(!p.secretKey)p.secretKey='TQIMS@Admin2024';if(!p.pendingActions)p.pendingActions=[];if(!p.rtutReports)p.rtutReports={};return p;}}catch(e){}return defaultDB();})();
 function save(){try{localStorage.setItem('tqims3',JSON.stringify(DB));}catch(e){}}
 
 let CU = null; // current user
@@ -2015,10 +2296,59 @@ function renderSeamCard(seam,standalone){
 // RENDER A SINGLE STAGE ROW (used in both Inspection page + Seam detail)
 // ══════════════════════════════════════════════════════════════
 function renderStageRow(seam, st, i){
-  const prev  = i===0 || seam.stages[i-1].status==='accepted';
-  const locked = !prev && st.status==='pending';
+  // ── Parallel Group unlock logic ──
+  // A stage is unlocked if:
+  //   (a) It's the first stage, OR
+  //   (b) The previous stage (different PG) is accepted, OR
+  //   (c) All stages before it with a DIFFERENT PG are accepted (parallel stages in same PG unlock together)
+  const myPg = st.pg||'';
+  let locked = false;
+  if(i>0){
+    // Find the first index of the current PG block (stages share the same PG)
+    let pgStart=i;
+    if(myPg){
+      for(let k=i-1;k>=0;k--){
+        if((seam.stages[k].pg||'')===myPg) pgStart=k; else break;
+      }
+    }
+    const gateIdx=pgStart-1; // last stage before our PG block
+    if(gateIdx>=0){
+      // Find the full previous-PG block and require ALL of them accepted
+      const gatePg=seam.stages[gateIdx].pg||'';
+      let gateStart=gateIdx;
+      if(gatePg){
+        for(let k=gateIdx-1;k>=0;k--){
+          if((seam.stages[k].pg||'')===gatePg) gateStart=k; else break;
+        }
+      }
+      locked=seam.stages.slice(gateStart,gateIdx+1).some(s=>s.status!=='accepted');
+    }
+    // Stages with no PG: strictly sequential
+    if(!myPg){
+      locked=seam.stages[i-1].status!=='accepted';
+    }
+  }
+
   const canOffer   = CU && CU.role==='production';
   const canInspect = CU && CU.role==='quality';
+
+  // ── Overdue QC alert — offered but not inspected >24h ──
+  let overdueHtml='';
+  if(st.status==='offered' && st.offeredAt){
+    const offMs=Date.parse(st.offeredAt.replace(/(\d{2}) (\w{3}) (\d{2})/,'$2 $1, 20$3'));
+    const hoursAgo=(Date.now()-offMs)/3600000;
+    if(!isNaN(hoursAgo) && hoursAgo>24){
+      const hRound=Math.floor(hoursAgo);
+      overdueHtml=`<div style="display:flex;align-items:center;gap:8px;background:#fef2f2;border:1.5px solid #f87171;border-radius:6px;padding:6px 10px;margin-top:6px;">
+        <span style="font-size:16px;">🔴</span>
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:700;color:#dc2626;">QC OVERDUE — ${hRound}h since offered</div>
+          ${st.overdueRem?`<div style="font-size:11px;color:#7f1d1d;margin-top:2px;">Justification: ${st.overdueRem}</div>`
+            :(canInspect?`<div style="font-size:11px;color:#dc2626;margin-top:2px;">⚠ Mandatory: Please add justification when inspecting.</div>`:'<div style="font-size:11px;color:#dc2626;margin-top:2px;">No QC justification provided yet.</div>')}
+        </div>
+      </div>`;
+    }
+  }
 
   let chip='', action='';
   if(locked)                              chip=`<span class="chip ch-lock">🔒 Locked</span>`;
@@ -2037,22 +2367,39 @@ function renderStageRow(seam, st, i){
   if(canInspect && st.status==='offered')
     action=`<button class="abtn ab-green" style="min-width:90px;font-weight:700;" onclick="openInspectModal('${seam.id}',${i})">✔ Inspect</button>`;
 
+  // RT/UT print button — visible for any RT/UT stage that has been offered (has data to print)
+  let rtutBtn='';
+  if(isRTUT(st.name) && (st.status==='offered'||st.status==='accepted'||st.status==='rejected'||st.status==='returned') && st.offeredAt)
+    rtutBtn=`<div style="margin-top:4px;"><button class="abtn ab-amber" style="font-size:11px;min-width:110px;font-weight:700;" onclick="printRTUTReport('${seam.id}',${i})">🔬 RT/UT Report</button></div>`;
+
   let detail='';
   if(st.offeredAt)   detail+=`Offered by ${st.offeredBy} (${st.offeredByCo}) @ ${st.offeredAt}`;
   if(st.location)    detail+=` · 📍 ${st.location}`;
-  if(st.drawing)     detail+=` · DRG: ${st.drawing}`;
+  if(st.drawing)     detail+=` · DRG: ${st.drawing}${st.drawingRev?' Rev.'+st.drawingRev:''}`;
+  if(st.itpTable||st.itpAnnex||st.itpClause){
+    const itpParts=[st.itpTable?'Tbl:'+st.itpTable:'',st.itpAnnex?'Annex:'+st.itpAnnex:'',st.itpClause?'Cl:'+st.itpClause:''].filter(Boolean).join(' · ');
+    detail+=` · ITP: ${itpParts}`;
+  } else if(st.itpRef) detail+=` · ITP: ${st.itpRef}`;
+  if(st.welderNo)    detail+=` · Welder: ${st.welderNo}`;
+  if(st.ndtIteration&&isRTUT(st.name)) detail+=` · Iteration: ${st.ndtIteration}`;
+  if(st.reportNo)    detail+=` · Rpt: ${st.reportNo}`;
   if(st.inspectedAt) detail+=`\nInspected by ${st.inspectedBy} @ ${st.inspectedAt}`;
   if(st.ncrNumber)   detail+=`\n🔴 NCR: ${st.ncrNumber}`;
+
+  // PG badge
+  const pgBadge=myPg&&isParallelPG(myPg)?`<span style="font-size:9px;background:var(--purple-lt);color:var(--purple);border:1px solid #a78bfa;padding:1px 6px;border-radius:10px;font-weight:700;margin-left:6px;">${myPg} ∥</span>`:'';
+  const sidBadge=st.sid?`<span style="font-size:9px;background:var(--surf2);color:var(--text3);border:1px solid var(--border2);padding:1px 5px;border-radius:10px;margin-left:4px;">${st.sid}</span>`:'';
 
   return `<div class="stage-row">
     <div class="sr-num">${String(i+1).padStart(2,'0')}</div>
     <div class="sr-info">
-      <div class="sr-name">${st.name}</div>
+      <div class="sr-name">${st.name}${pgBadge}${sidBadge}</div>
       ${detail?`<div class="sr-detail">${detail.replace(/\n/g,'<br>')}</div>`:''}
       ${st.prodRem?`<div class="sr-remark" style="color:var(--blue2);background:#eff6ff;padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔵 ${st.prodRem}</div>`:''}
       ${st.qeRem?`<div class="sr-remark" style="color:${st.status==='rejected'?'var(--red)':st.status==='returned'?'var(--sky)':'var(--amber)'};background:${st.status==='rejected'?'var(--red-lt)':st.status==='returned'?'var(--cyan-lt)':'var(--amber-lt)'};padding:3px 8px;border-radius:4px;margin-top:4px;font-size:12px;">🔍 ${st.qeRem}</div>`:''}
+      ${overdueHtml}
     </div>
-    <div class="sr-actions">${chip}${action?`<div style="margin-top:6px;">${action}</div>`:''}</div>
+    <div class="sr-actions">${chip}${action?`<div style="margin-top:6px;">${action}</div>`:''}${rtutBtn}</div>
   </div>`;
 }
 
@@ -2063,14 +2410,57 @@ function openOfferModal(seamId,idx){
   const seam=getSeam(seamId);const st=seam.stages[idx];
   const proj=getProj(seam.pid);
   offerTarget={seamId,idx};
-  $('of-loc').value='';$('of-drw').value='';$('of-rem').value='';
+  // Reset all fields
+  ['of-loc','of-drw','of-drw-rev','of-rem','of-itp-table','of-itp-annex','of-itp-clause','of-welder-no','of-spot-no','of-thk-total','of-weld-length','of-mat-grade','of-rtut-company'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  _rtutLogoDataUrl='';const rPrev=$('of-rtut-logo-preview');if(rPrev)rPrev.innerHTML='';;
+  if($('of-pt-done'))$('of-pt-done').checked=false;
+  if($('of-mt-done'))$('of-mt-done').checked=false;
+  // Pre-fill RT/UT company from previous offer
+  if($('of-rtut-company')&&st.rtutCompany) $('of-rtut-company').value=st.rtutCompany;
+  if(st.rtutLogoDataUrl){ _rtutLogoDataUrl=st.rtutLogoDataUrl; const p=$('of-rtut-logo-preview');if(p)p.innerHTML='✓ Logo loaded'; }
+  // Pre-fill ITP fields from previous offer on this stage if re-offering
+  if($('of-itp-table')&&st.itpTable) $('of-itp-table').value=st.itpTable;
+  if($('of-itp-annex')&&st.itpAnnex) $('of-itp-annex').value=st.itpAnnex;
+  if($('of-itp-clause')&&st.itpClause) $('of-itp-clause').value=st.itpClause;
+  if($('of-mat-grade')&&seam.mat) $('of-mat-grade').value=seam.mat;
+  // Show/hide RT/UT extra fields
+  const isRT=isRTUT(st.name);
+  if($('of-rtut-fields')) $('of-rtut-fields').style.display=isRT?'block':'none';
+  if(isRT){
+    // Determine which iteration is allowed:
+    // R0 = first offer (stage never offered before)
+    // R1 = only allowed if R0 was rejected by QC
+    // R2 = only allowed if R1 was rejected by QC (and requires manager approval)
+    let allowedIter='R0';
+    if(st.ndtIteration==='R0' && (st.status==='rejected'||st.status==='returned')) allowedIter='R1';
+    else if(st.ndtIteration==='R1' && (st.status==='rejected'||st.status==='returned')) allowedIter='R2';
+    else if(st.ndtIteration==='R0' && st.status==='pending') allowedIter='R0';
+    else if(!st.ndtIteration) allowedIter='R0';
+    // Lock iteration select to only the allowed value
+    if($('of-ndt-iter')){
+      $('of-ndt-iter').innerHTML=[
+        {v:'R0',l:'R0 — First Offer'},
+        {v:'R1',l:'R1 — After Repair (1st)'},
+        {v:'R2',l:'R2 — After Repair (2nd) · Manager Approval Required'},
+      ].map(o=>`<option value="${o.v}" ${o.v===allowedIter?'':'disabled'} ${o.v===allowedIter?'selected':''}>${o.l}</option>`).join('');
+      $('of-ndt-iter').value=allowedIter;
+    }
+    if($('of-ndt-type')){
+      if(st.name.includes('UT')) $('of-ndt-type').value='UT';
+      else $('of-ndt-type').value='RT';
+    }
+    // Show warning if R2
+    const r2warn=$('of-r2-warn');
+    if(r2warn) r2warn.style.display=allowedIter==='R2'?'block':'none';
+  }
   $('offer-info').innerHTML=`
     <div class="ir"><span class="ir-k">Project</span><span class="ir-v">#${proj?proj.number:'?'} — ${proj?proj.equipment:''}</span></div>
     <div class="ir"><span class="ir-k">Tag Number</span><span class="ir-v" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue2);">${seam.tag||seam.sec||'—'}</span></div>
     <div class="ir"><span class="ir-k">Component</span><span class="ir-v">${seam.comp||seam.sec||'—'}</span></div>
     <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v" style="font-weight:700;">${seam.num}</span></div>
     <div class="ir"><span class="ir-k">Description</span><span class="ir-v">${seam.desc}</span></div>
-    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber);font-weight:600;">${st.name}</span></div>
+    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber);font-weight:600;">${st.name}${st.sid?' ['+st.sid+']':''}</span></div>
+    ${st.pg&&isParallelPG(st.pg)?`<div class="ir"><span class="ir-k">Parallel Group</span><span class="ir-v" style="color:var(--purple);font-weight:700;">${st.pg} (Parallel — can be offered with group)</span></div>`:''}
     <div class="ir"><span class="ir-k">Offered By</span><span class="ir-v">${CU.name} · ${CU.co}</span></div>
   `;
   openModal('m-offer');
@@ -2080,10 +2470,60 @@ function confirmOffer(){
   if(!offerTarget)return;
   const{seamId,idx}=offerTarget;
   const seam=getSeam(seamId);const st=seam.stages[idx];
-  st.status='offered';st.offeredBy=CU.name;st.offeredByMob=CU.mob;st.offeredByCo=CU.co;
-  st.offeredAt=now();st.location=$('of-loc').value.trim();st.drawing=$('of-drw').value.trim();
-  st.prodRem=$('of-rem').value.trim();st.inspectedBy='';st.inspectedAt='';st.qeRem='';
-  log(`🔵 OFFERED — ${seam.num} · ${st.name}${st.location?' 📍'+st.location:''} by ${CU.name} (${CU.co})`);
+  const isRT=isRTUT(st.name);
+
+  // RT/UT: generate report number on first offer
+  let repNo=st.reportNo||'';
+  if(isRT && !repNo){
+    const tag=(seam.tag||seam.sec||'').trim();
+    repNo=nextRTUTReportNo(seam.pid,tag);
+    save(); // save incremented counter
+  }
+
+  st.status='offered';
+  st.offeredBy=CU.name;st.offeredByMob=CU.mob;st.offeredByCo=CU.co;
+  st.offeredAt=now();
+  st.location=$('of-loc').value.trim();
+  st.drawing=$('of-drw').value.trim();
+  st.drawingRev=$('of-drw-rev').value.trim();
+  st.prodRem=$('of-rem').value.trim();
+  st.itpTable=$('of-itp-table')?.value.trim()||'';
+  st.itpAnnex=$('of-itp-annex')?.value.trim()||'';
+  st.itpClause=$('of-itp-clause')?.value.trim()||'';
+  // Combined ref for display (backward compat)
+  st.itpRef=[st.itpTable,st.itpAnnex,st.itpClause].filter(Boolean).join(' / ');
+  st.inspectedBy='';st.inspectedAt='';st.qeRem='';
+  if(isRT){
+    st.rtutCompany=$('of-rtut-company')?.value.trim()||'';
+    if(_rtutLogoDataUrl) st.rtutLogoDataUrl=_rtutLogoDataUrl;
+    st.ndtType=$('of-ndt-type').value;
+    st.ndtSubType=$('of-ndt-subtype').value;
+    st.ndtIteration=$('of-ndt-iter').value;
+    st.weldProcess=$('of-weld-proc').value;
+    st.welderNo=$('of-welder-no').value.trim();
+    st.spotNo=$('of-spot-no').value.trim();
+    st.thkTotal=$('of-thk-total').value.trim();
+    st.weldLength=$('of-weld-length').value.trim();
+    st.matGrade=$('of-mat-grade').value.trim();
+    st.ptMtDone=[($('of-pt-done').checked?'PT':''),($('of-mt-done').checked?'MT':'')].filter(Boolean).join('+');
+    st.reportNo=repNo;
+  }
+  // R2 requires Manager approval before offering to QC
+  if(isRT && st.ndtIteration==='R2'){
+    st.status='pending'; // revert — not yet offered
+    if(!DB.pendingActions) DB.pendingActions=[];
+    DB.pendingActions.push({
+      type:'rtut_r2_offer',seamId,idx,
+      requestedBy:CU.name,requestedByMob:CU.mob,requestedByCo:CU.co,
+      at:now(),
+      desc:`R2 RT/UT offer for ${seam.num} · ${st.name} — requires Manager approval before QC notification`
+    });
+    log(`⏳ R2 OFFER PENDING APPROVAL — ${seam.num} · ${st.name} by ${CU.name}`);
+    save();closeModal('m-offer');refreshCurrentView();
+    toast('R2 offer submitted — awaiting Manager approval','ok');
+    return;
+  }
+  log(`🔵 OFFERED — ${seam.num} · ${st.name}${isRT?' ['+st.ndtIteration+']':''} by ${CU.name} (${CU.co})${st.location?' 📍'+st.location:''}`);
   save();closeModal('m-offer');
   refreshCurrentView();
   toast('Stage offered for inspection','ok');
@@ -2153,17 +2593,35 @@ function sendWA(seamId,idx){
 // ══════════════════════════════════════════════════════════════
 function openInspectModal(seamId,idx){
   const seam=getSeam(seamId);const st=seam.stages[idx];
-  inspTarget={seamId,idx};$('ins-rem').value='';$('ins-ncr').value='';
+  inspTarget={seamId,idx};
+  $('ins-rem').value='';$('ins-ncr').value='';
+  if($('ins-overdue-rem'))$('ins-overdue-rem').value='';
   $('ncr-field').style.display='none';
+
+  // Check overdue
+  const offMs=st.offeredAt?Date.parse(st.offeredAt.replace(/(\d{2}) (\w{3}) (\d{2})/,'$2 $1, 20$3')):0;
+  const hoursAgo=(Date.now()-offMs)/3600000;
+  const isOverdue = !isNaN(hoursAgo) && hoursAgo>24 && offMs>0;
+  if($('overdue-field'))$('overdue-field').style.display=isOverdue?'block':'none';
+
   $('inspect-info').innerHTML=`
     <div class="ir"><span class="ir-k">Seam / Joint</span><span class="ir-v">${seam.num}</span></div>
     <div class="ir"><span class="ir-k">Description</span><span class="ir-v">${seam.desc}</span></div>
-    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber)">${st.name}</span></div>
-    <div class="ir"><span class="ir-k">Section</span><span class="ir-v">${seam.sec}</span></div>
+    <div class="ir"><span class="ir-k">Stage</span><span class="ir-v" style="color:var(--amber)">${st.name}${st.sid?' ['+st.sid+']':''}</span></div>
+    <div class="ir"><span class="ir-k">Section</span><span class="ir-v">${seam.sec||seam.comp||'—'}</span></div>
     <div class="ir"><span class="ir-k">Offered By</span><span class="ir-v">${st.offeredBy} (${st.offeredByCo})</span></div>
-    <div class="ir"><span class="ir-k">Offered At</span><span class="ir-v">${st.offeredAt}</span></div>
+    <div class="ir"><span class="ir-k">Offered At</span><span class="ir-v">${st.offeredAt}${isOverdue?`<span style="color:#dc2626;font-weight:700;margin-left:8px;">⚠ ${Math.floor(hoursAgo)}h OVERDUE</span>`:''}</span></div>
     ${st.location?`<div class="ir"><span class="ir-k">Location</span><span class="ir-v">📍 ${st.location}</span></div>`:''}
-    ${st.drawing?`<div class="ir"><span class="ir-k">Drawing Ref.</span><span class="ir-v">${st.drawing}</span></div>`:''}
+    ${st.drawing?`<div class="ir"><span class="ir-k">Drawing Ref.</span><span class="ir-v">${st.drawing}${st.drawingRev?' Rev.'+st.drawingRev:''}</span></div>`:''}
+    ${(st.itpTable||st.itpAnnex||st.itpClause)?`<div class="ir"><span class="ir-k">ITP Table</span><span class="ir-v">${st.itpTable||'—'}</span></div><div class="ir"><span class="ir-k">ITP Annexure</span><span class="ir-v">${st.itpAnnex||'—'}</span></div><div class="ir"><span class="ir-k">ITP Clause</span><span class="ir-v">${st.itpClause||'—'}</span></div>`:st.itpRef?`<div class="ir"><span class="ir-k">ITP Ref.</span><span class="ir-v">${st.itpRef}</span></div>`:''}
+    ${st.welderNo?`<div class="ir"><span class="ir-k">Welder No.</span><span class="ir-v">${st.welderNo}</span></div>`:''}
+    ${st.ndtIteration&&isRTUT(st.name)?`<div class="ir"><span class="ir-k">NDT Iteration</span><span class="ir-v" style="font-weight:700;color:var(--amber);">${st.ndtIteration} — ${st.ndtSubType||''}</span></div>`:''}
+    ${st.thkTotal?`<div class="ir"><span class="ir-k">Thickness incl. Reinf.</span><span class="ir-v">${st.thkTotal}</span></div>`:''}
+    ${st.weldLength?`<div class="ir"><span class="ir-k">Weld Length</span><span class="ir-v">${st.weldLength}</span></div>`:''}
+    ${st.matGrade?`<div class="ir"><span class="ir-k">Material Grade</span><span class="ir-v">${st.matGrade}</span></div>`:''}
+    ${st.weldProcess?`<div class="ir"><span class="ir-k">Weld Process</span><span class="ir-v">${st.weldProcess}</span></div>`:''}
+    ${st.ptMtDone?`<div class="ir"><span class="ir-k">PT/MT Before</span><span class="ir-v" style="color:var(--green);font-weight:600;">✓ ${st.ptMtDone} — Found OK</span></div>`:''}
+    ${st.reportNo?`<div class="ir"><span class="ir-k">Report No.</span><span class="ir-v" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue2);">${st.reportNo}</span></div>`:''}
     ${st.prodRem?`<div class="ir"><span class="ir-k">Prod. Remarks</span><span class="ir-v">${st.prodRem}</span></div>`:''}
     <div class="ir"><span class="ir-k">Material</span><span class="ir-v">${seam.mat} · ${seam.thk}mm · ${seam.type}</span></div>
   `;
@@ -2171,11 +2629,8 @@ function openInspectModal(seamId,idx){
 }
 
 function prepareReject(){
-  // Show NCR field, user must fill NCR number before confirming reject
   $('ncr-field').style.display='block';
   $('ins-ncr').focus();
-  // Replace reject button with confirm step
-  const ncrVal=$('ins-ncr').value.trim();
   submitReject();
 }
 
@@ -2193,15 +2648,47 @@ function submitReject(){
 
 function submitInspect(result,ncrNumber){
   if(!inspTarget)return;
-  // If reject clicked directly (not via submitReject), show NCR field first
   if(result==='rejected'&&!ncrNumber){
     $('ncr-field').style.display='block';
     $('ins-ncr').focus();
     toast('Please enter NCR number then click REJECT again','err');
     return;
   }
+  // Enforce overdue justification if overdue field is shown
+  const overdueEl=$('overdue-field');
+  if(overdueEl&&overdueEl.style.display!=='none'){
+    const justification=($('ins-overdue-rem')?.value||'').trim();
+    if(!justification){
+      $('ins-overdue-rem').style.borderColor='var(--red)';
+      $('ins-overdue-rem').focus();
+      toast('Overdue justification is mandatory','err');
+      return;
+    }
+    // Save justification on the stage
+    const seam2=getSeam(inspTarget.seamId);
+    if(seam2)seam2.stages[inspTarget.idx].overdueRem=justification;
+  }
   const{seamId,idx}=inspTarget;
   const seam=getSeam(seamId);const st=seam.stages[idx];
+
+  // RT/UT rejection — send to Manager approval for repair + R1/R2 re-offer
+  if(result==='rejected' && isRTUT(st.name)){
+    const ncrNum=ncrNumber||$('ins-ncr').value.trim();
+    DB.pendingActions.push({
+      id:'pa'+Date.now(),
+      type:'rtut_repair',
+      data:{seamId,idx,ncrNumber:ncrNum,qeRem:$('ins-rem').value.trim(),rejectedBy:CU.name,rejectedAt:now(),reportNo:st.reportNo},
+      requestedBy:CU.name,requestedAt:now(),
+      desc:`RT/UT REPAIR APPROVAL — ${seam.num} · ${st.name} [${st.reportNo||''}] NCR: ${ncrNum}`
+    });
+    st.status='rejected';st.inspectedBy=CU.name;st.inspectedAt=now();
+    st.qeRem=$('ins-rem').value.trim();st.ncrNumber=ncrNum;
+    log(`❌ RT/UT REJECTED (NCR: ${ncrNum}) — ${seam.num} · ${st.name} — Repair approval sent to Manager`);
+    save();closeModal('m-inspect');updateApprovalBadge();refreshCurrentView();
+    toast('RT/UT rejected — Repair & Re-offer request sent to Manager','err');
+    return;
+  }
+
   st.status=result;
   st.inspectedBy=CU.name;st.inspectedAt=now();
   st.qeRem=$('ins-rem').value.trim();
@@ -2434,6 +2921,33 @@ function refreshNsComp(){
   compEl.disabled=false;
 }
 
+// ── ITP Catalog picker helpers ──
+function nsStageSourceChange(){
+  const src=document.querySelector('input[name="ns-stage-src"]:checked')?.value||'template';
+  $('ns-tmpl-wrap').style.display=src==='template'?'block':'none';
+  $('ns-catalog-wrap').style.display=src==='catalog'?'block':'none';
+  if(src==='catalog') nsRenderCatalog();
+}
+function nsRenderCatalog(){
+  const el=$('ns-catalog-list');if(!el)return;
+  // Group by PG
+  const pgs=[...new Set(ITP_STAGES.map(s=>s.pg))];
+  el.innerHTML=ITP_STAGES.map(s=>{
+    const isParallel=isParallelPG(s.pg);
+    const pgColor=isParallel?'var(--purple)':'var(--text3)';
+    const pgBg=isParallel?'var(--purple-lt)':'var(--surf2)';
+    return`<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surf);border:1.5px solid var(--border);border-radius:7px;cursor:pointer;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--blue2)'" onmouseout="this.style.borderColor='var(--border)'">
+      <input type="checkbox" class="ns-cat-cb" data-sid="${s.sid}" data-pg="${s.pg}" data-name="${s.name}" style="width:15px;height:15px;accent-color:var(--blue2);flex-shrink:0;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);min-width:32px;">${s.sid}</span>
+      <span style="flex:1;font-size:12px;font-weight:600;color:var(--text);">${s.name}</span>
+      <span style="font-size:9px;padding:1px 6px;border-radius:8px;font-weight:700;background:${pgBg};color:${pgColor};border:1px solid ${isParallel?'#a78bfa':'var(--border2)'};">${s.pg}${isParallel?' ∥':''}</span>
+    </label>`;
+  }).join('');
+}
+function nsSelectAllCatalog(v){
+  document.querySelectorAll('.ns-cat-cb').forEach(cb=>cb.checked=v);
+}
+
 function addSeam(){
   const pid=$('ns-proj').value;
   if(!pid){toast('Please select a Project first','err');return;}
@@ -2449,24 +2963,41 @@ function addSeam(){
   if(!comp){toast('Please select or enter a Component','err');return;}
   const num=$('ns-num').value.trim(),desc=$('ns-desc').value.trim();
   if(!num||!desc){toast('Seam number and description required','err');return;}
-  const tmplId=$('ns-tmpl').value;
-  const tmpl=DB.templates.find(t=>t.id===tmplId);
-  const stages=mkStages(tmpl?tmpl.stages.slice():DEFAULT_STAGES.slice());
+
+  // Determine stages: from catalog selection or template
+  const stageSource=document.querySelector('input[name="ns-stage-src"]:checked')?.value||'template';
+  let stages;
+  if(stageSource==='catalog'){
+    const checked=[...document.querySelectorAll('.ns-cat-cb:checked')];
+    if(!checked.length){toast('Please select at least one ITP stage from the catalog','err');return;}
+    // Build stage objects with sid and pg from catalog
+    stages=checked.map(cb=>{
+      const catalog=ITP_STAGES.find(s=>s.sid===cb.dataset.sid);
+      return {name:cb.dataset.name, sid:cb.dataset.sid, pg:cb.dataset.pg,
+        status:'pending',offeredBy:'',offeredByMob:'',offeredByCo:'',offeredAt:'',
+        location:'',drawing:'',drawingRev:'',prodRem:'',
+        inspectedBy:'',inspectedAt:'',qeRem:'',ncrNumber:'',returnRem:'',
+        welderNo:'',thkTotal:'',weldLength:'',matGrade:'',spotNo:'',weldProcess:'',
+        ndtType:'',ndtIteration:'R0',ptMtDone:'',ptMtResult:'',reportNo:''};
+    });
+  } else {
+    const tmplId=$('ns-tmpl').value;
+    const tmpl=DB.templates.find(t=>t.id===tmplId);
+    stages=mkStages(tmpl?tmpl.stages.slice():DEFAULT_STAGES.slice());
+  }
+
   const proj=getProj(pid);
   const newSeam={id:'s'+Date.now(),pid,tag,comp,sec:comp,num,desc,
     type:$('ns-type').value,mat:$('ns-mat').value.trim()||'N/A',
     thk:$('ns-thk').value.trim()||'N/A',wps:$('ns-wps').value.trim()||'—',
-    itpTable:$('ns-itp-table')?.value.trim()||'',
-    itpGroup:$('ns-itp-group')?.value||'',
-    itpSeq:$('ns-itp-seq')?.value.trim()||'',
     itpDoc:$('ns-itp-doc')?.value.trim()||'',
     stages};
   DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),
     desc:`Add Seam: ${num} [#${proj?proj.number:'?'} / ${tag} / ${comp}]`});
   log(`📋 PENDING APPROVAL — Add Seam ${num} | Tag: ${tag} | Comp: ${comp} | Project #${proj?proj.number:'?'} by ${CU.name}`);
   save();
-  ['ns-num','ns-desc','ns-mat','ns-thk','ns-wps','ns-tag-new','ns-comp-new','ns-itp-table','ns-itp-seq','ns-itp-doc'].forEach(id=>{const el=$(id);if(el)el.value='';});
-  if($('ns-itp-group'))$('ns-itp-group').value='';
+  ['ns-num','ns-desc','ns-mat','ns-thk','ns-wps','ns-tag-new','ns-comp-new','ns-itp-doc'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  nsSelectAllCatalog(false); // clear catalog checkboxes
   renderAdminSeams();
   toast(`✓ Seam "${num}" submitted for Manager approval`,'ok');
 }
@@ -2762,6 +3293,19 @@ function renderLog(){
 // PRINT SUMMARY — INSPECTION TRAVELLER (horizontal stages)
 // ══════════════════════════════════════════════════════════════
 let _logoDataUrl='';
+let _rtutLogoDataUrl='';
+let _rtutCompany='';
+
+function onRTUTLogoUpload(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    _rtutLogoDataUrl=e.target.result;
+    const prev=$('of-rtut-logo-preview');
+    if(prev) prev.innerHTML=`✓ Logo uploaded`;
+  };
+  r.readAsDataURL(file);
+}
 
 function onLogoUpload(input){
   const file=input.files[0];if(!file)return;
@@ -2808,11 +3352,12 @@ function _sigBlock(){
 }
 
 function _pageHeader(proj,today,tagLabel='',itpDoc=''){
+  const company=($('print-company')?.value.trim())||'';
   const logo=_logoDataUrl
     ?`<img src="${_logoDataUrl}" style="max-height:52px;max-width:140px;object-fit:contain;">`
     :`<div style="border:2px dashed #bbb;padding:8px 14px;font-size:9px;color:#aaa;border-radius:4px;text-align:center;">COMPANY LOGO</div>`;
   return`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:2.5px solid #1d4ed8;">
-    ${logo}
+    <div style="min-width:140px;">${logo}${company?`<div style="font-size:8px;font-weight:700;color:#374151;margin-top:4px;text-align:center;">${company}</div>`:''}</div>
     <div style="flex:1;text-align:center;padding:0 10px;">
       <div style="font-size:20px;font-weight:800;letter-spacing:4px;color:#1d4ed8;">TQIMS</div>
       <div style="font-size:8px;letter-spacing:2px;color:#555;text-transform:uppercase;">Inspection Traveller</div>
@@ -2895,6 +3440,7 @@ function buildPrintPreview(){
   tags.forEach(tag=>{
     const tagSeams=allSeams.filter(s=>nT(s)===tag);
     const visSeams=tagSeams.filter(seam=>{
+      if(!seam.stages||!seam.stages.length) return false; // skip seams with no stages
       const ss=stageStats(seam);
       if(filterStatus==='complete') return ss.pct===100;
       if(filterStatus==='incomplete') return ss.pct<100;
@@ -2910,12 +3456,15 @@ function buildPrintPreview(){
 
     // ITP info — use the first seam's ITP values for the tag (they should be consistent)
     const tagItpDoc = visSeams.map(s=>s.itpDoc||'').find(d=>d) || '';
-    // Build per-stage ITP reference: itpTable + Group + Seq
+    // Build per-stage maps from actual stage objects (itpRef/itpSeq set at offer time, sid/pg from catalog)
     const stageItpRef={};
+    const stageSidMap={};
+    const stagePgMap={};
     visSeams.forEach(seam=>{
-      if(!seam.itpTable&&!seam.itpGroup&&!seam.itpSeq) return;
-      stageNames.forEach(n=>{
-        if(!stageItpRef[n]) stageItpRef[n]=[seam.itpTable,seam.itpGroup,seam.itpSeq].filter(Boolean).join('-');
+      seam.stages.forEach(st=>{
+        if(st.sid) stageSidMap[st.name]=st.sid;
+        if(st.pg)  stagePgMap[st.name]=st.pg;
+        if(st.itpRef && !stageItpRef[st.name]) stageItpRef[st.name]=st.itpRef+(st.itpSeq?' §'+st.itpSeq:'');
       });
     });
 
@@ -2945,10 +3494,13 @@ function buildPrintPreview(){
             <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:32px;">THK</th>
             <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:38px;">WPS</th>
             ${stageNames.map(n=>{
-              const itpRef=stageItpRef[n]||'';
-              return`<th style="padding:4px 3px;border:1px solid #93c5fd;text-align:center;min-width:56px;font-size:7px;white-space:normal;max-width:64px;">
+              const sid=stageSidMap[n]||'';
+              const pg=stagePgMap[n]||'';
+              const isParallel=pg&&PARALLEL_GROUPS.includes(pg);
+              return`<th style="padding:4px 3px;border:1px solid #93c5fd;text-align:center;min-width:60px;font-size:7px;white-space:normal;max-width:68px;">
+                ${sid?`<div style="font-size:5.5px;color:#bfdbfe;font-family:monospace;letter-spacing:.2px;margin-bottom:1px;">${sid}</div>`:''}
                 <div style="font-weight:700;">${n}</div>
-                ${itpRef?`<div style="font-size:6px;color:#bfdbfe;margin-top:2px;letter-spacing:.3px;">${itpRef}</div>`:''}
+                ${pg?`<div style="font-size:5.5px;margin-top:1px;color:${isParallel?'#fde68a':'#bfdbfe'};font-weight:700;">${pg}${isParallel?' ∥':''}</div>`:''}
               </th>`;
             }).join('')}
             <th style="padding:5px 6px;border:1px solid #93c5fd;text-align:center;min-width:32px;">%</th>
@@ -2963,7 +3515,7 @@ function buildPrintPreview(){
           const ncrNums=seam.stages.filter(st=>st.ncrNumber).map(st=>st.ncrNumber).join(', ');
           const allRem=seam.stages.filter(st=>st.qeRem).map(st=>st.qeRem).join('; ');
           // ITP ref for this specific seam
-          const seamItpRef=[seam.itpTable,seam.itpGroup,seam.itpSeq].filter(Boolean).join('-');
+          const seamItpRef=seam.itpDoc||'';
           return`<tr style="background:${ri%2===0?'#fff':'#f8fafc'};">
             <td style="padding:4px 6px;border:1px solid #e2e8f0;font-family:monospace;font-weight:700;color:#1d4ed8;white-space:nowrap;">
               ${seam.num}${ncr?'<span style="color:#dc2626;font-size:6.5px;"> [NCR]</span>':''}
@@ -2981,10 +3533,13 @@ function buildPrintPreview(){
               const bgC=st.status==='accepted'?'#f0fdf4':st.status==='rejected'?'#fef2f2':st.status==='offered'?'#fffbeb':st.status==='returned'?'#eff6ff':'#fff';
               const txtC=st.status==='accepted'?'#059669':st.status==='rejected'?'#dc2626':st.status==='offered'?'#d97706':st.status==='returned'?'#2563eb':'#6b7280';
               const lbl=st.status==='accepted'?'✓ ACC':st.status==='rejected'?'✗ NCR':st.status==='offered'?'⬆ QC':st.status==='returned'?'↩ RET':'○ PND';
-              const dt=st.inspectedAt||st.offeredAt||'';
+              const dt=(st.inspectedAt||st.offeredAt||'');
+              const dtShort=dt?dt.split(',')[0]:'';
               return`<td style="padding:3px 2px;border:1px solid #e2e8f0;text-align:center;background:${bgC};">
                 <div style="font-weight:700;color:${txtC};font-size:7px;">${lbl}</div>
-                ${dt?`<div style="font-size:6px;color:#94a3b8;margin-top:1px;">${dt.split(',')[0]}</div>`:''}
+                ${dtShort?`<div style="font-size:5.5px;color:#94a3b8;margin-top:1px;">${dtShort}</div>`:''}
+                ${(st.itpTable||st.itpAnnex||st.itpClause||st.itpRef)?`<div style="font-size:5px;color:#64748b;margin-top:1px;border-top:1px dashed #cbd5e1;padding-top:1px;line-height:1.3;">${st.itpTable?'T:'+st.itpTable+' ':''
+}${st.itpAnnex?'A:'+st.itpAnnex+' ':''}${st.itpClause?'C:'+st.itpClause:st.itpRef||''}</div>`:''}
               </td>`;
             }).join('')}
             <td style="padding:4px 6px;border:1px solid #e2e8f0;text-align:center;font-weight:700;font-size:8px;color:${ss.pct===100?'#059669':'#d97706'};">${ss.pct}%</td>
@@ -3007,26 +3562,80 @@ function buildPrintPreview(){
   $('print-preview').innerHTML=html;
 }
 
+// ══ PRINT SYSTEM — uses dedicated #print-frame ══
+let _printMode=null; // 'traveller' or 'rtut'
+
+function _setPrintFrame(html, mode){
+  const frame=$('print-frame');
+  if(!frame){console.error('print-frame not found');return;}
+  frame.innerHTML=html;
+  frame.className=mode==='rtut'?'portrait':'landscape';
+  _printMode=mode;
+}
+function _clearPrintFrame(){
+  const frame=$('print-frame');
+  if(frame){frame.innerHTML='';frame.className='';}
+  _printMode=null;
+}
+
+// ── Traveller Preview Modal ──
+function closePrintModal(){
+  const m=$('m-print-modal');
+  if(m)m.style.display='none';
+}
+function openPrintModal(htmlContent){
+  closeRTUTModal();
+  const m=$('m-print-modal');
+  if(!m)return;
+  $('m-print-content').innerHTML=htmlContent;
+  m.style.display='block';
+  m.scrollTop=0;
+}
+function printTraveller(){
+  const c=$('printable');
+  if(!c){toast('Nothing to print','err');return;}
+  _setPrintFrame(`<style>
+    *{box-sizing:border-box;}
+    @page{size:A4 landscape;margin:8mm;}
+    body{margin:0;padding:0;font-family:Arial,sans-serif;font-size:8.5pt;color:#111;background:#fff;}
+    table{border-collapse:collapse;}
+  </style>`+c.outerHTML,'traveller');
+  setTimeout(()=>{window.print();setTimeout(_clearPrintFrame,1000);},120);
+}
+
+// ── RT/UT Report Preview Modal ──
+function closeRTUTModal(){
+  const m=$('m-rtut-modal');
+  if(m)m.style.display='none';
+}
+function openRTUTModal(htmlContent){
+  closePrintModal();
+  const m=$('m-rtut-modal');
+  if(!m)return;
+  $('m-rtut-content').innerHTML=htmlContent;
+  m.style.display='block';
+  m.scrollTop=0;
+}
+function printRTUTFrame(){
+  const c=$('m-rtut-content');
+  if(!c){toast('Nothing to print','err');return;}
+  _setPrintFrame(`<style>
+    *{box-sizing:border-box;}
+    @page{size:A4 portrait;margin:10mm;}
+    body{margin:0;padding:0;font-family:Arial,sans-serif;font-size:9pt;color:#111;background:#fff;}
+    table{border-collapse:collapse;width:100%;}
+    td,th{padding:4px 7px;border:1px solid #d1d5db;vertical-align:top;}
+    th{background:#1d4ed8;color:#fff;text-align:left;}
+  </style>`+c.innerHTML,'rtut');
+  setTimeout(()=>{window.print();setTimeout(_clearPrintFrame,1000);},120);
+}
+
 function doPrint(){
   buildPrintPreview();
   setTimeout(()=>{
-    const c=$('printable');if(!c)return;
-    const w=window.open('','_blank');
-    w.document.write(`<!DOCTYPE html><html><head><title>TQIMS Traveller</title>
-    <style>
-      *{box-sizing:border-box;margin:0;padding:0;}
-      body{font-family:Arial,sans-serif;background:#fff;color:#111;font-size:8.5pt;}
-      @media print{
-        @page{size:A4 landscape;margin:8mm;}
-        body{padding:0;}
-        div[style*="page-break-after:always"]{page-break-after:always;}
-        div[style*="page-break-before:always"]{page-break-before:always;}
-      }
-    </style></head><body>`);
-    w.document.write(c.outerHTML);
-    w.document.write('</body></html>');
-    w.document.close();w.focus();
-    setTimeout(()=>w.print(),700);
+    const c=$('printable');
+    if(!c){toast('Nothing to print','err');return;}
+    openPrintModal(c.outerHTML);
   },200);
 }
 
@@ -3127,13 +3736,37 @@ function goRefreshSeams(){
   const nC=s=>(s.comp||s.sec||'').trim()||'(general)';
   let seams=DB.seams.filter(s=>s.pid===pid);
   if(tag) seams=seams.filter(s=>nT(s)===tag);
+  const stageIsRTUT=isRTUT(stageName);
+  // RT/UT stages require individual offer (to fill weld/NDT details) — block group offer
+  if(stageIsRTUT){
+    listEl.innerHTML=`<div style="padding:16px 20px;background:var(--amber-lt);border:1.5px solid var(--amber);border-radius:8px;font-size:13px;color:var(--amber);font-weight:600;line-height:1.7;">
+      🔬 <strong>${stageName}</strong> is an RT/UT stage and cannot be group-offered.<br>
+      <span style="font-size:12px;font-weight:400;color:var(--text2);">RT/UT stages must be offered individually so that Welder No., NDT Type, Weld Process, and other details can be filled in. After individual offers are saved, they will appear in Group Inspection (QC).</span>
+    </div>`;
+    return;
+  }
   // Find eligible: stage exists, status pending or returned, stage unlocked
   const eligible=[];
   seams.forEach(seam=>{
     seam.stages.forEach((st,i)=>{
       if(st.name!==stageName) return;
       if(st.status!=='pending'&&st.status!=='returned') return;
-      if(i>0 && seam.stages[i-1].status!=='accepted') return; // locked
+      // Unlock check: use same PG-aware logic
+      const myPg=st.pg||'';
+      let locked=false;
+      if(i>0){
+        let pgStart=i;
+        if(myPg){for(let k=i-1;k>=0;k--){if((seam.stages[k].pg||'')===myPg)pgStart=k;else break;}}
+        const gateIdx=pgStart-1;
+        if(gateIdx>=0){
+          const gatePg=seam.stages[gateIdx].pg||'';
+          let gateStart=gateIdx;
+          if(gatePg){for(let k=gateIdx-1;k>=0;k--){if((seam.stages[k].pg||'')===gatePg)gateStart=k;else break;}}
+          locked=seam.stages.slice(gateStart,gateIdx+1).some(s=>s.status!=='accepted');
+        }
+        if(!myPg) locked=seam.stages[i-1].status!=='accepted';
+      }
+      if(locked) return;
       eligible.push({seam,st,stIdx:i});
     });
   });
@@ -3426,6 +4059,122 @@ function importExcel(input){
   reader.readAsText(file,'UTF-8');
 }
 
+// ══════════════════════════════════════════════════════════════
+// RT / UT REPORT PRINT
+// ══════════════════════════════════════════════════════════════
+function printRTUTReport(seamId, idx){
+  const seam=getSeam(seamId);if(!seam)return;
+  const st=seam.stages[idx];if(!st)return;
+  const proj=getProj(seam.pid);
+  const today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  const tag=(seam.tag||seam.sec||'').trim()||'—';
+  // Generate report number on-the-fly if not already set
+  if(!st.reportNo){
+    st.reportNo=nextRTUTReportNo(seam.pid,tag);
+    save();
+  }
+
+  const coName=st.rtutCompany||'';
+  const coLogo=st.rtutLogoDataUrl||'';
+  const html=`<div style="font-family:Arial,sans-serif;font-size:9pt;color:#111;max-width:794px;margin:0 auto;">
+  <!-- Company header row -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;margin-bottom:8px;border-bottom:3px solid #1d4ed8;">
+    <div style="min-width:100px;">
+      ${coLogo?`<img src="${coLogo}" style="max-height:52px;max-width:130px;object-fit:contain;">`:
+        `<div style="border:2px dashed #ccc;padding:6px 10px;font-size:8px;color:#aaa;border-radius:4px;text-align:center;">COMPANY LOGO</div>`}
+      ${coName?`<div style="font-size:8pt;font-weight:700;color:#374151;margin-top:3px;text-align:center;">${coName}</div>`:''}
+    </div>
+    <div style="flex:1;text-align:center;padding:0 10px;">
+      <div style="font-size:16pt;font-weight:800;color:#1d4ed8;letter-spacing:2px;">${st.ndtType||'RT/UT'} REQUEST FORM</div>
+      <div style="font-size:7.5pt;color:#555;margin-top:2px;">Volumetric NDT — All Joints (Pressure Vessel, Heat Exchanger, Structure Joints)</div>
+    </div>
+    <div style="text-align:right;font-size:8pt;color:#555;line-height:1.9;min-width:150px;">
+      <div><b>Report No.:</b> <span style="font-family:monospace;font-weight:700;color:#1d4ed8;">${st.reportNo||'—'}</span></div>
+      <div><b>Date &amp; Time:</b> ${st.offeredAt||today}</div>
+      <div><b>Job Location:</b> ${st.location||'—'}</div>
+    </div>
+  </div>
+
+  <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:10px;">
+    <tr><td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Project No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${proj?'#'+proj.number:'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Client</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${proj?proj.client||'—':'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">MSN / Tag No.</td><td style="font-family:monospace;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${tag}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Design Code</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${proj?proj.code||'—':'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">NDT Method</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ndtType||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Coverage / Spot No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.spotNo||'100%'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Iteration</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ndtIteration||'R0'} — ${st.ndtSubType||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Weld Process</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.weldProcess||'—'}</td></tr>
+  </table>
+
+  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">Weld Joint Details</div>
+  <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:10px;">
+    <tr><td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Seam / Joint No.</td><td style="font-family:monospace;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${seam.num}</td>
+        <td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Description</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${seam.desc}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Welder No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.welderNo||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Joint Type</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${seam.type||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Material Grade</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.matGrade||seam.mat||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Thickness incl. Reinf.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.thkTotal||seam.thk||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Weld Length (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.weldLength||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">WPS No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${seam.wps||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Drawing No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.drawing||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Drawing Revision</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.drawingRev||'—'}</td></tr>
+    ${(st.itpTable||st.itpAnnex||st.itpClause||st.itpRef)?`
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;width:20%;">ITP Table No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpTable||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;width:20%;">ITP Annexure No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpAnnex||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">ITP Clause No.</td><td colspan="3" style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpClause||st.itpRef||'—'}</td></tr>`:''}
+  </table>
+
+  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">PT / MT Clearance Before RT/UT</div>
+  <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:10px;">
+    <tr>
+      <td style="background:#f1f5f9;font-weight:700;width:25%;padding:5px 8px;border:1px solid #d1d5db;">PT Performed</td>
+      <td style="padding:5px 8px;border:1px solid #d1d5db;">${st.ptMtDone&&st.ptMtDone.includes('PT')?'<span style="color:#059669;font-weight:700;">Yes — Found OK</span>':'<span style="color:#6b7280;">No / N/A</span>'}</td>
+      <td style="background:#f1f5f9;font-weight:700;width:25%;padding:5px 8px;border:1px solid #d1d5db;">MT Performed</td>
+      <td style="padding:5px 8px;border:1px solid #d1d5db;">${st.ptMtDone&&st.ptMtDone.includes('MT')?'<span style="color:#059669;font-weight:700;">Yes — Found OK</span>':'<span style="color:#6b7280;">No / N/A</span>'}</td>
+    </tr>
+    <tr>
+      <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Visual Insp. after Final Weld</td><td style="padding:5px 8px;border:1px solid #d1d5db;">Yes</td>
+      <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Welder No. Verification on WDS</td><td style="padding:5px 8px;border:1px solid #d1d5db;">Yes</td>
+    </tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">PT/MT Clearance after Final Weld</td><td colspan="3" style="padding:5px 8px;border:1px solid #d1d5db;">Yes</td></tr>
+  </table>
+
+  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">NDT Result</div>
+  <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:10px;">
+    <tr><td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Status</td>
+        <td style="padding:5px 8px;border:1px solid #d1d5db;"><b style="color:${st.status==='accepted'?'#059669':'#dc2626'};font-size:10pt;">${st.status==='accepted'?'✓ ACCEPTED / SATISFACTORY':'✗ REJECTED / REPAIR REQUIRED'}</b></td>
+        <td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Inspected By (QE)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.inspectedBy||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Inspection Date</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.inspectedAt||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">NCR No.</td><td style="color:#dc2626;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ncrNumber||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">QE Remarks</td><td colspan="3" style="padding:5px 8px;border:1px solid #d1d5db;">${st.qeRem||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Prod. Remarks</td><td colspan="3" style="padding:5px 8px;border:1px solid #d1d5db;">${st.prodRem||'—'}</td></tr>
+  </table>
+
+  <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-top:16px;">
+    <tr>
+      <th style="background:#1d4ed8;color:#fff;padding:5px 8px;border:1px solid #93c5fd;width:25%;">Offered By (Production)</th>
+      <th style="background:#1d4ed8;color:#fff;padding:5px 8px;border:1px solid #93c5fd;width:25%;">Checked &amp; Received (NDE)</th>
+      <th style="background:#1d4ed8;color:#fff;padding:5px 8px;border:1px solid #93c5fd;width:25%;">Shop Supervisor (QC)</th>
+      <th style="background:#1d4ed8;color:#fff;padding:5px 8px;border:1px solid #93c5fd;width:25%;">QC Inspector</th>
+    </tr>
+    <tr>
+      <td style="height:42px;vertical-align:bottom;padding:5px 8px;border:1px solid #d1d5db;"><div>Name: ${st.offeredBy||'.'}</div><div>Sign: ___________</div><div>Date: ${(st.offeredAt||'').split(',')[0]||''}</div></td>
+      <td style="height:42px;vertical-align:bottom;padding:5px 8px;border:1px solid #d1d5db;"><div>Name: .</div><div>Sign: ___________</div><div>Date: .</div></td>
+      <td style="height:42px;vertical-align:bottom;padding:5px 8px;border:1px solid #d1d5db;"><div>Name: .</div><div>Sign: ___________</div><div>Date: .</div></td>
+      <td style="height:42px;vertical-align:bottom;padding:5px 8px;border:1px solid #d1d5db;"><div>Name: ${st.inspectedBy||'.'}</div><div>Sign: ___________</div><div>Date: ${(st.inspectedAt||'').split(',')[0]||''}</div></td>
+    </tr>
+  </table>
+
+  <div style="text-align:center;font-size:7pt;color:#9ca3af;margin-top:12px;border-top:1px solid #e5e7eb;padding-top:6px;">
+    TQIMS · ${st.ndtType||'RT/UT'} Report · Report No: ${st.reportNo||'—'} · Generated: ${today}<br>
+    Note: (1) ACV — After Complete Weld; ASR — After Repair; AFR — After Forming; DRS — Dress up; ITP — Inspection &amp; Testing Plan;
+    'G' — Ground Weld; 'P' — Position Weld. (2) Use Annexure-1 for bulk offering and seam representation.
+  </div>
+  </div>`;
+
+  openRTUTModal(html);
+}
+
 function exportBackup(){
   const ts=new Date().toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).replace(/[\s,:\/]+/g,'-');
   const filename=`TQIMS-Backup-${ts}.json`;
@@ -3549,6 +4298,8 @@ function renderApprovals(){
               a.type==='add_proj'?`<span class="chip ch-off" style="font-size:8px;">NEW PROJECT</span>`:
               a.type==='edit_proj'?`<span class="chip ch-off" style="font-size:8px;">EDIT PROJECT</span>`:
               a.type==='ncr_reoffer'?`<span class="chip ch-ncr" style="font-size:8px;">🔴 NCR RE-OFFER</span>`:
+              a.type==='rtut_repair'?`<span style="display:inline-block;background:#d97706;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">🔬 RT/UT REPAIR</span>`:
+              a.type==='rtut_r2_offer'?`<span style="display:inline-block;background:#dc2626;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">⚠ RT/UT R2 OFFER</span>`:
               a.type==='system_reset'?`<span style="display:inline-block;background:#dc2626;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">⚠ SYSTEM RESET</span>`:
               `<span class="chip ch-rej" style="font-size:8px;">DELETE PROJECT</span>`}
           </div>
@@ -3583,6 +4334,32 @@ function approveAction(id){
     populateSelects();renderDashboard();renderApprovals();updateApprovalBadge();updateBadge();
     toast('✅ System reset to factory defaults','ok');
     return;
+  }
+  else if(a.type==='rtut_repair'){
+    // Manager approves RT/UT repair — reset stage to pending so Production can re-offer as R1/R2
+    const d=a.data;
+    const seam=getSeam(d.seamId);
+    if(seam&&seam.stages[d.idx]){
+      const st=seam.stages[d.idx];
+      const nextIter=st.ndtIteration==='R0'?'R1':st.ndtIteration==='R1'?'R2':'R2';
+      st.status='pending';
+      st.ndtIteration=nextIter;
+      st.inspectedBy='';st.inspectedAt='';st.qeRem='';
+      log(`🔄 RT/UT REPAIR APPROVED — ${seam.num} · ${st.name} → Re-offer as ${nextIter} (approved by ${CU.name})`);
+      toast(`RT/UT repair approved — Production can now re-offer as ${nextIter}`,'ok');
+    }
+  }
+  else if(a.type==='rtut_r2_offer'){
+    // Manager approves R2 RT/UT offer — now set stage to offered for QC
+    const seam=getSeam(a.seamId);
+    if(seam&&seam.stages[a.idx]){
+      const st=seam.stages[a.idx];
+      st.status='offered';
+      st.offeredBy=a.requestedBy;st.offeredByMob=a.requestedByMob;st.offeredByCo=a.requestedByCo;
+      st.offeredAt=a.at;
+      log(`✅ R2 RT/UT OFFER APPROVED — ${seam.num} · ${st.name} now offered to QC (approved by ${CU.name})`);
+      toast('R2 RT/UT offer approved — QC can now inspect','ok');
+    }
   }
   else if(a.type==='ncr_reoffer'){
     const d=a.data;
@@ -3627,5 +4404,35 @@ function rejectAction(id){
   showTab('login');
 })();
 </script>
+
+<!-- ── INLINE PRINT MODAL (mobile-safe) ── -->
+<div id="m-print-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);overflow-y:auto;">
+  <div style="background:#fff;min-height:100%;">
+    <div style="position:sticky;top:0;z-index:10;background:#1d4ed8;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.3);">
+      <div style="font-size:14px;font-weight:700;letter-spacing:.5px;">🖨 Inspection Traveller — Print Preview</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="printTraveller()" style="padding:8px 18px;background:#fff;color:#1d4ed8;border:none;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;">⬇ Print / Save PDF</button>
+        <button onclick="closePrintModal()" style="padding:8px 14px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;">✕ Close</button>
+      </div>
+    </div>
+    <div id="m-print-content" style="padding:14px;font-family:Arial,sans-serif;font-size:9pt;color:#111;"></div>
+  </div>
+</div>
+
+<!-- ── RT/UT REPORT PRINT MODAL (separate, amber theme, portrait) ── -->
+<div id="m-rtut-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);overflow-y:auto;">
+  <div style="background:#fff;min-height:100%;">
+    <div style="position:sticky;top:0;z-index:10;background:#b45309;color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.3);">
+      <div style="font-size:14px;font-weight:700;letter-spacing:.5px;">🔬 RT / UT NDT Report — Print Preview</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="printRTUTFrame()" style="padding:8px 18px;background:#fff;color:#b45309;border:none;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;">⬇ Print / Save PDF</button>
+        <button onclick="closeRTUTModal()" style="padding:8px 14px;background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;">✕ Close</button>
+      </div>
+    </div>
+    <div id="m-rtut-content" style="padding:14px;font-family:Arial,sans-serif;font-size:9pt;color:#111;max-width:794px;margin:0 auto;"></div>
+  </div>
+</div>
+<!-- ── PRINT FRAME: always in DOM, written-to and printed, then cleared ── -->
+<div id="print-frame" style="display:none;"></div>
 </body>
 </html>
