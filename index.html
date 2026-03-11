@@ -379,6 +379,21 @@ tr:hover td{background:var(--surf2);}
   .tag-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
 }
 
+/* ── Screen preview: each .print-page looks like a real page ── */
+#print-preview .print-page{
+  background:#fff;
+  border:1px solid #d1d5db;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  border-radius:4px;
+  padding:14px 16px !important;
+  margin-bottom:18px;
+  position:relative;
+}
+#print-preview .print-page::after{
+  content:'';
+  display:block;
+  height:0;
+}
 /* ── BREADCRUMB ── */
 .breadcrumb{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:18px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;}
 .bc-item{color:var(--text3);cursor:pointer;font-weight:500;padding:2px 4px;border-radius:4px;transition:color .15s;}
@@ -422,14 +437,41 @@ tr:hover td{background:var(--surf2);}
 .stages-body.open{max-height:6000px;transition:max-height .38s ease-in;}
 /* ── PRINT FRAME — always in DOM, only visible during print ── */
 #print-frame{display:none;}
+
 @media print{
-  /* Hide everything except the print frame */
-  body > *{display:none!important;}
-  #print-frame{display:block!important;position:fixed;inset:0;background:#fff;z-index:99999;}
-  #print-frame.landscape{writing-mode:horizontal-tb;}
+  /* 1. Hide the entire app */
+  body > *:not(#print-frame){display:none!important;}
+  /* 2. Show the print frame as the only visible element */
+  #print-frame{
+    display:block!important;
+    position:static!important;
+    width:100%!important;
+    background:#fff!important;
+  }
+  /* 3. Every .print-page breaks onto its own page */
+  .print-page{
+    page-break-after:always;
+    break-after:page;
+    page-break-inside:avoid;
+    padding:0 !important;
+  }
+  .print-page:last-child{page-break-after:auto;break-after:auto;}
+  /* 4. Tables never cut in middle of a row */
+  tr{page-break-inside:avoid;break-inside:avoid;}
+  /* 5. Page number footer on every page */
+  .pg-footer{
+    position:running(footer);
+  }
+  @page{
+    margin:8mm;
+    @bottom-center{
+      content:element(footer);
+    }
+  }
+  /* 6. Landscape for traveller */
+  #print-frame.landscape @page{size:A4 landscape;margin:8mm;}
+  #print-frame.portrait  @page{size:A4 portrait;margin:10mm;}
 }
-@page .landscape{size:A4 landscape;margin:8mm;}
-@page .portrait{size:A4 portrait;margin:10mm;}
 </style>
 </head>
 <body>
@@ -3392,9 +3434,31 @@ function buildPrintPreview(){
   const donSt=allSeams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
   const pct=totSt?Math.round(donSt/totSt*100):0;
 
-  // ── Cover page ──
+  // ── Count total pages: 1 cover + 1 per visible tag ──
+  let visibleTagCount=0;
+  tags.forEach(tag=>{
+    const tagSeams=allSeams.filter(s=>nT(s)===tag);
+    const vis=tagSeams.filter(seam=>{
+      if(!seam.stages||!seam.stages.length) return false;
+      const ss=stageStats(seam);
+      if(filterStatus==='complete') return ss.pct===100;
+      if(filterStatus==='incomplete') return ss.pct<100;
+      return true;
+    });
+    if(vis.length) visibleTagCount++;
+  });
+  const totalPages=1+visibleTagCount;
+
+  // ── Page number footer helper ──
+  const pgFooter=(pgNum)=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:5px;border-top:1px solid #e5e7eb;font-size:7px;color:#9ca3af;">
+    <span>TQIMS · Inspection Traveller · Generated: ${today}</span>
+    <span style="font-weight:700;color:#6b7280;">Page ${pgNum} of ${totalPages}</span>
+    <span>Project #${p.number} — ${p.equipment}</span>
+  </div>`;
+
+  // ── Cover page (Page 1) ──
   let html=`<div id="printable" style="font-family:Arial,sans-serif;font-size:9pt;color:#111;">
-  <div style="page-break-after:always;padding:14px;">
+  <div class="print-page" style="padding:0;">
     ${_pageHeader(p,today)}
     <!-- Project info grid -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:9px;margin-bottom:14px;padding:10px 12px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;">
@@ -3434,9 +3498,11 @@ function buildPrintPreview(){
       </tbody>
     </table>
     ${_sigBlock()}
+    ${pgFooter(1)}
   </div>`;
 
-  // ── One section per TAG (can span multiple print pages) ──
+  // ── One section per TAG — each is a separate print-page ──
+  let pageNum=1;
   tags.forEach(tag=>{
     const tagSeams=allSeams.filter(s=>nT(s)===tag);
     const visSeams=tagSeams.filter(seam=>{
@@ -3468,7 +3534,8 @@ function buildPrintPreview(){
       });
     });
 
-    html+=`<div style="page-break-before:always;padding:14px;">
+    pageNum++;
+    html+=`<div class="print-page" style="padding:0;">
       ${_pageHeader(p,today,tag,tagItpDoc)}
 
       <!-- Tag stats bar -->
@@ -3552,12 +3619,11 @@ function buildPrintPreview(){
       </div>
 
       ${_sigBlock()}
+      ${pgFooter(pageNum)}
     </div>`;
   });
 
-  html+=`<div style="text-align:center;font-size:7px;color:#9ca3af;padding:8px;border-top:1px solid #e5e7eb;margin:8px 0;">
-    TQIMS · Inspection Traveller · Generated: ${today}
-  </div></div>`;
+  html+=`</div>`; // close #printable
 
   $('print-preview').innerHTML=html;
 }
@@ -3594,13 +3660,27 @@ function openPrintModal(htmlContent){
 function printTraveller(){
   const c=$('printable');
   if(!c){toast('Nothing to print','err');return;}
-  _setPrintFrame(`<style>
-    *{box-sizing:border-box;}
+  // Inject full page CSS + the printable content into the print frame
+  const printCSS=`<style>
+    *{box-sizing:border-box;margin:0;padding:0;}
     @page{size:A4 landscape;margin:8mm;}
-    body{margin:0;padding:0;font-family:Arial,sans-serif;font-size:8.5pt;color:#111;background:#fff;}
-    table{border-collapse:collapse;}
-  </style>`+c.outerHTML,'traveller');
-  setTimeout(()=>{window.print();setTimeout(_clearPrintFrame,1000);},120);
+    body{font-family:Arial,sans-serif;font-size:8pt;color:#111;background:#fff;}
+    table{border-collapse:collapse;width:100%;}
+    td,th{vertical-align:top;}
+    /* Each .print-page = one printed page */
+    .print-page{
+      width:100%;
+      page-break-after:always;
+      break-after:page;
+      overflow:hidden;
+    }
+    .print-page:last-of-type{page-break-after:auto;break-after:auto;}
+    tr{page-break-inside:avoid;break-inside:avoid;}
+    /* Ensure overflow-x tables still print fully */
+    div[style*="overflow-x:auto"]{overflow:visible!important;}
+  </style>`;
+  _setPrintFrame(printCSS + c.outerHTML, 'traveller');
+  setTimeout(()=>{window.print();setTimeout(_clearPrintFrame,1500);},200);
 }
 
 // ── RT/UT Report Preview Modal ──
@@ -3619,15 +3699,17 @@ function openRTUTModal(htmlContent){
 function printRTUTFrame(){
   const c=$('m-rtut-content');
   if(!c){toast('Nothing to print','err');return;}
-  _setPrintFrame(`<style>
-    *{box-sizing:border-box;}
+  const printCSS=`<style>
+    *{box-sizing:border-box;margin:0;padding:0;}
     @page{size:A4 portrait;margin:10mm;}
-    body{margin:0;padding:0;font-family:Arial,sans-serif;font-size:9pt;color:#111;background:#fff;}
+    body{font-family:Arial,sans-serif;font-size:9pt;color:#111;background:#fff;}
     table{border-collapse:collapse;width:100%;}
-    td,th{padding:4px 7px;border:1px solid #d1d5db;vertical-align:top;}
+    td,th{padding:4px 7px;border:1px solid #d1d5db;vertical-align:top;font-size:8.5pt;}
     th{background:#1d4ed8;color:#fff;text-align:left;}
-  </style>`+c.innerHTML,'rtut');
-  setTimeout(()=>{window.print();setTimeout(_clearPrintFrame,1000);},120);
+    img{max-width:100%;}
+  </style>`;
+  _setPrintFrame(printCSS + c.innerHTML, 'rtut');
+  setTimeout(()=>{window.print();setTimeout(_clearPrintFrame,1500);},200);
 }
 
 function doPrint(){
@@ -4086,7 +4168,7 @@ function printRTUTReport(seamId, idx){
     </div>
     <div style="flex:1;text-align:center;padding:0 10px;">
       <div style="font-size:16pt;font-weight:800;color:#1d4ed8;letter-spacing:2px;">${st.ndtType||'RT/UT'} REQUEST FORM</div>
-      <div style="font-size:7.5pt;color:#555;margin-top:2px;">Volumetric NDT — All Joints (Pressure Vessel, Heat Exchanger, Structure Joints)</div>
+      <div style="font-size:7.5pt;color:#555;margin-top:2px;">Volumetric NDT</div>
     </div>
     <div style="text-align:right;font-size:8pt;color:#555;line-height:1.9;min-width:150px;">
       <div><b>Report No.:</b> <span style="font-family:monospace;font-weight:700;color:#1d4ed8;">${st.reportNo||'—'}</span></div>
@@ -4165,10 +4247,12 @@ function printRTUTReport(seamId, idx){
     </tr>
   </table>
 
-  <div style="text-align:center;font-size:7pt;color:#9ca3af;margin-top:12px;border-top:1px solid #e5e7eb;padding-top:6px;">
-    TQIMS · ${st.ndtType||'RT/UT'} Report · Report No: ${st.reportNo||'—'} · Generated: ${today}<br>
-    Note: (1) ACV — After Complete Weld; ASR — After Repair; AFR — After Forming; DRS — Dress up; ITP — Inspection &amp; Testing Plan;
-    'G' — Ground Weld; 'P' — Position Weld. (2) Use Annexure-1 for bulk offering and seam representation.
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;border-top:1px solid #e5e7eb;padding-top:6px;font-size:7pt;color:#9ca3af;">
+    <span>TQIMS · ${st.ndtType||'RT/UT'} Report · Report No: ${st.reportNo||'—'} · Generated: ${today}</span>
+    <span style="font-weight:700;color:#6b7280;font-size:8pt;">Page 1 of 1</span>
+  </div>
+  <div style="font-size:6.5pt;color:#b0b0b0;margin-top:4px;text-align:center;">
+    Note: ACV — After Complete Weld · ASR — After Repair · AFR — After Forming · ITP — Inspection &amp; Testing Plan
   </div>
   </div>`;
 
