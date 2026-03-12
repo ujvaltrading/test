@@ -978,82 +978,124 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── BACKUP & RESTORE ── -->
       <div class="pg" id="pg-backup">
-        <div class="pgh"><div class="pgt">Backup & Restore</div><div class="pgs">Export regularly — JSON for full restore, Excel for historical data import</div></div>
+        <div class="pgh"><div class="pgt">Backup &amp; Restore</div><div class="pgs">Protect your data — export regularly, restore safely with Manager approval</div></div>
 
-        <!-- STORAGE EXPLAINER -->
-        <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:14px 18px;margin-bottom:16px;border-radius:10px;font-size:13px;color:#78350f;line-height:1.8;">
-          <strong>⚠️ Important:</strong> Data is stored in this browser only. Clearing cache or switching devices erases it.
-          Export a backup after every significant update and save to Google Drive / WhatsApp / Email.
+        <!-- LIVE STATS BAR -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:16px;">
+          <div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--blue2);" id="bk-stat-proj">—</div>
+            <div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;">Projects</div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--blue2);" id="bk-stat-seams">—</div>
+            <div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;">Seams</div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--blue2);" id="bk-stat-stages">—</div>
+            <div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;">Stages</div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--green);" id="bk-stat-acc">—</div>
+            <div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;">Accepted</div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--text3);" id="bk-stat-users">—</div>
+            <div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;">Users</div>
+          </div>
+          <div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;">
+            <div style="font-size:18px;font-weight:800;color:var(--text3);" id="bk-stat-size">—</div>
+            <div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;">Data Size</div>
+          </div>
+        </div>
+        <!-- hidden for compatibility -->
+        <div id="backup-stats" style="display:none;"></div>
+
+        <!-- STORAGE ALERT -->
+        <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:11px 14px;margin-bottom:16px;border-radius:10px;font-size:12px;color:#78350f;line-height:1.7;display:flex;align-items:flex-start;gap:10px;">
+          <span style="font-size:18px;margin-top:1px;">⚠️</span>
+          <div><strong>Data lives in this browser only.</strong> Clearing cache or switching devices will erase it. Export a backup after every significant session and store it on Google Drive, email, or a shared drive.</div>
         </div>
 
-        <!-- JSON BACKUP ROW -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <!-- SECTION LABEL: EXPORT -->
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;padding-left:2px;">📤 Export</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;" id="bk-export-row">
+
+          <!-- JSON Export -->
           <div class="card" style="border-top:4px solid var(--green);">
-            <div class="chead"><div class="ctitle" style="color:var(--green);">📤 Export Full Backup (JSON)</div></div>
-            <div style="font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6;">Downloads everything — all projects, seams, users, logs. Use to restore to any device.</div>
-            <div id="backup-stats" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:12px;line-height:1.8;"></div>
-            <button class="btn btn-green btn-w" onclick="exportBackup()">⬇ Download JSON Backup</button>
-            <div style="font-size:10px;color:var(--text4);margin-top:8px;text-align:center;" id="last-backup-time"></div>
+            <div class="chead"><div class="ctitle" style="color:var(--green);">✅ Full Backup (JSON)</div></div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Complete snapshot — projects, seams, stages, users, approval logs and history. Use to fully restore on any device or browser.</div>
+            <div style="display:flex;align-items:center;gap:8px;background:var(--surf2);border-radius:6px;padding:8px 10px;margin-bottom:12px;border:1px solid var(--border);">
+              <span style="font-size:16px;">🕒</span>
+              <div style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;" id="last-backup-time">No backup taken yet on this device</div>
+            </div>
+            <button class="btn btn-green btn-w" onclick="exportBackup()">⬇ Download JSON Backup Now</button>
           </div>
-          <div class="card" style="border-top:4px solid var(--blue2);">
-            <div class="chead"><div class="ctitle" style="color:var(--blue2);">📥 Restore from JSON</div></div>
-            <div style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Load a previously exported JSON file. <strong style="color:var(--red);">Replaces ALL current data.</strong></div>
-            <div style="background:var(--red-lt);border:1.5px solid #fca5a5;padding:8px 12px;font-size:12px;color:#991b1b;margin-bottom:12px;border-radius:7px;">⚠️ Export first if needed — current data will be overwritten.</div>
-            <label style="display:block;background:var(--blue2);color:#fff;padding:10px 20px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
-              ⬆ Select JSON Backup File
-              <input type="file" accept=".json" onchange="importBackup(this)" style="display:none;">
+
+          <!-- Excel Export -->
+          <div class="card" style="border-top:4px solid var(--amber);">
+            <div class="chead"><div class="ctitle" style="color:var(--amber);">📊 Export to Excel / CSV</div></div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Downloads every seam with all inspection stages as a spreadsheet. Fill the <strong>Status</strong> column for historical records, then re-import below — no approval needed for Excel imports.</div>
+            <label class="lbl">Project</label>
+            <select id="xl-proj" style="width:100%;padding:7px;font-size:12px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;margin-bottom:10px;color:var(--text);"></select>
+            <button class="btn btn-amber btn-w" onclick="exportExcel()">📊 Download Excel / CSV</button>
+            <div style="font-size:10px;color:var(--text3);margin-top:6px;line-height:1.5;">Valid Status values: <code>accepted</code> · <code>rejected</code> · <code>returned</code></div>
+          </div>
+        </div>
+
+        <!-- SECTION LABEL: RESTORE -->
+        <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;padding-left:2px;">📥 Restore</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;" id="bk-restore-row">
+
+          <!-- JSON Restore -->
+          <div class="card" style="border-top:4px solid #dc2626;">
+            <div class="chead"><div class="ctitle" style="color:#dc2626;">🔐 Restore from JSON Backup</div></div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;">Replaces <strong style="color:var(--red);">ALL current data</strong> with the selected backup file. This action is irreversible.</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;background:#fef2f2;border:1.5px solid #fca5a5;padding:10px 12px;font-size:11px;color:#991b1b;margin-bottom:12px;border-radius:8px;line-height:1.7;">
+              <span style="font-size:16px;flex-shrink:0;">🔒</span>
+              <div><strong>Manager Approval Required.</strong><br>
+              Selecting a file submits a restore request. The Manager must approve it from the <em>Approvals</em> section. Nothing is overwritten until approved.</div>
+            </div>
+            <div id="restore-pending-badge" style="margin-bottom:8px;"></div>
+            <label style="display:flex;align-items:center;justify-content:center;gap:8px;background:#dc2626;color:#fff;padding:10px 20px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
+              📁 Select JSON Backup File
+              <input type="file" id="restore-json-input" accept=".json" onchange="submitRestoreRequest(this)" style="display:none;">
             </label>
             <div id="import-msg" style="margin-top:10px;"></div>
           </div>
-        </div>
 
-        <!-- EXCEL SECTION -->
-        <div class="card" style="border-top:4px solid var(--amber);">
-          <div class="chead"><div class="ctitle" style="color:var(--amber);">📊 Excel — Export & Historical Data Import</div></div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.8;">
-            <strong>Export to Excel:</strong> Downloads every seam with all its stages as a spreadsheet. Open in Excel or Google Sheets, fill in the Status column for previous work, then import.<br>
-            <strong>Import from Excel:</strong> Bulk-update stage statuses from your filled spreadsheet. Use a custom past timestamp so historical records appear with the correct dates — without going through the live offer/inspect flow.
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-
-            <!-- Export side -->
-            <div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">
-              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;">① Export Template</div>
-              <label class="lbl">Project</label>
-              <select id="xl-proj" style="width:100%;padding:7px;font-size:12px;background:var(--surf);border:1px solid var(--border2);border-radius:6px;margin-bottom:12px;"></select>
-              <button class="btn btn-amber btn-w" onclick="exportExcel()">📊 Download Excel / CSV</button>
-              <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.6;">Opens in Excel. Fill <strong>Status</strong> column with: <code>accepted</code>, <code>rejected</code>, <code>returned</code>, or leave blank to skip. Save as .csv then import below.</div>
+          <!-- Excel / CSV Import -->
+          <div class="card" style="border-top:4px solid #7c3aed;">
+            <div class="chead"><div class="ctitle" style="color:#7c3aed;">📋 Import Historical Data (Excel/CSV)</div></div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;">Bulk-update stage statuses from a filled spreadsheet. New seams are created automatically. Ideal for loading historical inspection records. <strong>No approval needed — takes effect immediately.</strong></div>
+            <div style="display:flex;align-items:flex-start;gap:8px;background:#f5f3ff;border:1.5px solid #c4b5fd;padding:9px 11px;font-size:11px;color:#4c1d95;margin-bottom:12px;border-radius:7px;line-height:1.6;">
+              <span>📖</span>
+              <div>Export the Excel template first, fill in the <code>Status</code> column (accepted / rejected / returned), then upload here to bulk-update.</div>
             </div>
-
-            <!-- Import side -->
-            <div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">
-              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;">② Import Filled Excel / CSV</div>
-              <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6;">
-                Select your filled CSV file. New seams in the file will be <strong>created automatically</strong>. Existing seams will have their stages updated. Data becomes visible to <strong>all users</strong> immediately after import.
-              </div>
-              <label style="display:block;background:var(--amber);color:#fff;padding:10px 16px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
-                ⬆ Select CSV File & Import
-                <input type="file" accept=".csv,.xlsx,.xls,.txt" onchange="importExcel(this)" style="display:none;">
-              </label>
-              <div id="xl-msg" style="margin-top:10px;"></div>
-            </div>
-
+            <label style="display:flex;align-items:center;justify-content:center;gap:8px;background:#7c3aed;color:#fff;padding:10px 16px;text-align:center;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;border-radius:8px;">
+              📁 Select CSV / Excel File
+              <input type="file" accept=".csv,.xlsx,.xls,.txt" onchange="importExcel(this)" style="display:none;">
+            </label>
+            <div id="xl-msg" style="margin-top:10px;"></div>
           </div>
         </div>
 
-        <!-- DEVICE SYNC -->
+        <!-- PENDING RESTORE REQUESTS — visible to Manager -->
+        <div id="bk-pending-restores" style="display:none;margin-bottom:14px;"></div>
+
+        <!-- HOW TO SYNC -->
         <div class="card" style="margin-top:4px;">
           <div class="chead"><div class="ctitle">📱 How to Sync Across Devices</div></div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;">
             ${[
-              ['1️⃣','Export JSON','Admin → Backup & Restore → Download JSON Backup'],
+              ['1️⃣','Export JSON','Admin/Manager → Backup → Download JSON Backup'],
               ['2️⃣','Share File','Send .json via WhatsApp, Email, or Google Drive'],
-              ['3️⃣','Others Import','Each device: Backup & Restore → Select JSON Backup File'],
-              ['4️⃣','Repeat Often','Export after every batch of new seams or inspections'],
-            ].map(([n,t,d])=>`<div style="padding:12px;background:var(--surf2);border-radius:8px;border:1px solid var(--border);">
-              <div style="font-size:22px;margin-bottom:6px;">${n}</div>
-              <div style="font-weight:600;font-size:13px;margin-bottom:4px;color:var(--text);">${t}</div>
-              <div style="font-size:12px;color:var(--text3);">${d}</div>
+              ['3️⃣','Request Restore','Select JSON → Submit for Manager Approval'],
+              ['4️⃣','Manager Approves','Manager reviews and approves in Approvals section'],
+              ['5️⃣','Repeat Often','Export after every batch of new seams or inspections'],
+            ].map(([n,t,d])=>`<div style="padding:10px;background:var(--surf2);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-size:20px;margin-bottom:5px;">${n}</div>
+              <div style="font-weight:600;font-size:12px;margin-bottom:3px;color:var(--text);">${t}</div>
+              <div style="font-size:11px;color:var(--text3);">${d}</div>
             </div>`).join('')}
           </div>
         </div>
@@ -1556,8 +1598,37 @@ const ITP_STAGES=[
   {sid:'S-41',pg:'PG-29',name:'Release for Transportation'},
 ];
 // Parallel groups where stages within the same PG can be offered simultaneously
-const PARALLEL_GROUPS=['PG-04','PG-04.1','PG-05','PG-07','PG-08','PG-10','PG-12','PG-16'];
-const isParallelPG=pg=>PARALLEL_GROUPS.includes(pg);
+// Parallel groups: stages with the SAME exact PG code run in parallel.
+// Two PG codes are parallel only if they are exactly equal (PG-04 ≠ PG-04.1).
+// We derive parallel PGs dynamically from the ITP_STAGES catalog.
+const _pgCounts={};
+ITP_STAGES.forEach(s=>{if(s.pg){_pgCounts[s.pg]=(_pgCounts[s.pg]||0)+1;}});
+const PARALLEL_GROUPS=Object.keys(_pgCounts).filter(pg=>_pgCounts[pg]>1);
+// isParallelPG: a stage is in a parallel group only if its EXACT pg code has >1 member
+const isParallelPG=pg=>pg&&PARALLEL_GROUPS.includes(pg);
+// ── Central unlock check — single source of truth for all stage locking ──
+function stageUnlocked(seam,i){
+  if(i===0) return true;
+  const stages=seam.stages;
+  const myPg=(stages[i].pg||'').trim();
+  if(!myPg) return stages[i-1].status==='accepted'; // no PG = strictly sequential
+  if(isParallelPG(myPg)){
+    // Find start of our exact PG block
+    let pgStart=i;
+    for(let k=i-1;k>=0;k--){ if((stages[k].pg||'').trim()===myPg) pgStart=k; else break; }
+    if(pgStart===0) return true;
+    // Gate block = contiguous stages directly before our block
+    const gateIdx=pgStart-1;
+    const gatePg=(stages[gateIdx].pg||'').trim();
+    let gateStart=gateIdx;
+    if(isParallelPG(gatePg)){ for(let k=gateIdx-1;k>=0;k--){ if((stages[k].pg||'').trim()===gatePg) gateStart=k; else break; } }
+    return stages.slice(gateStart,gateIdx+1).every(s=>s.status==='accepted');
+  } else {
+    // Non-parallel PG (PG-06, PG-09, PG-13, PG-13.1, etc.) = strictly sequential
+    return stages[i-1].status==='accepted';
+  }
+}
+
 // RT/UT stage names — these get the extended offer form
 const RT_UT_STAGES=['RT','UT','RT after PWHT','UT after PWHT','Recordable','UT (Recordable)'];
 const isRTUT=name=>RT_UT_STAGES.some(s=>name===s||name.includes('(Radiographic')||name.includes('(Ultrasonic'));
@@ -2344,32 +2415,7 @@ function renderStageRow(seam, st, i){
   //   (b) The previous stage (different PG) is accepted, OR
   //   (c) All stages before it with a DIFFERENT PG are accepted (parallel stages in same PG unlock together)
   const myPg = st.pg||'';
-  let locked = false;
-  if(i>0){
-    // Find the first index of the current PG block (stages share the same PG)
-    let pgStart=i;
-    if(myPg){
-      for(let k=i-1;k>=0;k--){
-        if((seam.stages[k].pg||'')===myPg) pgStart=k; else break;
-      }
-    }
-    const gateIdx=pgStart-1; // last stage before our PG block
-    if(gateIdx>=0){
-      // Find the full previous-PG block and require ALL of them accepted
-      const gatePg=seam.stages[gateIdx].pg||'';
-      let gateStart=gateIdx;
-      if(gatePg){
-        for(let k=gateIdx-1;k>=0;k--){
-          if((seam.stages[k].pg||'')===gatePg) gateStart=k; else break;
-        }
-      }
-      locked=seam.stages.slice(gateStart,gateIdx+1).some(s=>s.status!=='accepted');
-    }
-    // Stages with no PG: strictly sequential
-    if(!myPg){
-      locked=seam.stages[i-1].status!=='accepted';
-    }
-  }
+  const locked = !stageUnlocked(seam, i);
 
   const canOffer   = CU && CU.role==='production';
   const canInspect = CU && CU.role==='quality';
@@ -2395,7 +2441,11 @@ function renderStageRow(seam, st, i){
   let chip='', action='';
   if(locked)                              chip=`<span class="chip ch-lock">🔒 Locked</span>`;
   else if(st.status==='pending')          chip=`<span class="chip ch-pend">Pending</span>`;
-  else if(st.status==='offered')          chip=`<span class="chip ch-off">⬆ Offered</span>`;
+  else if(st.status==='offered'){
+    // RT/UT offered but not yet inspected = Under Process
+    if(isRTUT(st.name)) chip=`<span class="chip ch-off" style="background:#fef3c7;color:#92400e;border-color:#f59e0b;">⏳ Under Process</span>`;
+    else                chip=`<span class="chip ch-off">⬆ Offered</span>`;
+  }
   else if(st.status==='accepted')         chip=`<span class="chip ch-acc">✓ Accepted</span>`;
   else if(st.status==='rejected')         chip=`<span class="chip ch-rej">✗ NCR${st.ncrNumber?' · '+st.ncrNumber:''}</span>`;
   else if(st.status==='returned')         chip=`<span class="chip ch-ret">↩ Returned</span>`;
@@ -3770,19 +3820,63 @@ function changeSecretKey(){
 // BACKUP & RESTORE
 // ══════════════════════════════════════════════════════════════
 function renderBackupPage(){
+  // ── Show pending restore requests to Manager ──
+  const container=$('bk-pending-restores');
+  if(container){
+    const restoreReqs=DB.pendingActions.filter(a=>a.type==='restore_request');
+    if(restoreReqs.length && CU&&(CU.role==='manager'||CU.role==='admin')){
+      container.style.display='block';
+      container.innerHTML=`<div class="card" style="border-top:4px solid #dc2626;">
+        <div class="chead"><div class="ctitle" style="color:#dc2626;">🔐 Pending Restore Requests — Manager Action Required</div></div>
+        ${restoreReqs.map(r=>`
+          <div style="background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+            <div style="font-size:12px;font-weight:700;color:#991b1b;margin-bottom:6px;">📥 Restore Request</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:8px;">
+              <b>Requested by:</b> ${r.requestedBy} &nbsp;·&nbsp; <b>At:</b> ${r.requestedAt}<br>
+              <b>Backup summary:</b> ${r.backupSummary||'—'}<br>
+              <b>Backup date:</b> ${r.backupDate||'—'}
+            </div>
+            <div style="background:#fff3cd;border:1px solid #f59e0b;padding:8px 10px;font-size:11px;color:#78350f;border-radius:6px;margin-bottom:10px;">
+              ⚠️ Approving this will <strong>replace ALL current data</strong> with the backup contents. This action cannot be undone.
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-green" style="font-size:12px;padding:7px 16px;" onclick="approveRestoreRequest('${r.id}')">✅ Approve Restore</button>
+              <button class="btn" style="background:#dc2626;color:#fff;font-size:12px;padding:7px 16px;border-radius:7px;" onclick="rejectRestoreRequest('${r.id}')">✗ Reject</button>
+            </div>
+          </div>`).join('')}
+      </div>`;
+    } else if(restoreReqs.length && CU&&CU.role==='production'){
+      container.style.display='block';
+      container.innerHTML=`<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:12px 14px;font-size:12px;color:#1e3a5f;margin-bottom:4px;">
+        ⏳ A restore request is <b>pending Manager approval</b>. You will be notified once the Manager acts on it.
+      </div>`;
+    } else {
+      container.style.display='none';
+    }
+  }
+  // ── Pending badge in restore card ──
+  const badge=$('restore-pending-badge');
+  if(badge){
+    const rr=DB.pendingActions.find(a=>a.type==='restore_request');
+    badge.innerHTML=rr?`<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:7px 12px;font-size:11px;color:#78350f;">⏳ Restore request pending — awaiting Manager approval</div>`:'';
+  }
+
+
   const seams=DB.seams.length;
   const stages=DB.seams.reduce((a,s)=>a+s.stages.length,0);
   const accepted=DB.seams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
-  const logCount=DB.log.length;
   const users=DB.users.length;
   const size=Math.round(JSON.stringify(DB).length/1024);
-  $('backup-stats').innerHTML=`
-    Projects: ${DB.projects.length} &nbsp;|&nbsp; Seams: ${seams} &nbsp;|&nbsp; Total Stages: ${stages}<br>
-    Accepted Stages: ${accepted} &nbsp;|&nbsp; Log Entries: ${logCount} &nbsp;|&nbsp; Users: ${users}<br>
-    Data Size: ~${size} KB
-  `;
+  // Populate stat cards
+  const _bset=(id,v)=>{const el=$(id);if(el)el.textContent=v;};
+  _bset('bk-stat-proj',DB.projects.length);
+  _bset('bk-stat-seams',seams);
+  _bset('bk-stat-stages',stages);
+  _bset('bk-stat-acc',accepted);
+  _bset('bk-stat-users',users);
+  _bset('bk-stat-size',size+'KB');
   const last=localStorage.getItem('tqims3_last_backup');
-  $('last-backup-time').textContent=last?`Last backup: ${last}`:'No backup taken yet on this device';
+  $('last-backup-time').textContent=last?`Last backup: ${last}`:'No backup taken on this device yet';
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -3833,22 +3927,8 @@ function goRefreshSeams(){
     seam.stages.forEach((st,i)=>{
       if(st.name!==stageName) return;
       if(st.status!=='pending'&&st.status!=='returned') return;
-      // Unlock check: use same PG-aware logic
-      const myPg=st.pg||'';
-      let locked=false;
-      if(i>0){
-        let pgStart=i;
-        if(myPg){for(let k=i-1;k>=0;k--){if((seam.stages[k].pg||'')===myPg)pgStart=k;else break;}}
-        const gateIdx=pgStart-1;
-        if(gateIdx>=0){
-          const gatePg=seam.stages[gateIdx].pg||'';
-          let gateStart=gateIdx;
-          if(gatePg){for(let k=gateIdx-1;k>=0;k--){if((seam.stages[k].pg||'')===gatePg)gateStart=k;else break;}}
-          locked=seam.stages.slice(gateStart,gateIdx+1).some(s=>s.status!=='accepted');
-        }
-        if(!myPg) locked=seam.stages[i-1].status!=='accepted';
-      }
-      if(locked) return;
+      // Unlock check — use central stageUnlocked()
+      if(!stageUnlocked(seam,i)) return;
       eligible.push({seam,st,stIdx:i});
     });
   });
@@ -4168,7 +4248,7 @@ function printRTUTReport(seamId, idx){
     </div>
     <div style="flex:1;text-align:center;padding:0 10px;">
       <div style="font-size:16pt;font-weight:800;color:#1d4ed8;letter-spacing:2px;">${st.ndtType||'RT/UT'} REQUEST FORM</div>
-      <div style="font-size:7.5pt;color:#555;margin-top:2px;">Volumetric NDT</div>
+
     </div>
     <div style="text-align:right;font-size:8pt;color:#555;line-height:1.9;min-width:150px;">
       <div><b>Report No.:</b> <span style="font-family:monospace;font-weight:700;color:#1d4ed8;">${st.reportNo||'—'}</span></div>
@@ -4224,7 +4304,12 @@ function printRTUTReport(seamId, idx){
   <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">NDT Result</div>
   <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:10px;">
     <tr><td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Status</td>
-        <td style="padding:5px 8px;border:1px solid #d1d5db;"><b style="color:${st.status==='accepted'?'#059669':'#dc2626'};font-size:10pt;">${st.status==='accepted'?'✓ ACCEPTED / SATISFACTORY':'✗ REJECTED / REPAIR REQUIRED'}</b></td>
+        <td style="padding:5px 8px;border:1px solid #d1d5db;"><b style="color:${st.status==='accepted'?'#059669':st.status==='offered'||st.status==='pending'?'#d97706':'#dc2626'};font-size:10pt;">${
+          st.status==='accepted'?'✓ ACCEPTED / SATISFACTORY':
+          st.status==='offered'?'⏳ UNDER PROCESS — Awaiting QC Decision':
+          st.status==='pending'?'⏳ UNDER PROCESS — Not Yet Submitted':
+          '✗ REJECTED / REPAIR REQUIRED'
+        }</b></td>
         <td style="background:#f1f5f9;font-weight:700;width:20%;padding:5px 8px;border:1px solid #d1d5db;">Inspected By (QE)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.inspectedBy||'—'}</td></tr>
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Inspection Date</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.inspectedAt||'—'}</td>
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">NCR No.</td><td style="color:#dc2626;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ncrNumber||'—'}</td></tr>
@@ -4262,7 +4347,8 @@ function printRTUTReport(seamId, idx){
 function exportBackup(){
   const ts=new Date().toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).replace(/[\s,:\/]+/g,'-');
   const filename=`TQIMS-Backup-${ts}.json`;
-  const data=JSON.stringify(DB,null,2);
+  const exportSnap={...DB,exportedAt:new Date().toLocaleString('en-IN',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true})};
+  const data=JSON.stringify(exportSnap,null,2);
   const blob=new Blob([data],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=filename;
@@ -4275,34 +4361,69 @@ function exportBackup(){
   toast('✓ Backup file downloaded successfully','ok');
 }
 
-function importBackup(input){
-  const file=input.files[0];
-  if(!file){return;}
+// ── BACKUP RESTORE — requires Manager approval ──
+// Stores parsed backup as a pending action with type='restore_request'
+// Manager sees it in Approvals, approves → data is applied, rejected → discarded
+
+function submitRestoreRequest(input){
+  const file=input.files[0];if(!file)return;
+  const msgEl=$('import-msg');
+  const pending=DB.pendingActions.find(a=>a.type==='restore_request');
+  if(pending){
+    if(msgEl)msgEl.innerHTML='<div class="msg msg-err">⚠️ A restore request is already pending. Ask the Manager to approve or reject it first from the Approvals section.</div>';
+    input.value='';return;
+  }
   const reader=new FileReader();
   reader.onload=function(e){
     try{
       const parsed=JSON.parse(e.target.result);
-      // Validate it's a TQIMS backup
       if(!parsed.projects||!parsed.seams||!parsed.users){
-        $('import-msg').innerHTML='<div class="msg msg-err">❌ Invalid backup file. Not a TQIMS backup.</div>';return;
+        if(msgEl)msgEl.innerHTML='<div class="msg msg-err">❌ Invalid backup file — not a TQIMS backup.</div>';
+        input.value='';return;
       }
-      if(!parsed.pendingActions)parsed.pendingActions=[];
-      if(!parsed.templates)parsed.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];
-      if(!parsed.secretKey)parsed.secretKey='TQIMS@Admin2024';
-      DB=parsed;save();
-      $('import-msg').innerHTML=`<div class="msg msg-ok">✓ Backup restored! ${parsed.projects.length} projects, ${parsed.seams.length} seams, ${parsed.users.length} users loaded.</div>`;
-      log(`📥 BACKUP IMPORTED — by ${CU.name}`);save();
-      toast('✓ Data restored from backup','ok');
-      // Refresh current user reference from restored DB
-      if(CU){const refreshed=DB.users.find(u=>u.id===CU.id);if(refreshed)CU=refreshed;}
-      populateSelects();
-      setTimeout(()=>{renderBackupPage();renderDashboard();},800);
+      const summary=`${parsed.projects.length} projects · ${parsed.seams.length} seams · ${parsed.users.length} users`;
+      const backupDate=parsed.exportedAt||'unknown date';
+      // Store the parsed backup payload as a JSON string in the pending action
+      DB.pendingActions.push({
+        id:'pa'+Date.now(),
+        type:'restore_request',
+        requestedBy:CU.name,
+        requestedAt:now(),
+        backupSummary:summary,
+        backupDate:backupDate,
+        backupPayload:JSON.stringify(parsed),
+        desc:`📥 RESTORE REQUEST — ${summary} (backup from ${backupDate}) — requested by ${CU.name}`
+      });
+      log(`📥 RESTORE REQUESTED — ${summary} — by ${CU.name}`);
+      save();updateApprovalBadge();
+      if(msgEl)msgEl.innerHTML=`<div class="msg msg-ok">✅ Restore request submitted for Manager approval.<br><b>Summary:</b> ${summary}<br><b>Backup from:</b> ${backupDate}<br>Nothing is overwritten until the Manager approves in the Approvals section.</div>`;
+      renderBackupPage();
     }catch(err){
-      $('import-msg').innerHTML='<div class="msg msg-err">❌ File is corrupted or not valid JSON.</div>';
+      if(msgEl)msgEl.innerHTML='<div class="msg msg-err">❌ File corrupted or not valid JSON.</div>';
     }
     input.value='';
   };
   reader.readAsText(file);
+}
+
+// Legacy direct restore (kept for admin emergency use — not exposed in UI)
+function importBackup(input){submitRestoreRequest(input);}
+
+function approveRestoreRequest(id){
+  if(!confirm('Approve this restore? ALL current data will be REPLACED by the backup.\n\nThis cannot be undone.'))return;
+  approveAction(id);
+}
+
+function rejectRestoreRequest(id){
+  const reason=prompt('Reason for rejecting this restore request (optional):','');
+  if(reason===null)return; // user cancelled
+  const a=DB.pendingActions.find(x=>x.id===id);
+  if(!a)return;
+  DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+  log(`✗ RESTORE REQUEST REJECTED — by Manager ${CU.name}${reason?' — Reason: '+reason:''}`);
+  save();updateApprovalBadge();renderApprovals();
+  if($('pg-backup')&&$('pg-backup').classList.contains('on'))renderBackupPage();
+  toast('Restore request rejected','ok');
 }
 
 function requestReset(){
@@ -4382,6 +4503,7 @@ function renderApprovals(){
               a.type==='add_proj'?`<span class="chip ch-off" style="font-size:8px;">NEW PROJECT</span>`:
               a.type==='edit_proj'?`<span class="chip ch-off" style="font-size:8px;">EDIT PROJECT</span>`:
               a.type==='ncr_reoffer'?`<span class="chip ch-ncr" style="font-size:8px;">🔴 NCR RE-OFFER</span>`:
+              a.type==='restore_request'?`<span style="display:inline-block;background:#dc2626;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">📥 RESTORE REQUEST</span>`:
               a.type==='rtut_repair'?`<span style="display:inline-block;background:#d97706;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">🔬 RT/UT REPAIR</span>`:
               a.type==='rtut_r2_offer'?`<span style="display:inline-block;background:#dc2626;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">⚠ RT/UT R2 OFFER</span>`:
               a.type==='system_reset'?`<span style="display:inline-block;background:#dc2626;color:#fff;font-size:8px;padding:2px 8px;border-radius:4px;font-weight:700;letter-spacing:.5px;">⚠ SYSTEM RESET</span>`:
@@ -4443,6 +4565,34 @@ function approveAction(id){
       st.offeredAt=a.at;
       log(`✅ R2 RT/UT OFFER APPROVED — ${seam.num} · ${st.name} now offered to QC (approved by ${CU.name})`);
       toast('R2 RT/UT offer approved — QC can now inspect','ok');
+    }
+  }
+  else if(a.type==='restore_request'){
+    // Manager approves backup restore — apply the backup payload
+    try{
+      const parsed=JSON.parse(a.backupPayload||'{}');
+      if(!parsed.projects||!parsed.seams||!parsed.users){
+        toast('Backup payload invalid — restore aborted','err');
+        DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+        save();renderApprovals();return;
+      }
+      DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+      if(!parsed.pendingActions)parsed.pendingActions=[];
+      if(!parsed.templates)parsed.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];
+      if(!parsed.secretKey)parsed.secretKey='TQIMS@Admin2024';
+      const summary=`${parsed.projects.length} projects · ${parsed.seams.length} seams · ${parsed.users.length} users`;
+      DB=parsed;
+      log(`📥 BACKUP RESTORED — ${summary} — approved by Manager ${CU.name}`);
+      save();
+      if(CU){const refreshed=DB.users.find(u=>u.id===CU.id);if(refreshed)CU=refreshed;}
+      populateSelects();renderDashboard();renderApprovals();updateApprovalBadge();updateBadge();
+      toast(`✅ Data restored from backup — ${summary}`,'ok');
+      if($('pg-backup')&&$('pg-backup').classList.contains('on'))renderBackupPage();
+      return;
+    }catch(err){
+      toast('Restore failed — backup file invalid','err');
+      DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
+      save();renderApprovals();return;
     }
   }
   else if(a.type==='ncr_reoffer'){
