@@ -1713,6 +1713,8 @@ let DB = defaultDB(); // will be replaced by loadFromSupabase()
 let _saving = false;
 let _saveQueued = false;
 let _lastSaveHash = '';
+let _suppressRealtime = false;   // true while we are saving — prevents self-echo
+const _approvedIds = new Set();  // action IDs approved this session — never apply twice
 
 // ── Sanitise DB after loading (same migration checks as before) ──
 function _migrateDB(p){
@@ -1734,16 +1736,19 @@ async function loadFromSupabase(){
   }catch(e){ console.error('TQIMS load exception',e); }
 }
 
-// ── Save to Supabase (debounced — skips if data unchanged) ──
+// ── Save to Supabase (debounced — suppresses realtime echo while saving) ──
 function save(){
   const hash=JSON.stringify(DB).length+'_'+DB.log.length;
   if(hash===_lastSaveHash && !_saveQueued){ _saveQueued=false; return; }
   if(_saving){ _saveQueued=true; return; }
   _saving=true; _lastSaveHash=hash;
+  _suppressRealtime=true;  // block our own echo
   _sb.from('tqims_state').update({payload:DB}).eq('id','main')
     .then(({error})=>{
       _saving=false;
       if(error) console.error('TQIMS save error',error);
+      // Keep suppressed for 3s to absorb the realtime echo that Supabase sends back
+      setTimeout(()=>{ _suppressRealtime=false; },3000);
       if(_saveQueued){ _saveQueued=false; save(); }
     });
 }
@@ -1754,9 +1759,10 @@ function startRealtime(){
     .on('postgres_changes',{
       event:'UPDATE', schema:'public', table:'tqims_state', filter:'id=eq.main'
     },payload=>{
+      // Ignore our own saves to prevent the approval-race / duplicate bug
+      if(_suppressRealtime) return;
       const remote=payload.new?.payload;
       if(!remote||!remote.users) return;
-      // Don't apply if we just saved this ourselves
       const remoteHash=JSON.stringify(remote).length+'_'+(remote.log||[]).length;
       if(remoteHash===_lastSaveHash) return;
       DB=_migrateDB(Object.assign(defaultDB(),remote));
@@ -4582,24 +4588,37 @@ function renderApprovals(){
           </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <button class="abtn ab-red" onclick="rejectAction('${a.id}')">✗ REJECT</button>
-          <button class="abtn ab-green" onclick="approveAction('${a.id}')">✓ APPROVE</button>
+          <button class="abtn ab-red" onclick="rejectAction('${a.id}')" ${_approvedIds.has(a.id)?'disabled style="opacity:.4;pointer-events:none;"':''}>✗ REJECT</button>
+          <button class="abtn ab-green" onclick="approveAction('${a.id}')" ${_approvedIds.has(a.id)?'disabled style="opacity:.4;pointer-events:none;"':''}>✓ APPROVE</button>
         </div>
       </div>`).join('')}
   `;
 }
 
 function approveAction(id){
+  // Hard guard — never apply same action twice even if realtime brings stale state back
+  if(_approvedIds.has(id)){ toast('Already approved — waiting for sync','ok'); return; }
+  _approvedIds.add(id);
+  // Disable all approve/reject buttons immediately to prevent double-click
+  document.querySelectorAll(`[onclick*="${id}"]`).forEach(btn=>{
+    btn.disabled=true;
+    btn.style.opacity='0.4';
+    btn.style.pointerEvents='none';
+  });
   const a=DB.pendingActions.find(x=>x.id===id);
-  if(!a)return;
-  if(a.type==='add_seam'){DB.seams.push(a.data);log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);}
+  if(!a){ renderApprovals(); return; }
+  if(a.type==='add_seam'){ if(!DB.seams.find(s=>s.id===a.data.id)){DB.seams.push(a.data);log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);} else{log(`⚠ DUPLICATE SKIPPED — ${a.desc}`);}}
   else if(a.type==='edit_seam'){const s=getSeam(a.data.id);if(s){Object.assign(s,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='del_seam'){DB.seams=DB.seams.filter(s=>s.id!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='add_proj'){
-    DB.projects.push(a.data);
-    // If current user has no project assigned, auto-assign to this new project
-    if(CU && !CU.pid){CU.pid=a.data.id;const cu=DB.users.find(u=>u.id===CU.id);if(cu)cu.pid=a.data.id;}
-    log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);
+    // Guard: never add a project if it already exists (prevents duplicate from realtime race)
+    if(!DB.projects.find(p=>p.id===a.data.id)){
+      DB.projects.push(a.data);
+      if(CU && !CU.pid){CU.pid=a.data.id;const cu=DB.users.find(u=>u.id===CU.id);if(cu)cu.pid=a.data.id;}
+      log(`✅ APPROVED & ADDED — ${a.desc} (approved by ${CU.name})`);
+    } else {
+      log(`⚠ DUPLICATE SKIPPED — ${a.desc} already exists`);
+    }
   }
   else if(a.type==='edit_proj'){const p=getProj(a.data.id);if(p){Object.assign(p,a.data);}log(`✅ APPROVED & EDITED — ${a.desc} (approved by ${CU.name})`);}
   else if(a.type==='del_proj'){DB.projects=DB.projects.filter(p=>p.id!==a.data.id);DB.seams=DB.seams.filter(s=>s.pid!==a.data.id);log(`✅ APPROVED & DELETED — ${a.desc} (approved by ${CU.name})`);}
@@ -4697,7 +4716,12 @@ function approveAction(id){
 }
 
 function rejectAction(id){
-  const a=DB.pendingActions.find(x=>x.id===id);if(!a)return;
+  if(_approvedIds.has(id)){ toast('Already processed','ok'); return; }
+  _approvedIds.add(id);
+  document.querySelectorAll(`[onclick*="${id}"]`).forEach(btn=>{
+    btn.disabled=true; btn.style.opacity='0.4'; btn.style.pointerEvents='none';
+  });
+  const a=DB.pendingActions.find(x=>x.id===id);if(!a){ renderApprovals(); return; }
   log(`❌ REJECTED — ${a.desc} (rejected by ${CU.name})`);
   DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
   save();renderApprovals();updateApprovalBadge();
