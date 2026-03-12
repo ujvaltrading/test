@@ -1547,6 +1547,9 @@ tr:hover td{background:var(--surf2);}
 
 <div class="toast" id="toast"></div>
 
+<!-- Supabase JS client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
 <script>
 // ══════════════════════════════════════════════════════════════
 // DATABASE
@@ -1699,8 +1702,76 @@ function defaultDB() {
   };
 }
 
-let DB = (()=>{try{const d=localStorage.getItem('tqims3');if(d){const p=JSON.parse(d);if(!p.templates)p.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];if(!p.secretKey)p.secretKey='TQIMS@Admin2024';if(!p.pendingActions)p.pendingActions=[];if(!p.rtutReports)p.rtutReports={};return p;}}catch(e){}return defaultDB();})();
-function save(){try{localStorage.setItem('tqims3',JSON.stringify(DB));}catch(e){}}
+// ══════════════════════════════════════════════════════════════
+// SUPABASE — Live sync across all devices
+// ══════════════════════════════════════════════════════════════
+const SUPA_URL = 'https://dqsugjgvdvwablkdeohg.supabase.co';
+const SUPA_KEY = 'sb_publishable_3VaNmFiGpnCk6jwJjtF5zg_B1cKkiXd';
+const _sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+let DB = defaultDB(); // will be replaced by loadFromSupabase()
+let _saving = false;
+let _saveQueued = false;
+let _lastSaveHash = '';
+
+// ── Sanitise DB after loading (same migration checks as before) ──
+function _migrateDB(p){
+  if(!p.templates) p.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];
+  if(!p.secretKey) p.secretKey='TQIMS@Admin2024';
+  if(!p.pendingActions) p.pendingActions=[];
+  if(!p.rtutReports) p.rtutReports={};
+  return p;
+}
+
+// ── Load once from Supabase on startup ──
+async function loadFromSupabase(){
+  try{
+    const {data,error}=await _sb.from('tqims_state').select('payload').eq('id','main').single();
+    if(error){ console.error('TQIMS load error',error); return; }
+    if(data?.payload && data.payload.users){
+      DB=_migrateDB(Object.assign(defaultDB(),data.payload));
+    }
+  }catch(e){ console.error('TQIMS load exception',e); }
+}
+
+// ── Save to Supabase (debounced — skips if data unchanged) ──
+function save(){
+  const hash=JSON.stringify(DB).length+'_'+DB.log.length;
+  if(hash===_lastSaveHash && !_saveQueued){ _saveQueued=false; return; }
+  if(_saving){ _saveQueued=true; return; }
+  _saving=true; _lastSaveHash=hash;
+  _sb.from('tqims_state').update({payload:DB}).eq('id','main')
+    .then(({error})=>{
+      _saving=false;
+      if(error) console.error('TQIMS save error',error);
+      if(_saveQueued){ _saveQueued=false; save(); }
+    });
+}
+
+// ── Realtime — receive live updates from other devices ──
+function startRealtime(){
+  _sb.channel('tqims-live')
+    .on('postgres_changes',{
+      event:'UPDATE', schema:'public', table:'tqims_state', filter:'id=eq.main'
+    },payload=>{
+      const remote=payload.new?.payload;
+      if(!remote||!remote.users) return;
+      // Don't apply if we just saved this ourselves
+      const remoteHash=JSON.stringify(remote).length+'_'+(remote.log||[]).length;
+      if(remoteHash===_lastSaveHash) return;
+      DB=_migrateDB(Object.assign(defaultDB(),remote));
+      // Refresh UI for current logged-in user
+      try{
+        refreshCurrentView();
+        renderDashboard();
+        updateBadge();
+        updateApprovalBadge();
+        renderApprovals();
+        toast('🔄 Live update received','ok');
+      }catch(e){}
+    })
+    .subscribe();
+}
 
 let CU = null; // current user
 let activeSeamId = null; // for seam detail view
@@ -4535,7 +4606,6 @@ function approveAction(id){
   else if(a.type==='system_reset'){
     DB.pendingActions=DB.pendingActions.filter(x=>x.id!==id);
     save(); log(`🔄 SYSTEM RESET — approved by Manager ${CU.name}`);
-    localStorage.removeItem('tqims3');
     DB=defaultDB();save();
     populateSelects();renderDashboard();renderApprovals();updateApprovalBadge();updateBadge();
     toast('✅ System reset to factory defaults','ok');
@@ -4633,7 +4703,30 @@ function rejectAction(id){
   save();renderApprovals();updateApprovalBadge();
   toast('Request rejected');
 }
-(function init(){
+// ── Show loading overlay while Supabase data is fetched ──
+document.addEventListener('DOMContentLoaded',()=>{
+  const overlay=document.createElement('div');
+  overlay.id='supa-loading';
+  overlay.innerHTML=`<div style="position:fixed;inset:0;z-index:99999;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;">
+    <div style="font-size:36px;font-weight:900;letter-spacing:6px;color:#60a5fa;">TQIMS</div>
+    <div style="font-size:13px;color:#94a3b8;letter-spacing:2px;">Connecting to database…</div>
+    <div style="width:48px;height:48px;border:4px solid #1e3a5f;border-top-color:#60a5fa;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+    <style>@keyframes spin{to{transform:rotate(360deg);}}</style>
+  </div>`;
+  document.body.appendChild(overlay);
+});
+
+(async function init(){
+  // Wait for DOM
+  await new Promise(r=>{ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',r); else r(); });
+  // Load data from Supabase
+  await loadFromSupabase();
+  // Start live sync
+  startRealtime();
+  // Remove loading overlay
+  const ov=document.getElementById('supa-loading');
+  if(ov) ov.remove();
+  // Show login
   $('scr-auth').classList.add('on');
   showTab('login');
 })();
