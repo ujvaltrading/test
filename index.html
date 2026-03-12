@@ -1781,6 +1781,108 @@ function startRealtime(){
 
 let CU = null; // current user
 let activeSeamId = null; // for seam detail view
+
+// ══════════════════════════════════════════════════════════════
+// SESSION PERSISTENCE + INACTIVITY TIMEOUT
+// ══════════════════════════════════════════════════════════════
+const SESSION_KEY = 'tqims_session';
+const TIMEOUT_MS  = 60 * 1000; // 1 minute inactivity → auto-logout
+let _inactivityTimer = null;
+let _warningTimer    = null;
+let _timeoutWarningEl = null;
+
+// ── Save current user to sessionStorage so refresh restores them ──
+function saveSession(u){
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify({id:u.id, ts:Date.now()}));
+}
+function clearSession(){
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+// ── Try to restore session after Supabase load ──
+function tryRestoreSession(){
+  try{
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if(!raw) return false;
+    const sess = JSON.parse(raw);
+    // Session must be from this browser tab-group (sessionStorage is per-tab but persists refresh)
+    const u = DB.users.find(u => u.id === sess.id && u.approved);
+    if(!u) return false;
+    loginAs(u, true); // true = silent restore (no activity reset needed yet)
+    return true;
+  }catch(e){ return false; }
+}
+
+// ── Reset inactivity timer on any user interaction ──
+function _resetInactivity(){
+  clearTimeout(_inactivityTimer);
+  clearTimeout(_warningTimer);
+  // Hide warning if showing
+  if(_timeoutWarningEl){ _timeoutWarningEl.style.display='none'; }
+  if(!CU) return;
+  // Warn at 45 seconds
+  _warningTimer = setTimeout(()=>{
+    _showTimeoutWarning();
+  }, 45000);
+  // Force logout at 60 seconds
+  _inactivityTimer = setTimeout(()=>{
+    _inactivityLogout();
+  }, TIMEOUT_MS);
+}
+
+function _showTimeoutWarning(){
+  if(!_timeoutWarningEl){
+    _timeoutWarningEl = document.createElement('div');
+    _timeoutWarningEl.id = 'timeout-warning';
+    _timeoutWarningEl.innerHTML = `
+      <div style="position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:99998;
+        background:#1e293b;color:#f8fafc;border:2px solid #f59e0b;border-radius:12px;
+        padding:14px 20px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+        box-shadow:0 8px 32px rgba(0,0,0,.5);display:flex;align-items:center;gap:12px;min-width:280px;">
+        <span style="font-size:20px;">⏱</span>
+        <div style="flex:1;">
+          <div>Session expiring in <span id="timeout-countdown">15</span>s due to inactivity</div>
+          <div style="font-size:11px;font-weight:400;color:#94a3b8;margin-top:2px;">Move your mouse or tap to stay logged in</div>
+        </div>
+        <button onclick="_resetInactivity()" style="background:#f59e0b;color:#1e293b;border:none;
+          border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">
+          Stay
+        </button>
+      </div>`;
+    document.body.appendChild(_timeoutWarningEl);
+  }
+  _timeoutWarningEl.style.display='block';
+  // Countdown
+  let secs=15;
+  const cd=document.getElementById('timeout-countdown');
+  if(cd){cd.textContent=secs;}
+  const cdInterval=setInterval(()=>{
+    secs--;
+    if(cd)cd.textContent=secs;
+    if(secs<=0) clearInterval(cdInterval);
+  },1000);
+}
+
+function _inactivityLogout(){
+  if(!CU) return;
+  clearSession();
+  const name=CU.name;
+  doLogout();
+  if(_timeoutWarningEl) _timeoutWarningEl.style.display='none';
+  // Show a message on the login screen
+  setTimeout(()=>{
+    $('l-err').innerHTML=`<div class="msg msg-err" style="color:#78350f;background:#fef3c7;border-color:#f59e0b;">
+      ⏱ Session expired after 1 minute of inactivity.<br>Please log in again.
+    </div>`;
+  },100);
+}
+
+// ── Attach activity listeners once ──
+function _startActivityListeners(){
+  ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(ev=>{
+    document.addEventListener(ev, _resetInactivity, {passive:true});
+  });
+}
 let inspTarget = null;
 let offerTarget = null;
 let editTmplId = null;
@@ -1918,8 +2020,9 @@ function doAdminReg(){
   setTimeout(()=>showTab('login'),2000);
 }
 
-function loginAs(u){
+function loginAs(u, silent=false){
   CU=u;
+  saveSession(u);          // persist across page refresh
   $('scr-auth').classList.remove('on');
   $('scr-app').classList.add('on');
   $('hdr-role').className='rpill rp-'+u.role;
@@ -1929,16 +2032,19 @@ function loginAs(u){
   $('manager-nav').style.display=u.role==='manager'?'block':'none';
   const warnBtn=$('storage-warn-admin');
   if(warnBtn) warnBtn.style.display=u.role==='admin'?'block':'none';
-  // Group action buttons visibility
   const goB=$('btn-group-offer'),giB=$('btn-group-inspect');
   if(goB)goB.style.display=(u.role==='production')?'block':'none';
   if(giB)giB.style.display=(u.role==='quality')?'block':'none';
   populateSelects();
   updateApprovalBadge();
   goPage('dashboard');
+  _resetInactivity();      // start the inactivity timer
 }
 
 function doLogout(){
+  clearSession();
+  clearTimeout(_inactivityTimer);
+  clearTimeout(_warningTimer);
   CU=null;
   $('scr-app').classList.remove('on');
   $('scr-auth').classList.add('on');
@@ -4747,12 +4853,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   await loadFromSupabase();
   // Start live sync
   startRealtime();
+  // Start activity listeners for inactivity timeout
+  _startActivityListeners();
   // Remove loading overlay
   const ov=document.getElementById('supa-loading');
   if(ov) ov.remove();
-  // Show login
-  $('scr-auth').classList.add('on');
-  showTab('login');
+  // Try to restore previous session (survives page refresh)
+  const restored = tryRestoreSession();
+  if(!restored){
+    // No session — show login screen
+    $('scr-auth').classList.add('on');
+    showTab('login');
+  }
 })();
 </script>
 
