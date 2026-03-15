@@ -7,24 +7,24 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#1d4ed8">
-<title>TQIMS — Quality Inspection Management System</title>
+<title>TQIMS — TEIL TEIL Quality Inspection Management System</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root{
-  /* ── Core Palette ── */
-  --bg:#f0f2f5;
-  --surf:#ffffff;
-  --surf2:#f7f8fa;
-  --surf3:#eef0f4;
-  --border:#dde1e8;
-  --border2:#c8cdd8;
+  /* ── Core Palette — MIR Professional Blue/White Theme ── */
+  --bg:#F4F7FC;
+  --surf:#FFFFFF;
+  --surf2:#F8FAFD;
+  --surf3:#EBF2FF;
+  --border:#DCE8F8;
+  --border2:#B8CFEF;
 
-  /* ── Brand Blue ── */
-  --blue:#1a56db;
-  --blue2:#2563eb;
-  --blue-lt:#dbeafe;
-  --blue-mid:#93c5fd;
+  /* ── Brand Blue (MIR palette) ── */
+  --blue:#1A56DB;
+  --blue2:#2563EB;
+  --blue-lt:#EBF2FF;
+  --blue-mid:#BFDBFE;
 
   /* ── Status Colors ── */
   --green:#16a34a;
@@ -109,7 +109,7 @@ textarea{resize:vertical;min-height:64px;}
 .msg-err{color:#991b1b;border-color:#fca5a5;background:#fee2e2;}
 .msg-ok{color:#166534;border-color:#86efac;background:#dcfce7;}
 .msg-warn{color:#92400e;border-color:#fcd34d;background:#fef3c7;}
-.credit{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text4);text-align:center;margin-top:20px;letter-spacing:1px;}
+.credit{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,.35);text-align:center;margin-top:20px;letter-spacing:1px;}
 
 /* ── APP SHELL ── */
 #scr-app{display:none;min-height:100vh;flex-direction:column;}
@@ -132,11 +132,11 @@ textarea{resize:vertical;min-height:64px;}
 
 /* ── BODY LAYOUT ── */
 .app-body{display:flex;flex:1;}
-.sidebar{width:230px;background:var(--surf);border-right:1px solid var(--border);padding:16px 8px;flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;transition:transform .3s;box-shadow:none;}
-.sg-lbl{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:var(--text4);letter-spacing:1px;text-transform:uppercase;padding:12px 12px 6px;}
-.nitem{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;color:var(--text3);font-size:14px;font-weight:500;transition:all .15s;border-radius:8px;margin:1px 0;}
-.nitem:hover{background:var(--surf2);color:var(--text2);}
-.nitem.on{background:var(--blue-lt);color:var(--blue2);font-weight:600;}
+.sidebar{width:230px;background:#0F2D6B;border-right:1px solid #1e3a6e;padding:16px 8px;flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;transition:transform .3s;box-shadow:none;}
+.sg-lbl{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:1px;text-transform:uppercase;padding:12px 12px 6px;}
+.nitem{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;color:rgba(255,255,255,.65);font-size:14px;font-weight:500;transition:all .15s;border-radius:8px;margin:1px 0;}
+.nitem:hover{background:rgba(255,255,255,.1);color:#fff;}
+.nitem.on{background:#1A56DB;color:#fff;font-weight:600;}
 .nitem .ni{font-size:16px;width:20px;text-align:center;}
 .nbadge{margin-left:auto;background:var(--amber);color:#fff;font-family:'Inter',sans-serif;font-size:9px;padding:2px 6px;font-weight:700;border-radius:10px;min-width:18px;text-align:center;}
 .sov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:299;}
@@ -472,6 +472,100 @@ tr:hover td{background:var(--surf2);}
   #print-frame.landscape @page{size:A4 landscape;margin:8mm;}
   #print-frame.portrait  @page{size:A4 portrait;margin:10mm;}
 }
+
+/* ══════════════════════════════════════════════
+   MIR PAGE STYLES
+══════════════════════════════════════════════ */
+.mir-step-bar{display:flex;background:var(--surf);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:22px;}
+.mir-step{flex:1;padding:11px 16px;text-align:center;font-size:12px;font-weight:600;border-right:1px solid var(--border);cursor:default;transition:all .2s;}
+.mir-step:last-child{border-right:none;}
+.mir-step.done{background:var(--blue-lt);color:var(--blue2);}
+.mir-step.active{background:var(--blue2);color:#fff;}
+.mir-step.todo{background:var(--surf2);color:var(--text4);}
+.mir-panel{background:var(--surf);border-radius:12px;border:1px solid var(--border);box-shadow:0 1px 8px rgba(26,86,219,.06);margin-bottom:16px;overflow:hidden;}
+.mir-phead{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.mir-ptitle{font-size:14px;font-weight:700;color:#0D1F3C;}
+.mir-stat{background:var(--surf);border-radius:12px;padding:18px 22px;flex:1 1 140px;border:1px solid var(--border);box-shadow:0 1px 8px rgba(26,86,219,.05);border-top:3px solid var(--blue2);min-width:130px;}
+.mir-stat-val{font-size:28px;font-weight:800;line-height:1;}
+.mir-stat-lbl{font-size:10px;font-weight:700;color:#4A6080;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.mir-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap;}
+.mir-tbl-hdr{padding:9px 12px;font-size:10px;font-weight:700;color:#8FA5C0;text-align:left;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;border-bottom:1.5px solid var(--border);background:var(--bg);}
+.mir-tbl-row td{padding:10px 12px;font-size:12px;color:#0D1F3C;border-bottom:1px solid var(--border);}
+.mir-tbl-row:hover td{background:#FAFCFF;}
+.mir-basket-item{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;}
+.mir-transfer-mark{padding:4px 10px;background:var(--surf);border:1.5px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;color:var(--text3);transition:all .15s;}
+.mir-transfer-mark.on{background:var(--blue-lt);border-color:var(--blue2);color:var(--blue2);}
+/* MIR Status chip colours */
+.mc-APPROVED{color:#059669;background:#ECFDF5;border-color:#A7F3D0;}
+.mc-PENDING_QC{color:#D97706;background:#FFFBEB;border-color:#FCD34D;}
+.mc-PENDING_APPROVAL{color:#2563EB;background:#EFF6FF;border-color:#BFDBFE;}
+.mc-REJECTED{color:#DC2626;background:#FEF2F2;border-color:#FCA5A5;}
+.mc-DRAFT{color:#8FA5C0;background:#F1F5F9;border-color:#CBD5E1;}
+
+/* ══════════════════════════════════════════════
+   TAG CATEGORY LEVEL STYLES
+══════════════════════════════════════════════ */
+.tagcat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:20px;}
+.tagcat-card{background:var(--surf);border:2px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .18s;box-shadow:var(--shadow-sm);}
+.tagcat-card:hover{border-color:var(--blue2);box-shadow:var(--shadow);transform:translateY(-1px);}
+.tagcat-icon{font-size:24px;margin-bottom:8px;}
+.tagcat-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.tagcat-sub{font-size:12px;color:var(--text3);}
+
+/* ══════════════════════════════════════════════
+   GLOBAL SEARCH BOX
+══════════════════════════════════════════════ */
+.gsearch-wrap{position:relative;flex:1;max-width:320px;}
+.gsearch-inp{padding:7px 12px 7px 32px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;width:100%;background:var(--surf2);color:var(--text);outline:none;transition:border .15s;}
+.gsearch-inp:focus{border-color:var(--blue2);background:var(--surf);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+.gsearch-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text4);font-size:14px;pointer-events:none;}
+.gsearch-results{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--surf);border:1.5px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);z-index:500;max-height:360px;overflow-y:auto;display:none;}
+.gsearch-results.on{display:block;}
+.gsr-item{padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-size:13px;transition:background .12s;}
+.gsr-item:hover{background:var(--blue-lt);}
+.gsr-item:last-child{border-bottom:none;}
+.gsr-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+.gsr-proj{background:#dbeafe;color:#1e40af;}
+.gsr-seam{background:#dcfce7;color:#166534;}
+.gsr-mir{background:#ede9fe;color:#5b21b6;}
+.gsr-user{background:#fef3c7;color:#92400e;}
+
+/* ══════════════════════════════════════════════
+   FAQ PAGE
+══════════════════════════════════════════════ */
+.faq-category{margin-bottom:24px;}
+.faq-cat-title{font-size:13px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--blue-lt);}
+.faq-item{background:var(--surf);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden;}
+.faq-q{padding:12px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:8px;user-select:none;transition:background .15s;}
+.faq-q:hover{background:var(--surf2);}
+.faq-a{padding:0 16px;font-size:13px;color:var(--text3);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .2s;}
+.faq-a.open{max-height:800px;padding:0 16px 14px;}
+.faq-caret{font-size:11px;color:var(--text4);transition:transform .2s;flex-shrink:0;}
+.faq-caret.open{transform:rotate(90deg);}
+
+/* ══════════════════════════════════════════════
+   COMPARE CHARTS
+══════════════════════════════════════════════ */
+.compare-check{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--surf);border:1.5px solid var(--border);border-radius:7px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text3);transition:all .15s;user-select:none;}
+.compare-check.on{background:var(--blue-lt);border-color:var(--blue2);color:var(--blue2);}
+.chart-wrap{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 8px rgba(26,86,219,.06);}
+.chart-title{font-size:14px;font-weight:700;color:#0D1F3C;margin-bottom:12px;}
+
+/* ══════════════════════════════════════════════
+   PART NUMBER BADGE (MIR clearance)
+══════════════════════════════════════════════ */
+.part-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;border:1.5px solid;}
+.part-cleared{background:#ECFDF5;color:#059669;border-color:#A7F3D0;}
+.part-pending{background:#FFFBEB;color:#D97706;border-color:#FCD34D;}
+.part-blocked{background:#FEF2F2;color:#DC2626;border-color:#FCA5A5;}
+.mir-block-banner{background:#FEF2F2;border:2px solid #FCA5A5;border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#991b1b;font-weight:600;display:flex;align-items:center;gap:8px;}
+
+@media(max-width:720px){
+  .tagcat-grid{grid-template-columns:1fr 1fr;}
+  .gsearch-wrap{max-width:none;width:100%;}
+  .mir-step-bar{display:none;}
+}
+
 </style>
 </head>
 <body>
@@ -482,7 +576,7 @@ tr:hover td{background:var(--surf2);}
 <div id="scr-auth">
   <div class="acard">
     <div class="logo-big">TQIMS</div>
-    <div class="logo-sub">Quality Inspection Management System</div>
+    <div class="logo-sub">TEIL Quality Inspection Management System</div>
 
     <div class="atabs">
       <button class="atab on" id="tab-login" onclick="showTab('login')">LOGIN</button>
@@ -544,7 +638,7 @@ tr:hover td{background:var(--surf2);}
       <div class="alink"><a onclick="showTab('login')">← Back to login</a></div>
     </div>
 
-    <div class="credit">© TQIMS · Designed by Ujval Dharawaparmar</div>
+    <div class="credit">© TQIMS · Designed &amp; Developed by Ujval Dharawaparmar</div>
   </div>
 </div>
 
@@ -556,9 +650,16 @@ tr:hover td{background:var(--surf2);}
   <div class="topbar">
     <div class="tb-left">
       <button class="ham" onclick="toggleSidebar()">☰</button>
-      <div class="tb-logo">TQIMS <span>Quality Inspection</span></div>
+      <div class="tb-logo">TQIMS <span>TEIL Quality Inspection</span></div>
     </div>
-    <div class="tb-right">
+    <div class="tb-right" style="gap:8px;">
+      <!-- Global Search -->
+      <div class="gsearch-wrap" id="gsearch-wrap">
+        <span class="gsearch-icon">🔍</span>
+        <input class="gsearch-inp" id="gsearch-inp" placeholder="Search projects, seams, MIRs…" autocomplete="off"
+          oninput="onGlobalSearch(this.value)" onblur="setTimeout(()=>closeGSearch(),200)">
+        <div class="gsearch-results" id="gsearch-results"></div>
+      </div>
       <span class="rpill" id="hdr-role"></span>
       <span class="tb-user" id="hdr-name"></span>
       <button class="tb-logout" onclick="doLogout()">LOGOUT</button>
@@ -574,6 +675,7 @@ tr:hover td{background:var(--surf2);}
         <div class="sg-lbl">Main</div>
         <div class="nitem on" id="ni-dashboard" onclick="goPage('dashboard')"><span class="ni">🏠</span>Dashboard</div>
         <div class="nitem" id="ni-inspection" onclick="goPage('inspection')"><span class="ni">🔬</span>Inspection<span class="nbadge" id="nb" style="display:none">0</span></div>
+        <div class="nitem" id="ni-mir" onclick="goPage('mir')"><span class="ni">📦</span>MIR<span class="nbadge" id="nb-mir" style="display:none">0</span></div>
         <div class="nitem" id="ni-log" onclick="goPage('log')"><span class="ni">📋</span>Activity Log</div>
       </div>
       <div id="admin-nav" style="display:none">
@@ -590,10 +692,12 @@ tr:hover td{background:var(--surf2);}
       <div>
         <div class="sg-lbl">Reports</div>
         <div class="nitem" id="ni-summary" onclick="goPage('summary')"><span class="ni">📄</span>Print Summary</div>
+        <div class="nitem" id="ni-compare" onclick="goPage('compare')"><span class="ni">📊</span>Compare & Charts</div>
         <div class="sg-lbl">Account</div>
         <div class="nitem" id="ni-profile" onclick="goPage('profile')"><span class="ni">👤</span>My Profile</div>
+        <div class="nitem" id="ni-faq" onclick="goPage('faq')"><span class="ni">❓</span>FAQ / Help</div>
       </div>
-      <div class="credit" style="padding:12px 16px;margin-top:8px;">Designed by<br>Ujval Dharawaparmar</div>
+      <div class="credit" style="padding:12px 16px;margin-top:8px;">Designed &amp; Developed by<br>Ujval Dharawaparmar</div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -601,8 +705,10 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── DASHBOARD ── -->
       <div class="pg on" id="pg-dashboard">
-        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs" id="dash-pgs">Project → Tag → Component → Seam → Stage</div></div>
+        <div class="pgh"><div class="pgt">Dashboard</div><div class="pgs" id="dash-pgs">Project → Tag Category → Tag → Component → Seam → Stage</div></div>
 
+        <!-- Live Global Stats Bar -->
+        <div id="dash-global-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:14px;"></div>
         <!-- NOTICE -->
         <div id="storage-warning" style="display:flex;align-items:center;gap:10px;background:#fffbeb;border:1px solid #f59e0b;border-left:4px solid #d97706;border-radius:8px;padding:10px 16px;margin-bottom:16px;flex-wrap:wrap;">
           <span style="font-size:15px;flex-shrink:0;">⚠️</span>
@@ -624,10 +730,13 @@ tr:hover td{background:var(--surf2);}
         <div id="dash-lv0"></div>
         <!-- LEVEL 1: Tags for selected project -->
         <div id="dash-lv1" style="display:none;"></div>
+        <div id="dash-lv1b" style="display:none;"></div>
         <!-- LEVEL 2: Components for selected tag -->
         <div id="dash-lv2" style="display:none;"></div>
         <!-- LEVEL 3: Seams for selected component -->
         <div id="dash-lv3" style="display:none;"></div>
+        <!-- Live Charts always visible -->
+        <div id="dash-charts" style="margin-top:20px;"></div>
       </div>
 
       <!-- ── SEAM DETAIL (from dashboard click) ── -->
@@ -640,6 +749,7 @@ tr:hover td{background:var(--surf2);}
       <!-- ── INSPECTION ── -->
       <div class="pg" id="pg-inspection">
         <div class="pgh"><div class="pgt">Inspection Stages</div><div class="pgs" id="insp-hint">Filter by Project → Tag → Component, then offer or inspect stages</div></div>
+        <div id="insp-stats-bar" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:12px;"></div>
 
         <!-- FILTER BAR: Project → Tag → Component → Seam → Stage Type + Status -->
         <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
@@ -653,7 +763,13 @@ tr:hover td{background:var(--surf2);}
               </select>
             </div>
             <div style="flex:1;min-width:130px;">
-              <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">② Tag Number</div>
+              <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">② Tag Category</div>
+              <select id="insp-tagcat" onchange="onInspTagCatChange()" style="width:100%;padding:7px 10px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;" disabled>
+                <option value="">All Categories</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:130px;">
+              <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">③ Tag Number</div>
               <select id="insp-tag" onchange="onInspTagChange()" style="width:100%;padding:7px 10px;font-size:13px;font-weight:600;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;" disabled>
                 <option value="">All Tags</option>
               </select>
@@ -701,6 +817,11 @@ tr:hover td{background:var(--surf2);}
           </div>
         </div>
 
+        <div style="position:relative;margin-bottom:10px;">
+          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text4);font-size:13px;">🔍</span>
+          <input id="insp-search" oninput="renderInspSeams()" placeholder="Search seams, stage names, NCR…" autocomplete="off"
+            style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--surf);outline:none;">
+        </div>
         <div id="insp-seams"></div>
       </div>
 
@@ -724,7 +845,8 @@ tr:hover td{background:var(--surf2);}
 
           <!-- Step 1: Project + Tag + Component -->
           <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
-            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 1 — Project › Tag › Component</div>
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Step 1 — Project → Tag Category → Tag Number → Component</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">🔗 Project, Tag Category and Tag Number are <strong>auto-loaded from MIR Catalog</strong>. Only Component needs manual entry.</div>
             <div class="grid2">
               <div>
                 <label class="lbl">Project <span style="color:var(--red);">*</span></label>
@@ -733,17 +855,22 @@ tr:hover td{background:var(--surf2);}
                 </select>
               </div>
               <div>
+                <label class="lbl">Tag Category <span style="color:var(--red);">*</span></label>
+                <div style="display:flex;gap:6px;">
+                  <select id="ns-tagcat" onchange="refreshNsTag()" style="width:100%;" disabled>
+                  <option value="">— Select Tag Category —</option>
+                </select>
+                <input id="ns-tagcat-new" style="display:none;">
+                <div style="font-size:10px;color:#059669;margin-top:3px;">✓ Auto-loaded from MIR Master Items</div>
+              </div>
+              <div>
                 <label class="lbl">Tag Number <span style="color:var(--red);">*</span></label>
                 <div style="display:flex;gap:6px;">
-                  <select id="ns-tag" onchange="refreshNsComp()" style="flex:1;" disabled>
-                    <option value="">— Select project first —</option>
-                  </select>
-                  <input id="ns-tag-new" placeholder="New tag…" style="width:110px;display:none;">
-                </div>
-                <div style="margin-top:4px;display:flex;gap:8px;">
-                  <button type="button" onclick="toggleNewTag(false)" id="btn-tag-existing" style="font-size:10px;color:var(--blue2);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Select existing</button>
-                  <button type="button" onclick="toggleNewTag(true)" id="btn-tag-new" style="font-size:10px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Add new tag</button>
-                </div>
+                  <select id="ns-tag" onchange="refreshNsComp()" style="width:100%;" disabled>
+                  <option value="">— Select Tag Number —</option>
+                </select>
+                <input id="ns-tag-new" style="display:none;">
+                <div style="font-size:10px;color:#059669;margin-top:3px;">✓ Auto-loaded from MIR Master Items</div>
               </div>
               <div class="span2">
                 <label class="lbl">Component <span style="color:var(--red);">*</span></label>
@@ -812,8 +939,48 @@ tr:hover td{background:var(--surf2);}
               <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
                 <button type="button" onclick="nsSelectAllCatalog(true)" style="font-size:11px;padding:4px 10px;border:1.5px solid var(--border2);background:var(--surf);border-radius:6px;cursor:pointer;color:var(--blue2);font-weight:600;">☑ All</button>
                 <button type="button" onclick="nsSelectAllCatalog(false)" style="font-size:11px;padding:4px 10px;border:1.5px solid var(--border2);background:var(--surf);border-radius:6px;cursor:pointer;color:var(--text3);font-weight:600;">☐ None</button>
+                <button type="button" onclick="nsSaveAsTemplate()" style="font-size:11px;padding:4px 12px;border:1.5px solid var(--green);background:var(--green-lt);border-radius:6px;cursor:pointer;color:var(--green);font-weight:600;">💾 Save as Template</button>
               </div>
               <div id="ns-catalog-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px;max-height:320px;overflow-y:auto;padding:2px;"></div>
+            </div>
+          </div>
+
+          <!-- Step 3b: Part Numbers for MIR clearance -->
+          <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;" id="ns-parts-section">
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Step 3 — Part Numbers <span style="color:var(--red);font-size:10px;">*</span> (min. 2 required for MIR clearance)</div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:10px;line-height:1.5;">Inspection stages cannot be offered until all listed part numbers are cleared in an approved MIR. Add a minimum of 2 part numbers.</div>
+            <div id="ns-parts-list" style="margin-bottom:10px;"></div>
+            <!-- Part Number smart search with dropdown -->
+            <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+              <div style="flex:1;min-width:180px;position:relative;">
+                <label class="lbl">Search or Type Part Number <span style="color:var(--red);">*</span></label>
+                <input id="ns-part-inp"
+                  placeholder="Type part no. or description to search…"
+                  autocomplete="off"
+                  oninput="nsPartSearch(this.value)"
+                  onfocus="nsPartSearch(this.value)"
+                  onkeydown="nsPartKeydown(event)"
+                  style="width:100%;padding-right:32px;">
+                <button type="button" onclick="nsPartClear()" title="Clear"
+                  style="position:absolute;right:8px;top:calc(50% + 8px);transform:translateY(-50%);background:none;border:none;color:var(--text4);font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>
+                <div id="ns-part-dropdown"
+                  style="display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;
+                    background:var(--surf);border:1.5px solid var(--blue2);border-radius:8px;
+                    box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:400;max-height:220px;overflow-y:auto;">
+                </div>
+              </div>
+              <div style="flex:2;min-width:180px;">
+                <label class="lbl">Description <span style="color:var(--text4);font-weight:400;">(auto-filled or type)</span></label>
+                <input id="ns-part-desc" readonly style="width:100%;background:var(--surf2);color:var(--text3);" placeholder="Auto-filled from MIR">
+              </div>
+              <div style="min-width:120px;">
+                <label class="lbl">Qty to Use *</label>
+                <select id="ns-part-qty" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);"><option value="">-- Qty --</option></select>
+              </div>
+              <button type="button" onclick="addNsPart()" class="btn btn-blue" style="padding:10px 16px;white-space:nowrap;flex-shrink:0;">+ Add Part</button>
+            </div>
+            <div style="font-size:11px;color:var(--text4);margin-top:5px;">
+              💡 Only MIR-registered parts appear here. Add parts in MIR → Master Items first.
             </div>
           </div>
 
@@ -974,7 +1141,8 @@ tr:hover td{background:var(--surf2);}
             </div>
           </div>
         </div>
-      </div>
+      
+        <div id="profile-extras" style="padding:0 4px 16px;"></div></div>
 
       <!-- ── BACKUP & RESTORE ── -->
       <div class="pg" id="pg-backup">
@@ -1013,7 +1181,7 @@ tr:hover td{background:var(--surf2);}
         <!-- STORAGE ALERT -->
         <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:11px 14px;margin-bottom:16px;border-radius:10px;font-size:12px;color:#78350f;line-height:1.7;display:flex;align-items:flex-start;gap:10px;">
           <span style="font-size:18px;margin-top:1px;">⚠️</span>
-          <div><strong>Data lives in this browser only.</strong> Clearing cache or switching devices will erase it. Export a backup after every significant session and store it on Google Drive, email, or a shared drive.</div>
+          <div><strong>Data is synced to Supabase cloud.</strong> Open this app from the web (GitHub Pages) for full sync. When opened locally, data is local only. Export a backup regularly.</div>
         </div>
 
         <!-- SECTION LABEL: EXPORT -->
@@ -1082,21 +1250,14 @@ tr:hover td{background:var(--surf2);}
         <!-- PENDING RESTORE REQUESTS — visible to Manager -->
         <div id="bk-pending-restores" style="display:none;margin-bottom:14px;"></div>
 
-        <!-- HOW TO SYNC -->
-        <div class="card" style="margin-top:4px;">
-          <div class="chead"><div class="ctitle">📱 How to Sync Across Devices</div></div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;">
-            ${[
-              ['1️⃣','Export JSON','Admin/Manager → Backup → Download JSON Backup'],
-              ['2️⃣','Share File','Send .json via WhatsApp, Email, or Google Drive'],
-              ['3️⃣','Request Restore','Select JSON → Submit for Manager Approval'],
-              ['4️⃣','Manager Approves','Manager reviews and approves in Approvals section'],
-              ['5️⃣','Repeat Often','Export after every batch of new seams or inspections'],
-            ].map(([n,t,d])=>`<div style="padding:10px;background:var(--surf2);border-radius:8px;border:1px solid var(--border);">
-              <div style="font-size:20px;margin-bottom:5px;">${n}</div>
-              <div style="font-weight:600;font-size:12px;margin-bottom:3px;color:var(--text);">${t}</div>
-              <div style="font-size:11px;color:var(--text3);">${d}</div>
-            </div>`).join('')}
+        <!-- QUICK HELP LINK -->
+        <div class="card" style="margin-top:4px;padding:16px 20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">❓ Need Help?</div>
+              <div style="font-size:12px;color:var(--text3);">Full FAQ and guide available — learn every feature step by step.</div>
+            </div>
+            <button class="btn btn-blue" style="padding:8px 20px;font-size:13px;" onclick="goPage('faq')">Open FAQ & Help Guide →</button>
           </div>
         </div>
 
@@ -1112,8 +1273,74 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── APPROVALS (Manager) ── -->
       <div class="pg" id="pg-approvals">
-        <div class="pgh"><div class="pgt">Pending Approvals</div><div class="pgs">Review and action pending Admin requests</div></div>
+        <div class="pgh" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="pgt">Pending Approvals</div>
+            <div class="pgs">Review and action pending requests — approve individually or use Group Approve to action all at once</div>
+          </div>
+          <div style="display:flex;gap:8px;" id="group-approve-bar" style="display:none;">
+            <button class="btn btn-green" style="padding:8px 18px;font-size:12px;" onclick="groupApproveAll()">✅ Approve All</button>
+            <button class="btn btn-red" style="padding:8px 18px;font-size:12px;" onclick="groupRejectAll()">✗ Reject All</button>
+          </div>
+        </div>
         <div class="card" id="approvals-body"></div>
+      </div>
+
+
+      <!-- ══════════════════════════════════════════
+           MIR PAGE — Material Identification Report
+      ══════════════════════════════════════════ -->
+      <div class="pg" id="pg-mir">
+        <div class="pgh" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="pgt">Material Identification Report (MIR)</div>
+            <div class="pgs">Register materials → QC review → Manager approval before inspection can proceed</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-ghost" style="font-size:12px;padding:7px 14px;" onclick="mirSetTab('list')">📋 All MIRs</button>
+            <button id="btn-new-mir" class="btn btn-blue" style="font-size:12px;padding:7px 14px;" onclick="mirSetTab('new')">➕ New MIR</button>
+          </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="stabs" id="mir-tabs">
+          <div class="stab on" data-mt="dashboard" onclick="mirSetTab('dashboard')">📊 Dashboard</div>
+          <div class="stab" data-mt="list" onclick="mirSetTab('list')">📋 All MIRs</div>
+          <div class="stab" id="mir-tab-new" data-mt="new" onclick="mirSetTab('new')">➕ New MIR</div>
+          <div class="stab" id="mir-tab-qc" data-mt="qc" onclick="mirSetTab('qc')" style="display:none;">🔍 QC Review</div>
+          <!-- MIR Manager approval removed: QC=final -->
+          <div class="stab" data-mt="items" onclick="mirSetTab('items')">📦 Master Items</div>
+          <div class="stab" id="mir-tab-backup" data-mt="mirbackup" onclick="mirSetTab('mirbackup')">💾 Backup</div>
+        </div>
+
+        <div id="mir-content"></div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           COMPARE & CHARTS PAGE
+      ══════════════════════════════════════════ -->
+      <div class="pg" id="pg-compare">
+        <div class="pgh">
+          <div class="pgt">Compare & Charts</div>
+          <div class="pgs">Live completion comparison across projects, tag categories and tags. Select items to compare.</div>
+        </div>
+        <div id="compare-content"></div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           FAQ / HELP PAGE
+      ══════════════════════════════════════════ -->
+      <div class="pg" id="pg-faq">
+        <div class="pgh">
+          <div class="pgt">❓ FAQ & Help Guide</div>
+          <div class="pgs">Everything you need to know — even if you are using TQIMS for the first time</div>
+        </div>
+        <!-- FAQ search -->
+        <div style="margin-bottom:20px;">
+          <input id="faq-search" placeholder="🔍  Type to search FAQ…" oninput="filterFAQ(this.value)"
+            style="max-width:420px;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;width:100%;background:var(--surf);outline:none;">
+        </div>
+        <div id="faq-body"></div>
       </div>
 
     </div><!-- /main -->
@@ -1548,8 +1775,6 @@ tr:hover td{background:var(--surf2);}
 <div class="toast" id="toast"></div>
 
 <!-- Supabase JS client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-
 <script>
 // ══════════════════════════════════════════════════════════════
 // DATABASE
@@ -1558,7 +1783,7 @@ const DEFAULT_STAGES = ['WEP PT/MT','Fit-up Inspection','Root Run / Back Chip PT
 
 // ── ITP STAGE CATALOG — Standard fabrication QC stages for pressure vessels / heat exchangers ──
 const ITP_STAGES=[
-  {sid:'S-01',pg:'PG-01',name:'MI'},
+  // S-01 MI removed: handled by MIR system
   {sid:'S-02',pg:'PG-02',name:'PMI'},
   {sid:'S-03',pg:'PG-03',name:'After forming dimensions'},
   {sid:'S-04',pg:'PG-04',name:'After forming PT'},
@@ -1698,16 +1923,31 @@ function defaultDB() {
     log:[],
     pendingActions:[],
     rtutReports:{},
+    mirItems:[],   // Master Items for MIR
+    mirs:[],       // MIR records
     secretKey:'TQIMS@Admin2024'
   };
 }
 
 // ══════════════════════════════════════════════════════════════
-// SUPABASE — Live sync across all devices
+// ══════════════════════════════════════════════════════════════
+// SUPABASE — Direct REST API (no CDN library needed)
+// Works correctly with new sb_publishable_ key format
 // ══════════════════════════════════════════════════════════════
 const SUPA_URL = 'https://dqsugjgvdvwablkdeohg.supabase.co';
 const SUPA_KEY = 'sb_publishable_3VaNmFiGpnCk6jwJjtF5zg_B1cKkiXd';
-const _sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+const SUPA_REST = SUPA_URL + '/rest/v1';
+const SUPA_RT   = SUPA_URL.replace('https://','wss://') + '/realtime/v1/websocket';
+
+// Standard headers for every request
+function _sbHeaders(extra){
+  return Object.assign({
+    'apikey': SUPA_KEY,
+    'Authorization': 'Bearer ' + SUPA_KEY,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=representation'
+  }, extra||{});
+}
 
 let DB = defaultDB(); // will be replaced by loadFromSupabase()
 let _saving = false;
@@ -1716,67 +1956,164 @@ let _lastSaveHash = '';
 let _suppressRealtime = false;   // true while we are saving — prevents self-echo
 const _approvedIds = new Set();  // action IDs approved this session — never apply twice
 
-// ── Sanitise DB after loading (same migration checks as before) ──
+// ── Sanitise DB after loading ──
 function _migrateDB(p){
   if(!p.templates) p.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];
   if(!p.secretKey) p.secretKey='TQIMS@Admin2024';
   if(!p.pendingActions) p.pendingActions=[];
   if(!p.rtutReports) p.rtutReports={};
+  if(!p.mirItems) p.mirItems=[];
+  if(!p.mirs) p.mirs=[];
   return p;
 }
 
 // ── Load once from Supabase on startup ──
 async function loadFromSupabase(){
+  // If opened from file://, skip Supabase and use defaultDB
+  if(location.protocol === 'file:'){
+    console.log('TQIMS: local file mode - using default DB');
+    return; // DB stays as defaultDB(), user can still use the app
+  }
   try{
-    const {data,error}=await _sb.from('tqims_state').select('payload').eq('id','main').single();
-    if(error){ console.error('TQIMS load error',error); return; }
-    if(data?.payload && data.payload.users){
-      DB=_migrateDB(Object.assign(defaultDB(),data.payload));
+    const res = await fetch(
+      SUPA_REST + '/tqims_state?id=eq.main&select=payload&limit=1',
+      { headers: _sbHeaders() }
+    );
+    if(!res.ok){
+      const errText = await res.text();
+      console.error('TQIMS load error', res.status, errText);
+      _showNetworkError(res.status + ' ' + errText.slice(0,120));
+      return;
     }
-  }catch(e){ console.error('TQIMS load exception',e); }
+    const rows = await res.json();
+    if(rows && rows.length > 0 && rows[0].payload && rows[0].payload.users){
+      DB = _migrateDB(Object.assign(defaultDB(), rows[0].payload));
+      console.log('TQIMS: loaded from Supabase ✓');
+    } else {
+      // Row missing — insert it
+      const ins = await fetch(SUPA_REST + '/tqims_state', {
+        method: 'POST',
+        headers: _sbHeaders({'Prefer':'resolution=merge-duplicates,return=minimal'}),
+        body: JSON.stringify({id:'main', payload: defaultDB()})
+      });
+      if(ins.ok){ console.log('TQIMS: created new tqims_state row ✓'); }
+      else { console.warn('TQIMS: could not create row', ins.status); }
+    }
+  } catch(e){
+    console.error('TQIMS load exception', e);
+    _showNetworkError('Could not reach database. Check internet connection.');
+  }
+}
+
+function _showLocalFileError(){ /* removed - local files work with defaultDB */ }
+
+function _showNetworkError(msg){
+  const ov = document.getElementById('supa-loading');
+  if(ov) ov.innerHTML = `<div style="position:fixed;inset:0;z-index:99999;background:#0f172a;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:16px;padding:24px;text-align:center;">
+    <div style="font-size:36px;font-weight:900;letter-spacing:6px;color:#60a5fa;">TQIMS</div>
+    <div style="font-size:20px;">&#x26a0;&#xfe0f;</div>
+    <div style="font-size:15px;font-weight:700;color:#f87171;">Database Connection Failed</div>
+    <div style="font-size:12px;color:#94a3b8;max-width:340px;line-height:1.7;">${msg}</div>
+    <button onclick="location.reload()" style="padding:10px 28px;background:#1d4ed8;color:#fff;
+      border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">
+      &#x21ba; Retry
+    </button>
+    <div style="font-size:11px;color:#475569;">Make sure you are connected to the internet and the URL is correct.</div>
+  </div>`;
+  if(ov) ov.style.display='flex';
 }
 
 // ── Save to Supabase (debounced — suppresses realtime echo while saving) ──
 function save(){
-  const hash=JSON.stringify(DB).length+'_'+DB.log.length;
-  if(hash===_lastSaveHash && !_saveQueued){ _saveQueued=false; return; }
+  const hash = JSON.stringify(DB).length + '_' + DB.log.length;
+  if(hash === _lastSaveHash && !_saveQueued){ _saveQueued=false; return; }
   if(_saving){ _saveQueued=true; return; }
   _saving=true; _lastSaveHash=hash;
-  _suppressRealtime=true;  // block our own echo
-  _sb.from('tqims_state').update({payload:DB}).eq('id','main')
-    .then(({error})=>{
-      _saving=false;
-      if(error) console.error('TQIMS save error',error);
-      // Keep suppressed for 3s to absorb the realtime echo that Supabase sends back
-      setTimeout(()=>{ _suppressRealtime=false; },3000);
-      if(_saveQueued){ _saveQueued=false; save(); }
-    });
+  _suppressRealtime=true;
+  fetch(SUPA_REST + '/tqims_state?id=eq.main', {
+    method: 'PATCH',
+    headers: _sbHeaders({'Prefer':'return=minimal'}),
+    body: JSON.stringify({payload: DB})
+  }).then(res=>{
+    _saving=false;
+    if(!res.ok) res.text().then(t=>console.error('TQIMS save error', res.status, t));
+    setTimeout(()=>{ _suppressRealtime=false; }, 3000);
+    if(_saveQueued){ _saveQueued=false; save(); }
+  }).catch(e=>{
+    _saving=false;
+    _suppressRealtime=false;
+    console.error('TQIMS save exception', e);
+    if(_saveQueued){ _saveQueued=false; save(); }
+  });
 }
 
-// ── Realtime — receive live updates from other devices ──
+// ── Realtime — WebSocket polling fallback (works without JS library) ──
+// Uses Supabase Realtime v2 protocol over WebSocket
+let _rtWs = null;
+let _rtRetry = 0;
 function startRealtime(){
-  _sb.channel('tqims-live')
-    .on('postgres_changes',{
-      event:'UPDATE', schema:'public', table:'tqims_state', filter:'id=eq.main'
-    },payload=>{
-      // Ignore our own saves to prevent the approval-race / duplicate bug
-      if(_suppressRealtime) return;
-      const remote=payload.new?.payload;
-      if(!remote||!remote.users) return;
-      const remoteHash=JSON.stringify(remote).length+'_'+(remote.log||[]).length;
-      if(remoteHash===_lastSaveHash) return;
-      DB=_migrateDB(Object.assign(defaultDB(),remote));
-      // Refresh UI for current logged-in user
+  try{
+    const wsUrl = SUPA_RT + '?apikey=' + encodeURIComponent(SUPA_KEY) + '&vsn=1.0.0';
+    _rtWs = new WebSocket(wsUrl);
+
+    _rtWs.onopen = ()=>{
+      _rtRetry=0;
+      // Join the realtime channel for tqims_state changes
+      _rtWs.send(JSON.stringify({
+        topic:'realtime:public:tqims_state',
+        event:'phx_join',
+        payload:{
+          config:{
+            broadcast:{self:false},
+            presence:{key:''},
+            postgres_changes:[{event:'UPDATE',schema:'public',table:'tqims_state',filter:'id=eq.main'}]
+          }
+        },
+        ref:'1'
+      }));
+    };
+
+    _rtWs.onmessage = (evt)=>{
       try{
-        refreshCurrentView();
-        renderDashboard();
-        updateBadge();
-        updateApprovalBadge();
-        renderApprovals();
-        toast('🔄 Live update received','ok');
+        const msg = JSON.parse(evt.data);
+        // Heartbeat response
+        if(msg.event==='phx_reply' && msg.payload?.status==='ok') return;
+        // Postgres change event
+        if(msg.event==='postgres_changes'){
+          if(_suppressRealtime) return;
+          const remote = msg.payload?.data?.record?.payload || msg.payload?.record?.payload;
+          if(!remote || !remote.users) return;
+          const remoteHash = JSON.stringify(remote).length+'_'+(remote.log||[]).length;
+          if(remoteHash===_lastSaveHash) return;
+          DB = _migrateDB(Object.assign(defaultDB(), remote));
+          try{
+            refreshCurrentView(); renderDashboard();
+            updateBadge(); updateApprovalBadge(); renderApprovals(); updateMIRBadge();
+            toast('🔄 Live update received','ok');
+          }catch(e){}
+        }
       }catch(e){}
-    })
-    .subscribe();
+    };
+
+    // Heartbeat every 30s to keep connection alive
+    const hb = setInterval(()=>{
+      if(_rtWs && _rtWs.readyState===WebSocket.OPEN){
+        _rtWs.send(JSON.stringify({topic:'phoenix',event:'heartbeat',payload:{},ref:'hb'}));
+      } else { clearInterval(hb); }
+    }, 30000);
+
+    _rtWs.onclose = ()=>{
+      // Reconnect with backoff — max 30s
+      const delay = Math.min(1000 * Math.pow(2, _rtRetry++), 30000);
+      setTimeout(startRealtime, delay);
+    };
+    _rtWs.onerror = ()=>{ _rtWs.close(); };
+
+  } catch(e){
+    console.warn('TQIMS Realtime unavailable — live updates disabled');
+  }
 }
 
 let CU = null; // current user
@@ -1786,7 +2123,8 @@ let activeSeamId = null; // for seam detail view
 // SESSION PERSISTENCE + INACTIVITY TIMEOUT
 // ══════════════════════════════════════════════════════════════
 const SESSION_KEY = 'tqims_session';
-const TIMEOUT_MS  = 60 * 1000; // 1 minute inactivity → auto-logout
+const TIMEOUT_MS  = 10 * 60 * 1000; // 10 minutes inactivity → auto-logout
+const WARN_MS     =  9 * 60 * 1000; // warn at 9 minutes
 let _inactivityTimer = null;
 let _warningTimer    = null;
 let _timeoutWarningEl = null;
@@ -1820,11 +2158,11 @@ function _resetInactivity(){
   // Hide warning if showing
   if(_timeoutWarningEl){ _timeoutWarningEl.style.display='none'; }
   if(!CU) return;
-  // Warn at 45 seconds
+  // Warn at 9 minutes (WARN_MS)
   _warningTimer = setTimeout(()=>{
     _showTimeoutWarning();
-  }, 45000);
-  // Force logout at 60 seconds
+  }, WARN_MS);
+  // Force logout at 10 minutes (TIMEOUT_MS)
   _inactivityTimer = setTimeout(()=>{
     _inactivityLogout();
   }, TIMEOUT_MS);
@@ -1841,8 +2179,8 @@ function _showTimeoutWarning(){
         box-shadow:0 8px 32px rgba(0,0,0,.5);display:flex;align-items:center;gap:12px;min-width:280px;">
         <span style="font-size:20px;">⏱</span>
         <div style="flex:1;">
-          <div>Session expiring in <span id="timeout-countdown">15</span>s due to inactivity</div>
-          <div style="font-size:11px;font-weight:400;color:#94a3b8;margin-top:2px;">Move your mouse or tap to stay logged in</div>
+          <div>Session expiring in <span id="timeout-countdown">60</span>s due to inactivity</div>
+          <div style="font-size:11px;font-weight:400;color:#94a3b8;margin-top:2px;">Tap anywhere or press Stay to remain logged in</div>
         </div>
         <button onclick="_resetInactivity()" style="background:#f59e0b;color:#1e293b;border:none;
           border-radius:7px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">
@@ -1853,12 +2191,12 @@ function _showTimeoutWarning(){
   }
   _timeoutWarningEl.style.display='block';
   // Countdown
-  let secs=15;
+  let secs=60;
   const cd=document.getElementById('timeout-countdown');
   if(cd){cd.textContent=secs;}
   const cdInterval=setInterval(()=>{
     secs--;
-    if(cd)cd.textContent=secs;
+    if(cd)cd.textContent=Math.max(0,secs);
     if(secs<=0) clearInterval(cdInterval);
   },1000);
 }
@@ -1872,15 +2210,22 @@ function _inactivityLogout(){
   // Show a message on the login screen
   setTimeout(()=>{
     $('l-err').innerHTML=`<div class="msg msg-err" style="color:#78350f;background:#fef3c7;border-color:#f59e0b;">
-      ⏱ Session expired after 1 minute of inactivity.<br>Please log in again.
+      ⏱ Session expired after 10 minutes of inactivity.<br>Please log in again.
     </div>`;
   },100);
 }
 
 // ── Attach activity listeners once ──
 function _startActivityListeners(){
-  ['mousemove','mousedown','keydown','touchstart','scroll','click'].forEach(ev=>{
+  // Standard interaction events
+  ['mousemove','mousedown','keydown','touchstart','touchmove','scroll','click','pointerdown'].forEach(ev=>{
     document.addEventListener(ev, _resetInactivity, {passive:true});
+  });
+  // Reset timer when user switches back to this tab (mobile browsers pause timers)
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible' && CU){
+      _resetInactivity();
+    }
   });
 }
 let inspTarget = null;
@@ -2038,6 +2383,7 @@ function loginAs(u, silent=false){
   populateSelects();
   updateApprovalBadge();
   goPage('dashboard');
+  updateMIRBadge();        // update MIR badge on login
   _resetInactivity();      // start the inactivity timer
 }
 
@@ -2072,10 +2418,17 @@ function goPage(pg){
   else if(pg==='profile')renderProfile();
   else if(pg==='approvals')renderApprovals();
   else if(pg==='backup'){renderBackupPage();}
+  else if(pg==='mir'){renderMIRPage();}
+  else if(pg==='compare'){renderComparePage();}
+  else if(pg==='faq'){renderFAQPage();}
 }
 
 function toggleSidebar(){$('sidebar').classList.toggle('open');$('sov').classList.toggle('on');}
 function closeSidebar(){$('sidebar').classList.remove('open');$('sov').classList.remove('on');}
+document.addEventListener('click',function(e){
+  const inp=$('ns-part-inp'),dd=$('ns-part-dropdown');
+  if(dd&&inp&&!inp.parentElement.contains(e.target))dd.style.display='none';
+});
 
 // ══════════════════════════════════════════════════════════════
 // POPULATE SELECTS
@@ -2110,16 +2463,19 @@ function refreshTmplSelect(){
 // ══════════════════════════════════════════════════════════════
 // DASHBOARD — 4-level drill: Project → Tag → Component → Seams
 // ══════════════════════════════════════════════════════════════
-let dashPid=null, dashTag=null, dashComp=null;
+let dashPid=null, dashTagCat=null, dashTag=null, dashComp=null;
 
 function showDashLevel(lv){
-  ['lv0','lv1','lv2','lv3'].forEach(l=>$('dash-'+l).style.display=l===lv?'block':'none');
+  ['lv0','lv1','lv1b','lv2','lv3'].forEach(l=>{
+    const el=$('dash-'+l);if(el)el.style.display=l===lv?'block':'none';
+  });
   const bc=$('dash-breadcrumb');
   if(lv==='lv0'){bc.style.display='none';return;}
   bc.style.display='flex';
   const p=getProj(dashPid);
   let parts=`<span class="bc-item bc-home" onclick="dashGoL0()">🏠 All Projects</span>`;
   parts+=`<span class="bc-sep">›</span><span class="bc-item ${lv==='lv1'?'active':''}" onclick="dashGoL1()">#${p.number} — ${p.equipment}</span>`;
+  if(lv==='lv1b'||lv==='lv2'||lv==='lv3') parts+=`<span class="bc-sep">›</span><span class="bc-item ${lv==='lv1b'?'active':''}" onclick="dashGoL1b()">${dashTagCat||'All Categories'}</span>`;
   if(lv==='lv2'||lv==='lv3') parts+=`<span class="bc-sep">›</span><span class="bc-item ${lv==='lv2'?'active':''}" onclick="dashGoL2()">${dashTag}</span>`;
   if(lv==='lv3') parts+=`<span class="bc-sep">›</span><span class="bc-item active">${dashComp}</span>`;
   bc.innerHTML=parts;
@@ -2127,6 +2483,8 @@ function showDashLevel(lv){
 
 function renderDashboard(){
   if(!CU)return;
+  _updateGlobalStatsBar();
+  setTimeout(renderDashCharts,50);
   // All roles see all projects on dashboard — production/quality work across projects
   const visibleProjs = DB.projects;
   if(!visibleProjs.length){
@@ -2179,15 +2537,18 @@ function renderDashboard(){
   showDashLevel('lv0');updateBadge();
 }
 
-function dashGoL0(){dashPid=null;dashTag=null;dashComp=null;renderDashboard();}
+function dashGoL0(){dashPid=null;dashTagCat=null;dashTag=null;dashComp=null;renderDashboard();}
 
 function dashGoL1(pid){
   if(pid)dashPid=pid;
+  dashTagCat=null;
   const p=getProj(dashPid);if(!p)return;
   const tags=getTags(dashPid);
+  const cats=getTagCats(dashPid);
   const st=overallStats(dashPid);
   const pending=Math.max(0,st.t-(st.a+st.o+st.r+(st.ret||0)));
   let html=`<div class="sgrid" style="margin-bottom:20px;">
+    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${cats.length}</div><div class="slbl">Tag Categories</div></div>
     <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${tags.length}</div><div class="slbl">Total Tags</div></div>
     <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Seams</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t} stages</div></div>
     <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Accepted</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t?Math.round(st.a/st.t*100):0}%</div></div>
@@ -2197,35 +2558,31 @@ function dashGoL1(pid){
   </div>`;
   if(!tags.length){html+=`<div style="text-align:center;padding:36px;color:var(--text3);">No seams added yet for this project. Admin can add from Projects &amp; Seams.</div>`;
   }else{
-    html+=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Click a Tag to drill down →</div><div class="tag-grid">`;
-    tags.forEach(tag=>{
-      const ts=tagStats(dashPid,tag);
-      const circ=2*Math.PI*22,off=circ-(ts.p/100*circ);
-      const rc=ts.p===100?'var(--green)':ts.o>0?'var(--amber)':ts.r>0?'var(--red)':'var(--blue2)';
-      const comps=getComponents(dashPid,tag);
-      html+=`<div class="tag-card" onclick="dashGoL2('${encodeURIComponent(tag)}')">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-          <div style="position:relative;flex-shrink:0;width:52px;height:52px;">
-            <svg width="52" height="52" viewBox="0 0 52 52" style="transform:rotate(-90deg)">
-              <circle cx="26" cy="26" r="22" fill="none" stroke="var(--surf3)" stroke-width="5"/>
-              <circle cx="26" cy="26" r="22" fill="none" stroke="${rc}" stroke-width="5"
-                stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/>
-            </svg>
-            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text);">${ts.p}%</div>
+    // Show Tag Category cards
+    const CAT_ICONS={'PRESSURE VESSEL':'🏭','HEAT EXCHANGER':'🔧','PIPING':'🔩','STRUCTURAL':'🏗','VESSEL':'⚙','COLUMN':'📏','STORAGE TANK':'🛢','General':'📦'};
+    html+=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Click a Tag Category to drill down →</div><div class="tagcat-grid">`;
+    cats.forEach(cat=>{
+      const catTags=getTagsByPidCat(dashPid,cat);
+      let ca=0,ct=0,co=0,cr=0;
+      catTags.forEach(tag=>{const ts=tagStats(dashPid,tag);ca+=ts.a;ct+=ts.t;co+=ts.o;cr+=ts.r;});
+      const cpct=ct?Math.round(ca/ct*100):0;
+      const rc=cpct===100?'var(--green)':co>0?'var(--amber)':cr>0?'var(--red)':'var(--blue2)';
+      const icon=CAT_ICONS[cat]||'📦';
+      html+=`<div class="tagcat-card" onclick="dashGoL1b('${encodeURIComponent(cat)}')">
+        <div class="tagcat-icon">${icon}</div>
+        <div class="tagcat-name">${cat}</div>
+        <div class="tagcat-sub">${catTags.length} tag${catTags.length!==1?'s':''}</div>
+        <div style="margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:10px;color:var(--text4);">Completion</span>
+            <span style="font-size:13px;font-weight:700;color:${rc};">${cpct}%</span>
           </div>
-          <div>
-            <div class="tag-num">${tag}</div>
-            <div class="tag-desc">${comps.length} component${comps.length!==1?'s':''} · ${ts.seams} seam${ts.seams!==1?'s':''}</div>
-          </div>
+          <div class="pbar"><div class="pfill" style="width:${cpct}%;background:${rc};"></div></div>
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">
-          ${comps.map(c=>`<span style="background:var(--surf2);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;color:var(--text3);">${c}</span>`).join('')}
-        </div>
-        <div class="tag-statrow">
-          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--green)">${ts.a}</div><div class="tag-stat-lbl">OK</div></div>
-          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--amber)">${ts.o}</div><div class="tag-stat-lbl">QC</div></div>
-          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--red)">${ts.r}</div><div class="tag-stat-lbl">NCR</div></div>
-          <div class="tag-stat"><div class="tag-stat-num" style="color:var(--text3)">${ts.seams}</div><div class="tag-stat-lbl">Seams</div></div>
+        <div style="display:flex;border-top:1px solid var(--border);padding-top:8px;margin-top:10px;gap:0;">
+          <div style="flex:1;text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--green)">${ca}</div><div style="font-size:9px;color:var(--text4);text-transform:uppercase;">OK</div></div>
+          <div style="flex:1;text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--amber)">${co}</div><div style="font-size:9px;color:var(--text4);text-transform:uppercase;">QC</div></div>
+          <div style="flex:1;text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--red)">${cr}</div><div style="font-size:9px;color:var(--text4);text-transform:uppercase;">NCR</div></div>
         </div>
       </div>`;
     });
@@ -2233,6 +2590,45 @@ function dashGoL1(pid){
   }
   $('dash-lv1').innerHTML=html;
   showDashLevel('lv1');
+}
+
+function dashGoL1b(catEncoded){
+  if(catEncoded)dashTagCat=decodeURIComponent(catEncoded);
+  const tags=getTagsByPidCat(dashPid,dashTagCat);
+  let html=`<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">
+    Category: <span style="color:var(--blue2);">${dashTagCat}</span> — ${tags.length} tag${tags.length!==1?'s':''} → click to drill down
+  </div><div class="tag-grid">`;
+  tags.forEach(tag=>{
+    const ts=tagStats(dashPid,tag);
+    const circ=2*Math.PI*22,off=circ-(ts.p/100*circ);
+    const rc=ts.p===100?'var(--green)':ts.o>0?'var(--amber)':ts.r>0?'var(--red)':'var(--blue2)';
+    const comps=getComponents(dashPid,tag);
+    html+=`<div class="tag-card" onclick="dashGoL2('${encodeURIComponent(tag)}')">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+        <div style="position:relative;flex-shrink:0;width:52px;height:52px;">
+          <svg width="52" height="52" viewBox="0 0 52 52" style="transform:rotate(-90deg)">
+            <circle cx="26" cy="26" r="22" fill="none" stroke="var(--surf3)" stroke-width="5"/>
+            <circle cx="26" cy="26" r="22" fill="none" stroke="${rc}" stroke-width="5"
+              stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text);">${ts.p}%</div>
+        </div>
+        <div>
+          <div class="tag-num">${tag}</div>
+          <div class="tag-desc">${comps.length} component${comps.length!==1?'s':''} · ${ts.seams} seams</div>
+        </div>
+      </div>
+      <div class="tag-statrow">
+        <div class="tag-stat"><div class="tag-stat-num" style="color:var(--green)">${ts.a}</div><div class="tag-stat-lbl">OK</div></div>
+        <div class="tag-stat"><div class="tag-stat-num" style="color:var(--amber)">${ts.o}</div><div class="tag-stat-lbl">QC</div></div>
+        <div class="tag-stat"><div class="tag-stat-num" style="color:var(--red)">${ts.r}</div><div class="tag-stat-lbl">NCR</div></div>
+        <div class="tag-stat"><div class="tag-stat-num" style="color:var(--text3)">${ts.seams}</div><div class="tag-stat-lbl">Seams</div></div>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  $('dash-lv1b').innerHTML=html;
+  showDashLevel('lv1b');
 }
 
 function dashGoL2(tagEncoded){
@@ -2314,8 +2710,70 @@ function renderSeamDetailContent(seamId){
 // ══════════════════════════════════════════════════════════════
 // INSPECTION PAGE — cascading filters: Project → Tag → Component
 // ══════════════════════════════════════════════════════════════
+function onInspTagCatChange(){
+  const pid=$('insp-proj')&&$('insp-proj').value;
+  const cat=$('insp-tagcat')&&$('insp-tagcat').value;
+  const tagEl=$('insp-tag');if(!tagEl)return;
+  if(!pid){tagEl.innerHTML='<option value="">All Tags</option>';tagEl.disabled=true;return;}
+  const tags=cat?getTagsByPidCat(pid,cat):getTags(pid);
+  tagEl.innerHTML='<option value="">All Tags</option>'+tags.map(t=>`<option>${t}</option>`).join('');
+  tagEl.disabled=false;
+  // reset downstream
+  const compEl=$('insp-comp');if(compEl){compEl.innerHTML='<option value="">All Components</option>';compEl.disabled=true;}
+  renderInspSeams();
+}
+
+
+// ======================================================
+// INSPECTION PAGE STATS BAR
+// ======================================================
+function _updateInspStatsBar(){
+  var el=document.getElementById('insp-stats-bar');
+  if(!el)return;
+  var pid=($('insp-proj')&&$('insp-proj').value)||'';
+  var tag=($('insp-tag')&&$('insp-tag').value)||'';
+  var comp=($('insp-comp')&&$('insp-comp').value)||'';
+  // Filter seams by current selection
+  var seams=DB.seams.filter(function(s){
+    if(pid&&s.pid!==pid) return false;
+    if(tag&&(s.tag||s.sec||'')!==tag) return false;
+    if(comp&&(s.comp||s.sec||'')!==comp) return false;
+    return true;
+  });
+  var t=0,a=0,o=0,r=0,ret=0,pending=0;
+  seams.forEach(function(s){s.stages.forEach(function(st){
+    t++;
+    if(st.status==='accepted')a++;
+    else if(st.status==='offered')o++;
+    else if(st.status==='rejected')r++;
+    else if(st.status==='returned')ret++;
+    else pending++;
+  });});
+  var pct=t?Math.round(a/t*100):0;
+  var col=pct===100?'#16a34a':pct>50?'#b45309':'#dc2626';
+  // MIR status for selected seams
+  var mirCleared=seams.filter(function(s){return isMIRClearedForSeam(s);}).length;
+  var stats=[
+    {lbl:'Seams',val:seams.length,c:'var(--blue2)',i:'&#128279;'},
+    {lbl:'Total Stages',val:t,c:'var(--blue2)',i:'&#9776;'},
+    {lbl:'Accepted',val:a,c:'#16a34a',i:'&#10003;'},
+    {lbl:'Completion',val:pct+'%',c:col,i:'&#128202;'},
+    {lbl:'Awaiting QC',val:o,c:'#b45309',i:'&#9203;'},
+    {lbl:'NCR',val:r,c:'#dc2626',i:'&#128308;'},
+    {lbl:'Pending',val:pending,c:'var(--text3)',i:'&#9711;'},
+    {lbl:'MIR Cleared',val:mirCleared+'/'+seams.length,c:mirCleared===seams.length&&seams.length>0?'#16a34a':'#D97706',i:'&#128230;'},
+  ];
+  el.innerHTML=stats.map(function(s){
+    return '<div style="background:var(--surf);border:1px solid var(--border);border-top:3px solid '+s.c+';border-radius:8px;padding:9px 10px;text-align:center;">'+
+      '<div style="font-size:17px;font-weight:800;color:'+s.c+';line-height:1.2;">'+s.val+'</div>'+
+      '<div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;letter-spacing:.4px;">'+s.i+' '+s.lbl+'</div>'+
+      '</div>';
+  }).join('');
+}
+
 function renderInspection(){
   if(!CU)return;
+  _updateInspStatsBar();
   if(!DB.projects.length){
     $('insp-seams').innerHTML=`<div style="text-align:center;padding:48px 20px;"><div style="font-size:36px;margin-bottom:12px;">📋</div><div style="font-size:15px;color:var(--text2);">No projects yet. Admin needs to add projects and seams first.</div></div>`;
     return;
@@ -2351,6 +2809,16 @@ function _resetSeamDrop(){
 
 function onInspProjChange(resetDown=true){
   const pid=$('insp-proj')&&$('insp-proj').value;
+  // populate tag category dropdown
+  const tcEl=$('insp-tagcat');
+  if(tcEl){
+    if(!pid){tcEl.innerHTML='<option value="">All Categories</option>';tcEl.disabled=true;}
+    else{
+      const cats=getTagCats(pid);
+      tcEl.innerHTML='<option value="">All Categories</option>'+cats.map(ct=>`<option>${ct}</option>`).join('');
+      tcEl.disabled=false;
+    }
+  }
   const tagEl=$('insp-tag'),compEl=$('insp-comp');
   if(!tagEl||!compEl)return;
   if(!pid){
@@ -2422,8 +2890,11 @@ function renderInspSeams(){
   const comp   = ($('insp-comp'       )&&$('insp-comp'       ).value)||'';
   const seamId = ($('insp-seam'       )&&$('insp-seam'       ).value)||'';
   const stNmF  = ($('stage-name-filter')&&$('stage-name-filter').value)||'';
+  const inspQ  = ($('insp-search')&&$('insp-search').value.trim().toLowerCase())||'';
 
   // ── Require project selection first ──────────────────────────
+  // Update stats bar on each render
+  _updateInspStatsBar();
   if(!pid){
     $('insp-seams').innerHTML=`<div style="text-align:center;padding:44px 20px;">
       <div style="font-size:36px;margin-bottom:10px;">👆</div>
@@ -2451,6 +2922,13 @@ function renderInspSeams(){
   if(tag)    seams = seams.filter(s => normTag(s)  === tag.trim());
   if(comp)   seams = seams.filter(s => normComp(s) === comp.trim());
   if(seamId) seams = seams.filter(s => s.id === seamId);
+  // Apply search query across seam num, desc, stage names, NCR
+  if(inspQ) seams = seams.filter(function(s){
+    if((s.num||'').toLowerCase().includes(inspQ)) return true;
+    if((s.desc||'').toLowerCase().includes(inspQ)) return true;
+    if(s.stages.some(function(st){return (st.name||'').toLowerCase().includes(inspQ)||(st.ncrNumber||'').toLowerCase().includes(inspQ);})) return true;
+    return false;
+  });
 
   // ── Stage-level filters active? ───────────────────────────────
   const stageFiltered = activeStageFilter !== 'all' || !!stNmF;
@@ -2739,6 +3217,18 @@ function openOfferModal(seamId,idx){
     <div class="ir"><span class="ir-k">Offered By</span><span class="ir-v">${CU.name} · ${CU.co}</span></div>
   `;
   openModal('m-offer');
+}
+
+// ── MIR Clearance check ──
+function isMIRClearedForSeam(seam){
+  if(!seam.parts||!seam.parts.length) return true;
+  const apNos=new Set((DB.mirs||[]).filter(m=>m.status==='APPROVED').map(m=>m.partNo).filter(Boolean));
+  return seam.parts.every(p=>apNos.has(p.no));
+}
+function getUnclearedParts(seam){
+  if(!seam.parts||!seam.parts.length) return [];
+  const apNos=new Set((DB.mirs||[]).filter(m=>m.status==='APPROVED').map(m=>m.partNo).filter(Boolean));
+  return seam.parts.filter(p=>!apNos.has(p.no));
 }
 
 function confirmOffer(){
@@ -3166,25 +3656,250 @@ function toggleNewComp(useNew){
   $('btn-comp-new').style.color=useNew?'var(--text3)':'var(--green)';
   $('btn-comp-existing').style.color=useNew?'var(--blue2)':'var(--text3)';
 }
+// ── Tag Category helpers ──
+function getTagCats(pid){
+  return [...new Set(getSeamsByProj(pid).map(s=>s.tagCat||'General'))].sort();
+}
+function getTagsByPidCat(pid,cat){
+  return [...new Set(getSeamsByProj(pid).filter(s=>(s.tagCat||'General')===cat).map(s=>normT(s)))].sort();
+}
+
 function refreshNsTagComp(){
   const pid=$('ns-proj').value;
+  const catEl=$('ns-tagcat');
   const tagEl=$('ns-tag');
   const compEl=$('ns-comp');
   if(!pid){
-    tagEl.innerHTML='<option value="">— Select project first —</option>';tagEl.disabled=true;
+    if(catEl){catEl.innerHTML='<option value="">— Select project first —</option>';catEl.disabled=true;}
+    tagEl.innerHTML='<option value="">— Select category first —</option>';tagEl.disabled=true;
     compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
     $('ns-proj-info').innerHTML='';return;
   }
-  const tags=getTags(pid);
-  tagEl.innerHTML='<option value="">— Select tag —</option>'+tags.map(t=>`<option>${t}</option>`).join('');
-  tagEl.disabled=false;
-  compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
   const proj=getProj(pid);
-  if(proj){
-    $('ns-proj-info').innerHTML=`<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:6px 12px;margin-top:6px;">
-      <strong>Project #${proj.number}</strong> — ${proj.equipment}${proj.client?' · '+proj.client:''}${proj.code?' · '+proj.code:''}
-    </div>`;
+  var projNum=proj?String(proj.number):'';
+  var mirItems=DB.mirItems||[];
+  var mirFP=mirItems.filter(function(it){var pc=it.projectCode||'';return pc.replace('PROJ-','')===projNum||pc===('PROJ-'+projNum);});
+  var mirCats=[...new Set(mirFP.map(function(it){return it.tagCategory;}).filter(Boolean))].sort();
+  var seamCats=getTagCats(pid);
+  var allCats=[...new Set([...mirCats,...seamCats])].sort();
+  if(catEl){
+    catEl.innerHTML='<option value="">— Select Tag Category —</option>'+allCats.map(function(c){return '<option>'+c+'</option>';}).join('');
+    catEl.disabled=allCats.length===0;
   }
+  tagEl.innerHTML='<option value="">— Select category first —</option>';tagEl.disabled=true;
+  compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
+  if(proj){
+    var mirNote=mirFP&&mirFP.length?' <span style="color:#059669;font-size:10px;font-weight:600;">✓ '+mirFP.length+' MIR parts</span>':'<span style="color:#D97706;font-size:10px;"> No MIR parts yet</span>';
+    $('ns-proj-info').innerHTML='<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:6px 12px;margin-top:6px;"><strong>Project #'+proj.number+'</strong> — '+proj.equipment+(proj.client?' · '+proj.client:'')+mirNote+'</div>';
+  }
+  renderNsParts();
+}
+
+function refreshNsTag(){
+  const pid=$('ns-proj').value;
+  const cat=($('ns-tagcat')&&$('ns-tagcat').style.display!=='none'?$('ns-tagcat').value:'')||($('ns-tagcat-new')&&$('ns-tagcat-new').value.trim())||'';
+  const tagEl=$('ns-tag');
+  const compEl=$('ns-comp');
+  if(!pid||!cat){tagEl.innerHTML='<option value="">— Select category first —</option>';tagEl.disabled=true;compEl.innerHTML='<option value="">—</option>';compEl.disabled=true;return;}
+  var proj3=getProj(pid);
+  var pn3=proj3?String(proj3.number):'';
+  var mi3=DB.mirItems||[];
+  var mirTags=[...new Set(mi3.filter(function(it){
+    var pc=it.projectCode||'';
+    return (pc.replace('PROJ-','')===pn3||pc===('PROJ-'+pn3))&&it.tagCategory===cat;
+  }).map(function(it){return it.tagNo;}).filter(Boolean))].sort();
+  var seamTags=getTagsByPidCat(pid,cat);
+  var allTags=[...new Set([...mirTags,...seamTags])].sort();
+  tagEl.innerHTML='<option value="">— Select Tag Number —</option>'+allTags.map(function(t){return '<option>'+t+'</option>';}).join('');
+  tagEl.disabled=allTags.length===0;
+  compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
+}
+
+// tag-cat toggle helpers
+function toggleNewTagCat(useNew){
+  const sel=$('ns-tagcat'),inp=$('ns-tagcat-new');
+  if(!sel||!inp)return;
+  sel.style.display=useNew?'none':'flex';
+  inp.style.display=useNew?'block':'none';
+  $('btn-tagcat-new').style.color=useNew?'var(--text3)':'var(--green)';
+  $('btn-tagcat-existing').style.color=useNew?'var(--blue2)':'var(--text3)';
+}
+
+// Part numbers helpers
+let _nsParts=[];
+let _nsPartDropIdx=-1;
+
+function renderNsParts(){
+  _nsParts=_nsParts||[];
+  const el=$('ns-parts-list');if(!el)return;
+  if(!_nsParts.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text3);padding:8px 10px;background:var(--amber-lt);border-radius:6px;">⚠ At least 2 part numbers required before inspection stages can be offered.</div>';
+    return;
+  }
+  el.innerHTML=_nsParts.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surf);
+      border:1px solid var(--border);border-radius:7px;margin-bottom:5px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+        color:var(--blue2);min-width:60px;">${p.no}</span>
+      <span style="flex:1;font-size:12px;color:var(--text3);">${p.desc||'—'}</span>
+      <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#EBF2FF;color:#1A56DB;font-weight:700;">Qty:${p.qty||1}</span>
+      <span style="font-size:10px;padding:2px 7px;border-radius:10px;background:var(--blue-lt);
+        color:var(--blue2);font-weight:600;">MIR Part</span>
+      <button type="button" onclick="_nsParts.splice(${i},1);renderNsParts();"
+        style="background:none;border:none;color:var(--red);font-size:15px;cursor:pointer;
+        padding:0 4px;line-height:1;" title="Remove">✕</button>
+    </div>`).join('');
+}
+
+// Get MIR master items filtered by current project/tag selection
+function _getNsPartCandidates(){
+  const pid=$('ns-proj')?$('ns-proj').value:'';
+  const proj=getProj(pid);
+  const projNum=proj?String(proj.number):'';
+  const tagSel=$('ns-tag');
+  const tagNew=$('ns-tag-new');
+  const tag=(tagSel&&tagSel.style.display!=='none'?tagSel.value:'')||(tagNew?tagNew.value.trim():'');
+  const items=DB.mirItems||[];
+  return items.filter(it=>{
+    const pMatch=!projNum||(it.projectCode||'').includes(projNum)||(it.projectCode||'')===projNum;
+    const tMatch=!tag||it.tagNo===tag;
+    return pMatch||tMatch;
+  });
+}
+
+function nsPartSearch(q){
+  const dd=$('ns-part-dropdown');if(!dd)return;
+  _nsPartDropIdx=-1;
+  const ql=(q||'').trim().toLowerCase();
+  const candidates=_getNsPartCandidates();
+  const matched=ql
+    ?candidates.filter(it=>
+        it.partNo.toLowerCase().includes(ql)||
+        it.description.toLowerCase().includes(ql)||
+        it.tagNo.toLowerCase().includes(ql))
+    :candidates.slice(0,20);
+
+  if(!matched.length&&!ql){dd.style.display='none';return;}
+
+  let rows='';
+  if(matched.length){
+    rows+=matched.map((it,i)=>{
+      const pno=it.partNo.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      const pdesc=(it.description+(it.material?' | '+it.material:'')).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      return `<div class="ns-part-opt" data-pno="${pno}" data-pdesc="${pdesc}" data-iid="${it.id}" data-maxqty="${it.maxQty}"
+        onclick="nsPartPick(this)"
+        onmouseenter="nsPartHover(this)"
+        style="display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;
+          border-bottom:1px solid var(--border);">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+          color:var(--blue2);min-width:52px;">${it.partNo}</span>
+        <span style="flex:1;font-size:12px;color:var(--text);">${it.description}</span>
+        ${it.material?`<span style="font-size:10px;color:var(--text4);white-space:nowrap;">${it.material}</span>`:''}
+        <span style="font-size:10px;padding:1px 6px;border-radius:8px;background:var(--blue-lt);
+          color:var(--blue2);font-weight:600;flex-shrink:0;">${it.tagNo||''}</span>
+      </div>`;
+    }).join('');
+  }
+
+  const exactMatch=matched.find(it=>it.partNo.toLowerCase()===ql);
+  // MIR-only: no custom part entry
+
+  if(!rows){
+    rows='<div style="padding:12px 14px;font-size:12px;color:var(--text4);text-align:center;">No MIR parts match. Add parts in <strong>MIR &rarr; Master Items</strong> first.</div>';
+  }
+
+  dd.innerHTML=rows;
+  dd.style.display='block';
+}
+
+function nsPartPick(el){
+  const no=el.dataset.pno||'';
+  const desc=el.dataset.pdesc||'';
+  const iid=el.dataset.iid||'';
+  const maxQty=Number(el.dataset.maxqty)||1;
+  window._nsPartSelDesc=desc;
+  window._nsPartSelId=iid;
+  const inp=$('ns-part-inp');
+  const descInp=$('ns-part-desc');
+  if(inp)inp.value=no;
+  if(descInp){descInp.value=desc;descInp.readOnly=true;}
+  // Populate qty dropdown
+  const qtyEl=$('ns-part-qty');
+  if(qtyEl){
+    qtyEl.innerHTML='<option value="">-- Select Qty --</option>'+
+      Array.from({length:maxQty},(_,k)=>`<option value="${k+1}">${k+1} of ${maxQty}</option>`).join('');
+    qtyEl.value='1';
+  }
+  nsPartHideDropdown();
+  if(inp)inp.focus();
+}
+
+function nsPartHover(el){
+  document.querySelectorAll('.ns-part-opt').forEach(e=>e.style.background='');
+  el.style.background='var(--surf2)';
+}
+
+function nsPartHideDropdown(){
+  const dd=$('ns-part-dropdown');
+  if(dd)dd.style.display='none';
+  _nsPartDropIdx=-1;
+}
+
+function nsPartClear(){
+  const inp=$('ns-part-inp');
+  const descInp=$('ns-part-desc');
+  if(inp){inp.value='';inp.focus();}
+  if(descInp)descInp.value='';
+  nsPartHideDropdown();
+}
+
+function nsPartKeydown(e){
+  const dd=$('ns-part-dropdown');
+  if(!dd||dd.style.display==='none'){
+    if(e.key==='Enter'){e.preventDefault();addNsPart();}
+    return;
+  }
+  const opts=[...dd.querySelectorAll('.ns-part-opt')];
+  if(!opts.length)return;
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    _nsPartDropIdx=Math.min(_nsPartDropIdx+1,opts.length-1);
+    opts.forEach((o,i)=>o.style.background=i===_nsPartDropIdx?'var(--blue-lt)':'');
+    opts[_nsPartDropIdx].scrollIntoView({block:'nearest'});
+  } else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    _nsPartDropIdx=Math.max(_nsPartDropIdx-1,0);
+    opts.forEach((o,i)=>o.style.background=i===_nsPartDropIdx?'var(--blue-lt)':'');
+    opts[_nsPartDropIdx].scrollIntoView({block:'nearest'});
+  } else if(e.key==='Enter'){
+    e.preventDefault();
+    if(_nsPartDropIdx>=0&&opts[_nsPartDropIdx]){
+      opts[_nsPartDropIdx].click();
+      setTimeout(addNsPart,60);
+    } else {
+      addNsPart();
+    }
+  } else if(e.key==='Escape'){
+    nsPartHideDropdown();
+  }
+}
+
+function addNsPart(){
+  const no=($('ns-part-inp')?$('ns-part-inp').value.trim():'');
+  const qtyEl=$('ns-part-qty');
+  const qty=qtyEl&&qtyEl.value?Number(qtyEl.value):1;
+  const desc=window._nsPartSelDesc||'';
+  const itemId=window._nsPartSelId||'';
+  if(!no){toast('Search and select a Part from MIR Catalog','err');return;}
+  if(!window._nsPartSelId&&!(DB.mirItems||[]).find(i=>i.partNo===no)){toast('Part not in MIR Catalog. Add it first via MIR \u2192 Master Items.','err');return;}
+  if(_nsParts.find(p=>p.no===no)){toast('Part '+no+' already added','warn');return;}
+  _nsParts.push({no,desc,qty:qty,itemId:itemId});
+  if($('ns-part-inp'))$('ns-part-inp').value='';
+  if(qtyEl)qtyEl.innerHTML='<option value="">-- Qty --</option>';
+  window._nsPartSelDesc='';window._nsPartSelId='';
+  nsPartHideDropdown();
+  renderNsParts();
+  toast('Part '+no+' added (Qty: '+qty+')','ok');
 }
 function refreshNsComp(){
   const pid=$('ns-proj').value;
@@ -3226,6 +3941,10 @@ function nsSelectAllCatalog(v){
 function addSeam(){
   const pid=$('ns-proj').value;
   if(!pid){toast('Please select a Project first','err');return;}
+  // Get tag category
+  const catFromSel=($('ns-tagcat')&&$('ns-tagcat').style.display!=='none')?($('ns-tagcat').value||''):'';
+  const catFromNew=($('ns-tagcat-new')&&$('ns-tagcat-new').value.trim())||'';
+  const tagCat=catFromSel||catFromNew||'General';
   // Get tag: either from select or new input
   const tagFromSel=$('ns-tag').style.display!=='none'?$('ns-tag').value:'';
   const tagFromNew=$('ns-tag-new').value.trim();
@@ -3236,6 +3955,8 @@ function addSeam(){
   const compFromNew=$('ns-comp-new').value.trim();
   const comp=compFromSel||compFromNew;
   if(!comp){toast('Please select or enter a Component','err');return;}
+  // Validate part numbers
+  if(!_nsParts||_nsParts.length<1){toast('Add at least 1 Part Number from MIR Catalog','err');return;}
   const num=$('ns-num').value.trim(),desc=$('ns-desc').value.trim();
   if(!num||!desc){toast('Seam number and description required','err');return;}
 
@@ -3262,7 +3983,7 @@ function addSeam(){
   }
 
   const proj=getProj(pid);
-  const newSeam={id:'s'+Date.now(),pid,tag,comp,sec:comp,num,desc,
+  const newSeam={id:'s'+Date.now(),pid,tag,comp,sec:comp,tagCat,parts:_nsParts.slice(),num,desc,
     type:$('ns-type').value,mat:$('ns-mat').value.trim()||'N/A',
     thk:$('ns-thk').value.trim()||'N/A',wps:$('ns-wps').value.trim()||'—',
     itpDoc:$('ns-itp-doc')?.value.trim()||'',
@@ -3272,6 +3993,7 @@ function addSeam(){
   log(`📋 PENDING APPROVAL — Add Seam ${num} | Tag: ${tag} | Comp: ${comp} | Project #${proj?proj.number:'?'} by ${CU.name}`);
   save();
   ['ns-num','ns-desc','ns-mat','ns-thk','ns-wps','ns-tag-new','ns-comp-new','ns-itp-doc'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  _nsParts=[];renderNsParts();
   nsSelectAllCatalog(false); // clear catalog checkboxes
   renderAdminSeams();
   toast(`✓ Seam "${num}" submitted for Manager approval`,'ok');
@@ -3958,6 +4680,7 @@ function doPrint(){
 // PROFILE
 // ══════════════════════════════════════════════════════════════
 function renderProfile(){
+  setTimeout(renderProfileExtras,50);
   if(!CU)return;
   const p=getProj(CU.pid);
   $('profile-rows').innerHTML=`
@@ -4661,14 +5384,79 @@ function setLogFilter(f,el){
 // ══════════════════════════════════════════════════════════════
 // MANAGER APPROVALS
 // ══════════════════════════════════════════════════════════════
+
+// ══════════════ GROUP APPROVE / REJECT ══════════════
+function groupApproveAll(){
+  if(!DB.pendingActions.length){toast('No pending actions','ok');return;}
+  if(!confirm('Approve ALL '+DB.pendingActions.length+' pending requests? This cannot be undone.'))return;
+  const ids=DB.pendingActions.map(a=>a.id);
+  ids.forEach(id=>{if(!_approvedIds.has(id)){_approvedIds.add(id);approveAction(id);}});
+  toast('✅ All '+ids.length+' requests approved','ok');
+}
+function groupRejectAll(){
+  if(!DB.pendingActions.length){toast('No pending actions','ok');return;}
+  if(!confirm('Reject ALL '+DB.pendingActions.length+' pending requests?'))return;
+  const ids=DB.pendingActions.map(a=>a.id);
+  ids.forEach(id=>{if(!_approvedIds.has(id)){_approvedIds.add(id);rejectAction(id);}});
+  toast('All requests rejected','ok');
+}
+
+
+// ======================================================
+// GLOBAL STATS BAR (top of dashboard, always visible)
+// ======================================================
+function _updateGlobalStatsBar(){
+  var el=document.getElementById('dash-global-stats');
+  if(!el)return;
+  var mirs=DB.mirs||[];
+  var seams=DB.seams||[];
+  var projs=DB.projects||[];
+  var stTotal=0,stAcc=0,stOff=0,stRej=0;
+  seams.forEach(function(s){s.stages.forEach(function(st){
+    stTotal++;
+    if(st.status==='accepted')stAcc++;
+    else if(st.status==='offered')stOff++;
+    else if(st.status==='rejected')stRej++;
+  });});
+  var mirApproved=mirs.filter(function(m){return m.status==='APPROVED';}).length;
+  var mirPendQC=mirs.filter(function(m){return m.status==='PENDING_QC';}).length;
+  var pct=stTotal?Math.round(stAcc/stTotal*100):0;
+  var col=pct===100?'#16a34a':pct>50?'#b45309':'#dc2626';
+  var stats=[
+    {lbl:'Projects',val:projs.length,c:'var(--blue2)',i:'&#128193;'},
+    {lbl:'Seams',val:seams.length,c:'var(--blue2)',i:'&#128279;'},
+    {lbl:'Stages Done',val:stAcc+'/'+stTotal,c:'#16a34a',i:'&#9989;'},
+    {lbl:'Overall',val:pct+'%',c:col,i:'&#128202;'},
+    {lbl:'QC Queue',val:stOff,c:'#b45309',i:'&#9203;'},
+    {lbl:'NCR',val:stRej,c:'#dc2626',i:'&#128308;'},
+    {lbl:'MIR Approved',val:mirApproved,c:'#059669',i:'&#128230;'},
+    {lbl:'MIR Pending QC',val:mirPendQC,c:'#D97706',i:'&#128203;'},
+  ];
+  el.innerHTML=stats.map(function(s){return '<div style="background:var(--surf);border:1px solid var(--border);border-top:3px solid '+s.c+';border-radius:8px;padding:10px 12px;text-align:center;box-shadow:var(--shadow-sm);"><div style="font-size:18px;font-weight:800;color:'+s.c+';line-height:1.2;">'+s.val+'</div><div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:3px;letter-spacing:.5px;">'+s.i+' '+s.lbl+'</div></div>';}).join('');
+}
+
 function updateApprovalBadge(){
   const count=DB.pendingActions.length;
   const nb=$('nb-approvals');
   if(nb){nb.style.display=count>0?'inline':'none';nb.textContent=count;}
 }
 
+function updateMIRBadge(){
+  if(!CU) return;
+  const mirs=DB.mirs||[];
+  let count=0;
+  if(CU.role==='quality')   count=mirs.filter(m=>m.status==='PENDING_QC').length;
+  if(CU.role==='manager')   count=0; // no MIR approval needed from manager
+  if(CU.role==='admin')     count=mirs.filter(m=>m.status==='PENDING_QC').length;
+  const nb=$('nb-mir');
+  if(nb){nb.style.display=count>0?'inline':'none';nb.textContent=count;}
+}
+
 function renderApprovals(){
   updateApprovalBadge();
+  // Show/hide group approve bar
+  const gab=$('group-approve-bar');
+  if(gab)gab.style.display=DB.pendingActions.length?'flex':'none';
   if(!DB.pendingActions.length){
     $('approvals-body').innerHTML=`<div style="text-align:center;padding:40px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">✓ No pending approvals. All up to date.</div>`;
     return;
@@ -4833,6 +5621,1373 @@ function rejectAction(id){
   save();renderApprovals();updateApprovalBadge();
   toast('Request rejected');
 }
+
+// ══════════════════════════════════════════════════════════════
+// GLOBAL SEARCH
+// ══════════════════════════════════════════════════════════════
+function onGlobalSearch(q){
+  const el=$('gsearch-results');
+  if(!q||q.length<2){el.classList.remove('on');el.innerHTML='';return;}
+  const ql=q.toLowerCase();
+  let results=[];
+  // Search projects
+  DB.projects.forEach(p=>{
+    if((p.number+''+p.equipment+' '+(p.client||'')).toLowerCase().includes(ql))
+      results.push({type:'Project',icon:'📁',label:`Project #${p.number} — ${p.equipment}`,action:`dashGoL1('${p.id}')`});
+  });
+  // Search seams
+  DB.seams.forEach(s=>{
+    const p=getProj(s.pid);
+    if((s.num+' '+s.desc+' '+(s.tag||'')+' '+(s.comp||'')).toLowerCase().includes(ql))
+      results.push({type:'Seam',icon:'🔗',label:`${s.num} — ${s.desc} [${s.tag||''}]`,sub:p?`Project #${p.number}`:'',action:`viewSeamFromSearch('${s.id}')`});
+  });
+  // Search MIRs
+  (DB.mirs||[]).forEach(m=>{
+    if((m.reportNo+' '+(m.tagNo||'')+' '+(m.projectCode||'')).toLowerCase().includes(ql))
+      results.push({type:'MIR',icon:'📦',label:`${m.reportNo}`,sub:`${m.projectCode||''} · ${MIR_STATUS_META[m.status]?.label||m.status}`,action:`goPage('mir');setTimeout(()=>mirSetTab('list'),100)`});
+  });
+  // Search users (admin only)
+  if(CU&&CU.role==='admin'){
+    DB.users.forEach(u=>{
+      if((u.name+' '+u.mob+' '+(u.email||'')+' '+u.role).toLowerCase().includes(ql))
+        results.push({type:'User',icon:'👤',label:`${u.name} (${u.role})`,sub:u.mob,action:`goPage('users')`});
+    });
+  }
+  results=results.slice(0,12);
+  if(!results.length){el.innerHTML=`<div style="padding:14px;text-align:center;font-size:12px;color:var(--text4);">No results for "${q}"</div>`;el.classList.add('on');return;}
+  el.innerHTML=results.map(r=>`
+    <div onclick="${r.action};closeGSearch()" style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);" onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background=''">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">${r.icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${r.label}</div>
+        ${r.sub?`<div style="font-size:10px;color:var(--text4);">${r.sub}</div>`:''}
+      </div>
+      <span style="font-size:9px;padding:2px 7px;border-radius:10px;background:var(--blue-lt);color:var(--blue2);font-weight:700;flex-shrink:0;">${r.type}</span>
+    </div>`).join('');
+  el.classList.add('on');
+}
+function closeGSearch(){const el=$('gsearch-results');if(el){el.classList.remove('on');el.innerHTML='';}}
+function viewSeamFromSearch(id){
+  const s=getSeam(id);if(!s)return;
+  closeGSearch();
+  dashPid=s.pid;dashTagCat=s.tagCat||'General';dashTag=s.tag||s.sec||'';dashComp=s.comp||s.sec||'';
+  goPage('dashboard');
+  setTimeout(()=>openSeamDetail(id),200);
+}
+
+// ══════════════════════════════════════════════════════════════
+// MIR — Material Identification Report
+// ══════════════════════════════════════════════════════════════
+const MIR_STATUS_META={
+  DRAFT:            {label:'Draft',           c:'#6B7280', bg:'#F1F5F9', bd:'#CBD5E1'},
+  PENDING_QC:       {label:'Pending QC',      c:'#D97706', bg:'#FFFBEB', bd:'#FCD34D'},
+  PENDING_APPROVAL: {label:'Pending Approval',c:'#2563EB', bg:'#EFF6FF', bd:'#BFDBFE'},
+  APPROVED:         {label:'Approved',        c:'#059669', bg:'#ECFDF5', bd:'#A7F3D0'},
+  REJECTED:         {label:'Rejected',        c:'#DC2626', bg:'#FEF2F2', bd:'#FCA5A5'},
+};
+const MIR_XFER_OPTS=['MAT.SPEC','HEAT NO','PLATE NO','PART NO','MSN/TAG NO','UT OK'];
+let _mirTab='dashboard';
+let _mirNewStep=1;
+let _mirBasket=[];
+let _mirHdr={reportNo:'',date:new Date().toISOString().slice(0,10),drgNo:'',client:'',code:'ASME SEC. VIII DIV. 1',inspBy:'',projectCode:'',tagNo:'',tagCategory:''};
+let _mirSearchQ='';
+let _mirFiltStatus='';
+let _mirFiltProj='';
+let _mirEditId=null;
+
+function mirChip(s){
+  const m=MIR_STATUS_META[s]||MIR_STATUS_META.DRAFT;
+  return `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;color:${m.c};background:${m.bg};border:1px solid ${m.bd};">
+    <span style="width:5px;height:5px;border-radius:50%;background:${m.c};display:inline-block;"></span>${m.label}</span>`;
+}
+
+function renderMIRPage(){
+  if(!CU)return;
+  // Show/hide tabs by role
+  const isQC=CU.role==='quality';
+  const isMgr=CU.role==='manager';
+  const isAdmin=CU.role==='admin';
+  const isProd=CU.role==='production';
+  const qtab=$('mir-tab-qc'),atab=$('mir-tab-approve'),ntab=$('mir-tab-new');
+  if(qtab)qtab.style.display=(isQC||isAdmin)?'block':'none';
+  if(atab)atab.style.display=(isMgr||isAdmin)?'block':'none';
+  if(ntab)ntab.style.display=(isProd||isAdmin)?'block':'none';
+  mirSetTab(_mirTab);
+  // Update MIR badge
+  const pendingMIR=(DB.mirs||[]).filter(m=>
+    (isQC&&m.status==='PENDING_QC')||(isMgr&&m.status==='PENDING_APPROVAL')).length;
+  const nb=$('nb-mir');
+  if(nb){nb.style.display=pendingMIR>0?'inline':'none';nb.textContent=pendingMIR;}
+}
+
+function mirSetTab(t){
+  _mirTab=t;
+  document.querySelectorAll('.stab[data-mt]').forEach(el=>{
+    el.classList.toggle('on',el.dataset.mt===t);
+  });
+  const c=$('mir-content');if(!c)return;
+  if(t==='dashboard')c.innerHTML=mirRenderDashboard();
+  else if(t==='mirbackup')c.innerHTML=mirRenderBackup();
+  else if(t==='list')c.innerHTML=mirRenderList();
+  else if(t==='new')c.innerHTML=mirRenderNew();
+  else if(t==='qc')c.innerHTML=mirRenderQC();
+  else if(t==='approve')c.innerHTML=mirRenderApprove();
+  else if(t==='items')c.innerHTML=mirRenderItems();
+}
+
+function mirRenderDashboard(){
+  const mirs=DB.mirs||[];
+  const items=DB.mirItems||[];
+  const ap=mirs.filter(m=>m.status==='APPROVED').length;
+  const pqc=mirs.filter(m=>m.status==='PENDING_QC').length;
+  const pmgr=0; // no manager step
+  const rej=mirs.filter(m=>m.status==='REJECTED').length;
+  const rate=mirs.length?Math.round(ap/mirs.length*100):0;
+  const recent=[...mirs].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,8);
+  const projs=[...new Set(mirs.map(m=>m.projectCode).filter(Boolean))];
+  const fD=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+  const barRows=projs.map(p=>{
+    const apc=mirs.filter(m=>m.projectCode===p&&m.status==='APPROVED').length;
+    const ppc=mirs.filter(m=>m.projectCode===p&&(m.status==='PENDING_QC'||m.status==='PENDING_APPROVAL')).length;
+    const rpc=mirs.filter(m=>m.projectCode===p&&m.status==='REJECTED').length;
+    const tot=Math.max(apc+ppc+rpc,1);
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:4px;"><span>${p}</span><span>${apc+ppc+rpc} MIRs</span></div>
+      <div style="height:10px;border-radius:5px;background:var(--surf3);overflow:hidden;display:flex;">
+        <div style="background:#059669;width:${apc/tot*100}%;"></div>
+        <div style="background:#D97706;width:${ppc/tot*100}%;"></div>
+        <div style="background:#DC2626;width:${rpc/tot*100}%;"></div>
+      </div></div>`;
+  }).join('');
+  return `
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+    ${[['Total MIRs',mirs.length,'var(--blue2)','📋',items.length+' master items'],
+       ['Approved',ap,'#059669','✅',rate+'% rate'],
+       ['Awaiting QC',pqc,'#D97706','⏳','Offered by Production'],
+       ['Awaiting Approval',pmgr,'#2563EB','🔖','QC cleared'],
+       ['Rejected',rej,'#DC2626','↩','Needs revision']
+    ].map(([lbl,val,col,icon,sub])=>`
+    <div style="flex:1 1 130px;background:var(--surf);border:1px solid var(--border);border-top:3px solid ${col};border-radius:10px;padding:16px 18px;min-width:120px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div><div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;">${lbl}</div>
+        <div style="font-size:26px;font-weight:800;color:${col};line-height:1;">${val}</div>
+        <div style="font-size:10px;color:var(--text4);margin-top:3px;">${sub}</div></div>
+        <span style="font-size:20px;opacity:.5;">${icon}</span>
+      </div></div>`).join('')}
+  </div>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:20px;">
+    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;">📊 MIRs by Project</div>
+      <div style="padding:16px 18px;">${barRows||'<div style="color:var(--text4);font-size:12px;text-align:center;padding:20px;">No MIRs yet</div>'}</div>
+      <div style="padding:8px 18px 14px;display:flex;gap:14px;font-size:10px;font-weight:600;">
+        <span style="color:#059669;">● Approved</span><span style="color:#D97706;">● Pending</span><span style="color:#DC2626;">● Rejected</span>
+      </div>
+    </div>
+    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;">🔵 Status Distribution</div>
+      <div style="padding:16px 18px;">
+        ${[['Approved',ap,'#059669'],['Pending QC',pqc,'#D97706'],['Pend.Approval',pmgr,'#2563EB'],['Rejected',rej,'#DC2626']].map(([lbl,val,col])=>{
+          const pct=mirs.length?Math.round(val/mirs.length*100):0;
+          return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;"></div>
+            <div style="flex:1;font-size:11px;color:var(--text2);">${lbl}</div>
+            <div style="font-size:11px;font-weight:700;color:${col};min-width:24px;">${val}</div>
+            <div style="width:80px;height:6px;border-radius:3px;background:var(--surf3);">
+              <div style="height:100%;border-radius:3px;background:${col};width:${pct}%;"></div>
+            </div></div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;">
+    <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:13px;font-weight:700;">Recent MIRs</div>
+      <button onclick="mirSetTab('list')" style="font-size:11px;color:var(--blue2);background:none;border:none;cursor:pointer;font-weight:600;">View All →</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px;">
+        <thead><tr>${['Report No.','Date','Project','Part No.','Qty Offered','Status','PDF'].map(h=>`<th style="padding:8px 12px;font-size:10px;font-weight:700;color:var(--text4);text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);background:var(--surf2);">${h}</th>`).join('')}</tr></thead>
+        <tbody>${recent.map((m,i)=>`
+        <tr style="background:${i%2===0?'var(--surf)':'#FAFCFF'};">
+          <td style="padding:9px 12px;"><code style="color:var(--blue2);font-size:11px;">${m.reportNo}</code></td>
+          <td style="padding:9px 12px;color:var(--text3);">${fD(m.date)}</td>
+          <td style="padding:9px 12px;font-weight:600;">${m.projectCode||'—'}</td>
+          <td style="padding:9px 12px;font-weight:700;">${m.partNo||'—'}</td>
+          <td style="padding:9px 12px;font-weight:700;color:var(--blue2);text-align:center;">${m.offeredQty||m.qty||'—'}</td>
+          <td style="padding:9px 12px;">${mirChip(m.status)}</td>
+          <td style="padding:9px 12px;"><button onclick="mirPrintReport('${m.id}')" style="padding:4px 10px;background:var(--blue2);color:#fff;border:none;border-radius:5px;font-size:10px;cursor:pointer;">🖨 PDF</button></td>
+        </tr>`).join('')||`<tr><td colspan="7" style="padding:28px;text-align:center;color:var(--text4);">No MIRs yet.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function mirRenderList(){
+  const mirs=DB.mirs||[];
+  const projs=[...new Set(mirs.map(m=>m.projectCode).filter(Boolean))];
+  const fD=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+  const filtered=mirs.filter(m=>{
+    const q=(_mirSearchQ||'').toLowerCase();
+    return(!q||(m.reportNo+' '+(m.partNo||'')+' '+(m.projectCode||'')+' '+(m.description||'')).toLowerCase().includes(q))
+      &&(!_mirFiltStatus||m.status===_mirFiltStatus)
+      &&(!_mirFiltProj||m.projectCode===_mirFiltProj);
+  });
+  return `
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+    <div style="flex:1;min-width:180px;position:relative;">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text4);font-size:13px;">🔍</span>
+      <input value="${_mirSearchQ}" oninput="_mirSearchQ=this.value;mirSetTab('list')" placeholder="Search report no., part, project…"
+        style="padding:8px 10px 8px 32px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;width:100%;background:var(--surf2);outline:none;">
+    </div>
+    <div style="min-width:140px;">
+      <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:3px;">Status</label>
+      <select onchange="_mirFiltStatus=this.value;mirSetTab('list')" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;background:var(--surf);width:100%;">
+        <option value="">All Status</option>
+        ${Object.entries(MIR_STATUS_META).map(([v,m])=>`<option value="${v}" ${_mirFiltStatus===v?'selected':''}>${m.label}</option>`).join('')}
+      </select>
+    </div>
+    <div style="min-width:140px;">
+      <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:3px;">Project</label>
+      <select onchange="_mirFiltProj=this.value;mirSetTab('list')" style="padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;background:var(--surf);width:100%;">
+        <option value="">All Projects</option>
+        ${projs.map(p=>`<option value="${p}" ${_mirFiltProj===p?'selected':''}>${p}</option>`).join('')}
+      </select>
+    </div>
+    ${(_mirSearchQ||_mirFiltStatus||_mirFiltProj)?`<button onclick="_mirSearchQ='';_mirFiltStatus='';_mirFiltProj='';mirSetTab('list')" style="padding:7px 14px;background:none;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text3);cursor:pointer;">✕ Reset</button>`:''}
+  </div>
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text4);">Showing ${filtered.length} of ${mirs.length} MIRs</div>
+    ${filtered.length?filtered.map((m,i)=>`
+    <div style="border-bottom:1px solid var(--border);background:${i%2===0?'var(--surf)':'#FAFCFF'};">
+      <div style="padding:12px 16px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="mirToggleRow('${m.id}')">
+        <div style="flex:1;min-width:200px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
+            <code style="font-size:12px;font-weight:700;color:var(--blue2);">${m.reportNo}</code>
+            ${mirChip(m.status)}
+          </div>
+          <div style="font-size:10px;color:var(--text4);">${fD(m.date)} · ${m.projectCode||'—'} · Part: <strong>${m.partNo||'—'}</strong> · Qty: ${m.offeredQty||m.qty||'—'} · By: ${m.offeredBy||'—'}</div>
+          ${m.rejectReason?`<div style="font-size:10px;color:var(--red);margin-top:2px;">⚠ ${m.rejectReason}</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+          <button onclick="event.stopPropagation();mirPrintReport('${m.id}')" style="padding:5px 12px;background:var(--blue2);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">🖨 PDF</button>
+          <span id="mir-arr-${m.id}" style="color:var(--text4);font-size:14px;">▼</span>
+        </div>
+      </div>
+      <div id="mir-row-${m.id}" style="display:none;padding:0 16px 14px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:10px 12px;background:var(--surf2);border-radius:8px;margin-bottom:10px;font-size:11px;">
+          ${[['Part No.',m.partNo||'—'],['Description',m.description||'—'],['Project',m.projectCode||'—'],
+             ['Tag No.',m.tagNo||'—'],['Qty Offered',m.offeredQty||m.qty||'—'],['Req. Material',m.material||'—'],
+             ['Used Material',m.usedMaterial||'—'],['Req. Thickness',m.thickness||'—'],['Used Thickness',m.usedThickness||'—'],
+             ['Heat No.',m.heatNo||'—'],['Plate No.',m.plateNo||'—'],['TC No.',m.tcNo||'—'],
+             ['Manufacturer',m.manufacturer||'—'],['Drawing',m.drgNo||'—'],['Client',m.client||'—'],
+             ['Code',m.code||'—'],['Insp.By',m.inspBy||'—'],['Offered By',m.offeredBy||'—'],
+             ['QC By',m.qcBy||'—'],['Approved By',m.approvedBy||'—']].map(([l,v])=>`
+          <div><div style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.7px;margin-bottom:1px;">${l}</div>
+          <div style="font-weight:600;color:var(--text);font-size:11px;">${v}</div></div>`).join('')}
+        </div>
+        ${m.transferMarks&&m.transferMarks.length?`<div style="margin-bottom:8px;font-size:11px;"><span style="font-weight:700;color:var(--text3);">Transfer Marks: </span>${m.transferMarks.map(mk=>`<span style="padding:2px 8px;background:var(--blue-lt);color:var(--blue2);border-radius:10px;font-size:10px;font-weight:700;margin-right:4px;">${mk}</span>`).join('')}</div>`:''}
+        ${m.qcRemarks?`<div style="font-size:11px;color:var(--text3);margin-bottom:4px;">QC Remarks: ${m.qcRemarks}</div>`:''}
+        ${m.managerRemark?`<div style="font-size:11px;color:var(--text3);margin-bottom:4px;">Manager Note: ${m.managerRemark}</div>`:''}
+      </div>
+    </div>`).join(''):`<div style="padding:36px;text-align:center;color:var(--text4);">🔎 No MIRs match current filters</div>`}
+  </div>`;
+}
+
+function mirToggleRow(id){
+  const row=document.getElementById('mir-row-'+id);
+  const arr=document.getElementById('mir-arr-'+id);
+  if(!row)return;
+  const open=row.style.display==='block';
+  row.style.display=open?'none':'block';
+  if(arr)arr.textContent=open?'▼':'▲';
+}
+
+// ── Production Offer Form state ──
+let _mirOfferItemId=null;
+
+function mirRenderNew(){
+  // Production: select a master item and fill offer details
+  const items=DB.mirItems||[];
+  if(!items.length)return`<div style="padding:40px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:12px;">📦</div>
+    <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;">No Master Items available yet</div>
+    <div style="font-size:12px;color:var(--text4);">Admin must add parts first from MIR → Master Items tab.</div>
+  </div>`;
+
+  // Group items by project for display
+  const projs=[...new Set(items.map(i=>i.projectCode))];
+  const selProj=document.getElementById('mno-proj')?.value||projs[0]||'';
+  const selItem=document.getElementById('mno-item')?.value||'';
+
+  // Qty already used for this item across approved/pending MIRs
+  const usedQty=iid=>(DB.mirs||[]).filter(m=>m.status!=='REJECTED'&&m.itemId===iid)
+    .reduce((a,m)=>a+(Number(m.offeredQty)||0),0);
+
+  const projItems=items.filter(i=>i.projectCode===selProj);
+  const selIT=selItem?items.find(i=>i.id===selItem):null;
+  const maxAvail=selIT?Math.max(0,selIT.maxQty-usedQty(selIT.id)):0;
+  const qtyOpts=selIT?Array.from({length:Math.max(maxAvail,1)},(_,k)=>k+1):[];
+
+  return `
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--blue2);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+      📤 Offer Material for Inspection — Select Part & Fill Details
+    </div>
+
+    <!-- Step 1: Select Part -->
+    <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:10px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 1 — Select Project & Part</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Project <span style="color:var(--red);">*</span></label>
+          <select id="mno-proj" onchange="_mirOfferItemId=null;mirSetTab('new')"
+            style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+            ${projs.map(p=>`<option value="${p}" ${selProj===p?'selected':''}>${p}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Select Part (Item) <span style="color:var(--red);">*</span></label>
+          <select id="mno-item" onchange="_mirOfferItemId=this.value;mirSetTab('new')"
+            style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+            <option value="">— Select a Part —</option>
+            ${projItems.map(it=>{
+              const used=usedQty(it.id);
+              const rem=Math.max(0,it.maxQty-used);
+              return `<option value="${it.id}" ${selItem===it.id?'selected':''}>${it.partNo} — ${it.description} (Available: ${rem}/${it.maxQty})</option>`;
+            }).join('')}
+          </select>
+        </div>
+      </div>
+      ${selIT?`
+      <div style="margin-top:12px;background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:7px;padding:10px 14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;font-size:11px;">
+        ${[['Tag Category',selIT.tagCategory],['Tag No.',selIT.tagNo],['Part No.',selIT.partNo],
+           ['Description',selIT.description],['Req. Material',selIT.material],['Req. Thickness',selIT.thickness],
+           ['Max Qty',selIT.maxQty],['Available',maxAvail]].map(([l,v])=>`
+        <div><div style="font-size:9px;font-weight:700;color:var(--blue2);text-transform:uppercase;margin-bottom:1px;">${l}</div>
+        <div style="font-weight:700;color:var(--text);">${v}</div></div>`).join('')}
+      </div>`:''}
+    </div>
+
+    ${selIT&&maxAvail>0?`
+    <!-- Step 2: Qty + Production fills manual fields -->
+    <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:10px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Step 2 — Quantity & Identification Details</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Qty to Offer <span style="color:var(--red);">*</span></label>
+          <select id="mno-qty" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:14px;font-weight:700;background:var(--surf);color:var(--blue2);">
+            ${qtyOpts.map(n=>`<option value="${n}">${n} of ${selIT.maxQty}</option>`).join('')}
+          </select>
+          <div style="font-size:10px;color:var(--text4);margin-top:3px;">${maxAvail} units available of ${selIT.maxQty} total</div>
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Report No. <span style="color:var(--red);">*</span></label>
+          <input id="mno-rno" placeholder="e.g. E9351_MIR-01" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Date <span style="color:var(--red);">*</span></label>
+          <input id="mno-date" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Heat No. <span style="color:var(--red);">*</span></label>
+          <input id="mno-heat" placeholder="e.g. B-40080" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Used Material</label>
+          <input id="mno-umat" placeholder="${selIT.material}" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Used Thickness / Size</label>
+          <input id="mno-uthk" placeholder="${selIT.thickness}" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Plate No.</label>
+          <input id="mno-plate" placeholder="e.g. PR4546111N" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">TC No. (Test Certificate)</label>
+          <input id="mno-tc" placeholder="e.g. TC-2024-001" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Manufacturer / Mill</label>
+          <input id="mno-mfr" placeholder="e.g. POSCO / CHW" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">UT Remarks</label>
+          <input id="mno-ut" placeholder="e.g. UT OK" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Drawing No.</label>
+          <input id="mno-drg" placeholder="e.g. DRG-1242-001" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Client</label>
+          <input id="mno-cli" placeholder="e.g. QATAR ENERGY LNG." style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Code / Standard</label>
+          <input id="mno-code" value="ASME SEC. VIII DIV. 1" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Inspection By (TPI)</label>
+          <input id="mno-insp" placeholder="e.g. TECHNIP / AI" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Extra Remarks</label>
+          <input id="mno-rem" placeholder="Optional note" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+      </div>
+      <!-- Transfer Marks -->
+      <div style="margin-top:14px;">
+        <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:6px;">Transfer Marks (tick all applicable)</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;" id="mno-marks-wrap">
+          ${['MAT.SPEC','HEAT NO','PLATE NO','PART NO','MSN/TAG NO','UT OK'].map(mk=>`
+          <label id="mno-mk-lbl-${mk.replace(/\./g,'').replace(/ /g,'-')}"
+            onclick="mirToggleOfferMark('${mk}')"
+            style="display:flex;align-items:center;gap:5px;padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;cursor:pointer;font-size:11px;font-weight:600;color:var(--text3);background:var(--surf);user-select:none;">
+            <input type="checkbox" id="mno-mk-${mk.replace(/\./g,'').replace(/ /g,'-')}" style="display:none;">${mk}
+          </label>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button onclick="mirSubmitOffer()" style="padding:11px 32px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.3);">
+        📤 Submit MIR for QC Inspection
+      </button>
+    </div>
+    `:`${selIT&&maxAvail===0?`<div style="background:#fef3c7;border:1.5px solid #f59e0b;border-radius:8px;padding:14px;text-align:center;font-size:13px;font-weight:600;color:#92400e;">⚠ All ${selIT.maxQty} units of this part have already been offered. No remaining quantity available.</div>`:''}`}
+  </div>`;
+}
+
+function mirToggleOfferMark(mk){
+  const safe=mk.replace(/\./g,'').replace(/ /g,'-');
+  const cb=document.getElementById('mno-mk-'+safe);
+  const lbl=document.getElementById('mno-mk-lbl-'+safe);
+  if(!cb||!lbl)return;
+  cb.checked=!cb.checked;
+  lbl.style.background=cb.checked?'var(--blue-lt)':'var(--surf)';
+  lbl.style.color=cb.checked?'var(--blue2)':'var(--text3)';
+  lbl.style.borderColor=cb.checked?'var(--blue2)':'var(--border)';
+}
+
+function mirSubmitOffer(){
+  const get=id=>document.getElementById(id)?.value.trim()||'';
+  const item=(DB.mirItems||[]).find(i=>i.id===get('mno-item'));
+  if(!item)return toast('Select a Part first','err');
+  const rno=get('mno-rno');
+  if(!rno)return toast('Report No. is required','err');
+  const hno=get('mno-heat');
+  if(!hno)return toast('Heat No. is required','err');
+  const qty=Number(get('mno-qty'))||1;
+  const marks=['MAT.SPEC','HEAT NO','PLATE NO','PART NO','MSN/TAG NO','UT OK']
+    .filter(mk=>document.getElementById('mno-mk-'+mk.replace(/\./g,'').replace(/ /g,'-'))?.checked);
+
+  if(!DB.mirs)DB.mirs=[];
+  const mir={
+    id:'MIR-'+Date.now(),
+    itemId:item.id,
+    reportNo:rno,
+    date:get('mno-date')||new Date().toISOString().slice(0,10),
+    projectCode:item.projectCode,
+    tagCategory:item.tagCategory,
+    tagNo:item.tagNo,
+    partNo:item.partNo,
+    description:item.description,
+    material:item.material,
+    thickness:item.thickness,
+    offeredQty:qty,
+    usedMaterial:get('mno-umat')||item.material,
+    usedThickness:get('mno-uthk')||item.thickness,
+    heatNo:hno,
+    plateNo:get('mno-plate'),
+    tcNo:get('mno-tc'),
+    manufacturer:get('mno-mfr'),
+    utRemarks:get('mno-ut'),
+    drgNo:get('mno-drg'),
+    client:get('mno-cli'),
+    code:get('mno-code'),
+    inspBy:get('mno-insp'),
+    extraRemarks:get('mno-rem'),
+    transferMarks:marks,
+    status:'PENDING_QC',
+    offeredBy:CU.name,
+    offeredDate:new Date().toISOString().slice(0,10),
+    qcBy:'',qcDate:'',qcStatus:'',qcRemarks:'',
+    approvedBy:'',approvedDate:'',rejectReason:'',managerRemark:''
+  };
+  DB.mirs.push(mir);
+  log(`📦 MIR OFFERED — ${rno} · Part ${item.partNo} · ${item.description} · Qty ${qty} · by ${CU.name}`);
+  save();
+  _mirOfferItemId=null;
+  toast(`✅ MIR ${rno} submitted for QC`,'ok');
+  mirSetTab('list');
+}
+
+function mirRenderQC(){
+  const queue=(DB.mirs||[]).filter(m=>m.status==='PENDING_QC');
+  const fD=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+  if(!queue.length)return`<div style="text-align:center;padding:52px;"><div style="font-size:40px;margin-bottom:12px;">✅</div>
+    <div style="font-size:15px;font-weight:700;color:var(--text);">No MIRs awaiting QC review.</div>
+    <div style="font-size:12px;color:var(--text4);margin-top:6px;">New submissions will appear here automatically.</div></div>`;
+  return queue.map(mir=>`
+  <div style="background:var(--surf);border:1px solid var(--border);border-left:4px solid #D97706;border-radius:10px;margin-bottom:14px;">
+    <div style="padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="mirToggleQCRow('${mir.id}')">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
+          <code style="font-size:13px;font-weight:700;color:var(--blue2);">${mir.reportNo}</code>
+          ${mirChip(mir.status)}
+        </div>
+        <div style="font-size:11px;color:var(--text4);">Part <strong>${mir.partNo}</strong> — ${mir.description||'—'} · Qty: <strong>${mir.offeredQty}</strong> · By ${mir.offeredBy||'—'} · ${fD(mir.offeredDate)}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="event.stopPropagation();mirPrintReport('${mir.id}')" style="padding:5px 12px;background:var(--blue2);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">🖨 PDF</button>
+        <span id="qcr-arr-${mir.id}" style="color:var(--text4);font-size:14px;">▼</span>
+      </div>
+    </div>
+    <div id="qcr-body-${mir.id}" style="display:none;padding:0 18px 18px;border-top:1px solid var(--border);">
+      <!-- Pre-filled details for QC to verify -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;padding:12px;background:var(--surf2);border-radius:8px;margin:14px 0;font-size:11px;">
+        ${[['Project',mir.projectCode||'—'],['Tag Category',mir.tagCategory||'—'],['Tag No.',mir.tagNo||'—'],
+           ['Part No.',mir.partNo||'—'],['Description',mir.description||'—'],['Qty Offered',mir.offeredQty||'—'],
+           ['Req. Material',mir.material||'—'],['Used Material',mir.usedMaterial||'—'],
+           ['Req. Thickness',mir.thickness||'—'],['Used Thickness',mir.usedThickness||'—'],
+           ['Heat No.',mir.heatNo||'—'],['Plate No.',mir.plateNo||'—'],
+           ['TC No.',mir.tcNo||'—'],['Manufacturer',mir.manufacturer||'—'],
+           ['UT Remarks',mir.utRemarks||'—'],['Drawing',mir.drgNo||'—'],
+           ['Client',mir.client||'—'],['Code',mir.code||'—'],
+           ['Inspection By',mir.inspBy||'—'],['Date',fD(mir.date)]].map(([l,v])=>`
+        <div>
+          <div style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:1px;">${l}</div>
+          <div style="font-weight:600;color:${l==='Used Material'&&v!==mir.material&&v!=='—'?'#D97706':l==='Used Thickness'&&v!==mir.thickness&&v!=='—'?'#D97706':'var(--text)'};">${v}</div>
+        </div>`).join('')}
+      </div>
+      ${mir.transferMarks&&mir.transferMarks.length?`<div style="margin-bottom:12px;font-size:11px;">
+        <span style="font-weight:700;color:var(--text3);">Transfer Marks: </span>
+        ${mir.transferMarks.map(mk=>`<span style="padding:2px 8px;background:var(--blue-lt);color:var(--blue2);border-radius:10px;font-size:10px;font-weight:700;margin-right:4px;">${mk}</span>`).join('')}
+      </div>`:''}
+      <!-- QC Decision -->
+      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px;">QC Decision</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+          ${[['ACCEPTED','✅ Accept','#059669'],['REJECTED','❌ Reject','#DC2626']].map(([val,lbl,col])=>`
+          <div onclick="document.getElementById('qcd-${mir.id}').value='${val}';this.parentElement.querySelectorAll('.qcd-opt').forEach(b=>{b.style.borderColor='var(--border)';b.style.background='var(--surf)'});this.style.borderColor='${col}';this.style.background='${col}18';this.style.color='${col}';"
+            class="qcd-opt" style="display:flex;align-items:center;gap:8px;padding:10px 22px;border-radius:9px;cursor:pointer;border:2px solid var(--border);background:var(--surf);color:var(--text3);font-weight:600;font-size:13px;transition:all .15s;">
+            ${lbl}
+          </div>`).join('')}
+        </div>
+        <input type="hidden" id="qcd-${mir.id}" value="">
+        <textarea id="qcr-rem-${mir.id}" placeholder="QC remarks or rejection reason (required for rejection)…" rows="2"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;resize:vertical;margin-bottom:10px;"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="mirSubmitQC('${mir.id}')" style="padding:9px 22px;background:var(--blue2);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">Submit QC Decision</button>
+          <button onclick="mirPrintReport('${mir.id}')" style="padding:9px 18px;background:var(--surf);color:var(--blue2);border:1.5px solid var(--blue2);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;">🖨 Print / PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+function mirToggleQCRow(id){
+  const body=document.getElementById('qcr-body-'+id);
+  const arr=document.getElementById('qcr-arr-'+id);
+  if(!body)return;
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(arr)arr.textContent=open?'▼':'▲';
+}
+
+function mirSubmitQC(id){
+  const mir=(DB.mirs||[]).find(m=>m.id===id);if(!mir)return;
+  const dec=document.getElementById('qcd-'+id)?.value;
+  const rem=document.getElementById('qcr-rem-'+id)?.value||'';
+  if(!dec)return toast('Please select Accept or Reject','err');
+  if(dec==='REJECTED'&&!rem)return toast('Rejection reason is required','err');
+  mir.qcBy=CU.name;mir.qcDate=new Date().toISOString().slice(0,10);
+  mir.qcStatus=dec;mir.qcRemarks=rem;
+  mir.status=dec==='ACCEPTED'?'APPROVED':'REJECTED'; // QC clearance = final
+  if(dec==='REJECTED')mir.rejectReason=rem;
+  log(`${dec==='ACCEPTED'?'✅':'❌'} MIR QC ${dec} — ${mir.reportNo} · Part ${mir.partNo} · by ${CU.name}${rem?' | '+rem:''}`);
+  save();updateMIRBadge();
+  toast(dec==='ACCEPTED'?'MIR accepted — sent to Manager for approval':'MIR rejected — Production notified','ok');
+  mirSetTab('qc');
+}
+
+function mirRenderApprove(){
+  const queue=(DB.mirs||[]).filter(m=>m.status==='REJECTED'); // only show rejected for re-open
+  const fD=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+  if(!queue.length)return`<div style="text-align:center;padding:52px;"><div style="font-size:40px;margin-bottom:12px;">✅</div>
+    <div style="font-size:15px;font-weight:700;color:var(--text);">No MIRs awaiting your approval.</div></div>`;
+  return `
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    <button onclick="mirGroupApproveAll()" style="padding:8px 18px;background:#059669;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">✅ Approve All Pending</button>
+  </div>
+  ${queue.map(mir=>`
+  <div style="background:var(--surf);border:1px solid var(--border);border-left:4px solid ${mir.status==='REJECTED'?'#DC2626':'#2563EB'};border-radius:10px;margin-bottom:14px;">
+    <div style="padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="mirToggleApprRow('${mir.id}')">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:3px;">
+          <code style="font-size:13px;font-weight:700;color:var(--blue2);">${mir.reportNo}</code>
+          ${mirChip(mir.status)}
+        </div>
+        <div style="font-size:11px;color:var(--text4);">Part <strong>${mir.partNo}</strong> · Qty ${mir.offeredQty||'—'} · QC: ${mir.qcBy||'—'} · ${fD(mir.qcDate)}</div>
+        ${mir.rejectReason?`<div style="font-size:10px;color:var(--red);">⚠ ${mir.rejectReason}</div>`:''}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button onclick="event.stopPropagation();mirPrintReport('${mir.id}')" style="padding:5px 12px;background:var(--blue2);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;">🖨 PDF</button>
+        <span id="appr-arr-${mir.id}" style="color:var(--text4);font-size:14px;">▼</span>
+      </div>
+    </div>
+    <div id="appr-body-${mir.id}" style="display:none;padding:0 18px 18px;border-top:1px solid var(--border);">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;padding:12px;background:var(--surf2);border-radius:8px;margin:12px 0;font-size:11px;">
+        ${[['Part No.',mir.partNo||'—'],['Description',mir.description||'—'],['Qty',mir.offeredQty||'—'],
+           ['Req. Material',mir.material||'—'],['Used Material',mir.usedMaterial||'—'],
+           ['Heat No.',mir.heatNo||'—'],['Plate No.',mir.plateNo||'—'],['Manufacturer',mir.manufacturer||'—'],
+           ['UT Remarks',mir.utRemarks||'—'],['QC By',mir.qcBy||'—'],['QC Remarks',mir.qcRemarks||'—']].map(([l,v])=>`
+        <div><div style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:1px;">${l}</div>
+        <div style="font-weight:600;color:var(--text);">${v}</div></div>`).join('')}
+      </div>
+      <div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+        <textarea id="mgr-rem-${mir.id}" placeholder="Manager remarks (optional)…" rows="2"
+          style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;resize:vertical;margin-bottom:10px;"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${mir.status==='PENDING_APPROVAL'?`
+          <button onclick="mirManagerAct('${mir.id}','approve')" style="padding:8px 20px;background:#059669;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">✅ Approve</button>
+          <button onclick="mirManagerAct('${mir.id}','sendback')" style="padding:8px 20px;background:#DC2626;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">↩ Send Back</button>
+          `:`
+          <button onclick="mirManagerAct('${mir.id}','reopen')" style="padding:8px 20px;background:#D97706;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">🔄 Re-open for QC</button>
+          <button onclick="mirManagerAct('${mir.id}','override')" style="padding:8px 20px;background:#059669;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">✅ Override Approve</button>
+          `}
+          <button onclick="mirPrintReport('${mir.id}')" style="padding:8px 16px;background:var(--surf);color:var(--blue2);border:1.5px solid var(--blue2);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;">🖨 PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>`).join('')}`;
+}
+
+function mirToggleApprRow(id){
+  const body=document.getElementById('appr-body-'+id);
+  const arr=document.getElementById('appr-arr-'+id);
+  if(!body)return;
+  const open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(arr)arr.textContent=open?'▼':'▲';
+}
+
+function mirManagerAct(id,action){
+  const mir=(DB.mirs||[]).find(m=>m.id===id);if(!mir)return;
+  const rem=document.getElementById('mgr-rem-'+id)?.value||'';
+  const today=new Date().toISOString().slice(0,10);
+  if(action==='approve'){mir.status='APPROVED';mir.approvedBy=CU.name;mir.approvedDate=today;mir.managerRemark=rem;}
+  else if(action==='sendback'){mir.status='REJECTED';mir.rejectReason=rem||'Sent back by Manager';mir.managerRemark=rem;}
+  else if(action==='reopen'){mir.status='PENDING_QC';mir.rejectReason=undefined;mir.managerRemark=rem;}
+  else if(action==='override'){mir.status='APPROVED';mir.approvedBy=CU.name+' (Override)';mir.approvedDate=today;mir.managerRemark=rem;}
+  log(`${action==='approve'||action==='override'?'✅':'↩'} MIR ${action.toUpperCase()} — ${mir.reportNo} · Part ${mir.partNo} by ${CU.name}${rem?' | '+rem:''}`);
+  save();updateMIRBadge();
+  toast(action==='approve'||action==='override'?'MIR approved ✓':action==='reopen'?'Re-opened for QC':'Sent back','ok');
+  mirSetTab('approve');
+}
+
+function mirGroupApproveAll(){
+  const pending=(DB.mirs||[]).filter(m=>m.status==='PENDING_APPROVAL');
+  if(!pending.length)return toast('No pending MIRs','ok');
+  if(!confirm('Approve all '+pending.length+' pending MIRs?'))return;
+  const today=new Date().toISOString().slice(0,10);
+  pending.forEach(m=>{m.status='APPROVED';m.approvedBy=CU.name;m.approvedDate=today;});
+  log(`✅ GROUP MIR APPROVE — ${pending.length} MIRs approved by ${CU.name}`);
+  save();updateMIRBadge();toast('All '+pending.length+' MIRs approved','ok');
+  mirSetTab('approve');
+}
+
+function mirRenderItems(){
+  // Admin-only: manage master item catalog
+  const items=DB.mirItems||[];
+  const searchQ=window._mirItemQ||'';
+  const rows=items.filter(it=>[it.description,it.partNo,it.tagNo,it.projectCode,it.tagCategory]
+    .some(v=>(v||'').toLowerCase().includes(searchQ.toLowerCase())));
+  return `
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px;">
+    <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">➕ Add New Master Item (Part)</div>
+    <div style="font-size:11px;color:var(--text4);margin-bottom:14px;">Admin adds parts here. Production team will see these parts and offer them for QC inspection.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px;">
+      ${[['Project Code *','mi-proj','PROJ-1242'],['Tag Category *','mi-cat','PRESSURE VESSEL'],
+         ['Tag No. *','mi-tag','605/365-E9351'],['Part No. *','mi-pno','302'],
+         ['Required Material *','mi-mat','SA-266 GR.2N'],['Thickness / Size *','mi-thk','806 OD x 105'],
+         ['Max Qty *','mi-qty','1']].map(([lbl,id,ph])=>`
+      <div>
+        <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:3px;">${lbl}</label>
+        <input id="${id}" placeholder="${ph}" type="${id==='mi-qty'?'number':'text'}"
+          style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf2);outline:none;">
+      </div>`).join('')}
+      <div style="grid-column:span 2">
+        <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:3px;">Description *</label>
+        <input id="mi-desc" placeholder="e.g. BOTTOM TUBESHEET"
+          style="width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf2);outline:none;">
+      </div>
+    </div>
+    <button onclick="mirAddItem()" style="padding:9px 22px;background:var(--blue2);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">➕ Add Part to Catalog</button>
+  </div>
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text);">Master Item Catalog (${rows.length} parts)</div>
+      <div style="position:relative;">
+        <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text4);font-size:12px;">🔍</span>
+        <input value="${searchQ}" oninput="window._mirItemQ=this.value;mirSetTab('items')" placeholder="Search parts…"
+          style="padding:6px 10px 6px 28px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;background:var(--surf2);width:200px;outline:none;">
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:900px;">
+        <thead><tr>${['Project','Category','Tag No.','Part No.','Description','Req. Material','Thickness','Max Qty','Used','Actions'].map(h=>`<th style="padding:8px 10px;font-size:10px;font-weight:700;color:var(--text4);text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);background:var(--surf2);">${h}</th>`).join('')}</tr></thead>
+        <tbody>${rows.map((it,i)=>{
+          const used=(DB.mirs||[]).filter(m=>m.itemId===it.id&&m.status!=='REJECTED').reduce((a,m)=>a+(Number(m.offeredQty)||0),0);
+          const rem=Math.max(0,it.maxQty-used);
+          return `
+          <tr style="background:${i%2===0?'var(--surf)':'#FAFCFF'};">
+            <td style="padding:7px 10px;font-weight:600;color:var(--blue2);">${it.projectCode}</td>
+            <td style="padding:7px 10px;color:var(--text3);">${it.tagCategory}</td>
+            <td style="padding:7px 10px;"><code style="font-size:10px;">${it.tagNo}</code></td>
+            <td style="padding:7px 10px;font-weight:700;">${it.partNo}</td>
+            <td style="padding:7px 10px;max-width:160px;">${it.description}</td>
+            <td style="padding:7px 10px;color:var(--text3);font-size:10px;">${it.material}</td>
+            <td style="padding:7px 10px;color:var(--text3);font-size:10px;">${it.thickness}</td>
+            <td style="padding:7px 10px;font-weight:700;text-align:center;">${it.maxQty}</td>
+            <td style="padding:7px 10px;text-align:center;">
+              <span style="font-weight:700;color:${rem===0?'#DC2626':rem<it.maxQty?'#D97706':'#059669'};">${used}/${it.maxQty}</span>
+            </td>
+            <td style="padding:7px 10px;">
+              <button onclick="mirDelItem('${it.id}')" style="padding:4px 10px;background:none;border:1.5px solid var(--red);color:var(--red);border-radius:5px;font-size:11px;cursor:pointer;">🗑 Delete</button>
+            </td>
+          </tr>`;
+        }).join('')||`<tr><td colspan="10" style="padding:28px;text-align:center;color:var(--text4);">No parts added yet — use the form above to add parts.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function mirAddItem(){
+  const get=id=>document.getElementById(id)?.value.trim()||'';
+  const proj=get('mi-proj'),cat=get('mi-cat'),tag=get('mi-tag'),pno=get('mi-pno'),desc=get('mi-desc'),mat=get('mi-mat'),thk=get('mi-thk');
+  if(!proj||!cat||!tag||!pno||!desc||!mat||!thk)return toast('Fill all required fields','err');
+  if(!DB.mirItems)DB.mirItems=[];
+  DB.mirItems.push({id:'ITM-'+Date.now(),projectCode:proj,tagCategory:cat,tagNo:tag,
+    partNo:pno,description:desc,material:mat,thickness:thk,maxQty:Number(get('mi-qty'))||1});
+  save();toast('Part added to catalog ✓','ok');mirSetTab('items');
+}
+
+function mirDelItem(id){
+  if(!confirm('Delete this part from catalog?'))return;
+  DB.mirItems=(DB.mirItems||[]).filter(i=>i.id!==id);
+  save();toast('Part deleted','ok');mirSetTab('items');
+}
+
+function mirPrintReport(id){
+  const mir=(DB.mirs||[]).find(m=>m.id===id);if(!mir)return;
+  const sm=MIR_STATUS_META[mir.status]||MIR_STATUS_META.DRAFT;
+  const fD=d=>d?new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
+  const matOk=!mir.usedMaterial||mir.usedMaterial===mir.material;
+  const thkOk=!mir.usedThickness||mir.usedThickness===mir.thickness;
+  const w=window.open('','_blank');
+  if(!w)return toast('Allow pop-ups to print PDF','err');
+  w.document.write(`<!DOCTYPE html><html><head><title>MIR: ${mir.reportNo}</title>
+  <style>
+    @page{size:A4 portrait;margin:12mm 14mm}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+    body{font-size:10px;color:#0D1F3C;background:#fff}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #1A56DB;padding-bottom:12px;margin-bottom:14px}
+    .title h1{font-size:16px;font-weight:800;color:#1A56DB;letter-spacing:-.3px}
+    .title h2{font-size:10px;color:#4A6080;margin-top:2px}
+    .title h3{font-size:13px;font-weight:800;margin-top:6px;color:#0D1F3C;text-transform:uppercase}
+    .chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:9px;font-weight:700;
+      background:${sm.bg};color:${sm.c};border:1px solid ${sm.bd}}
+    .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:#F4F7FC;
+      border:1px solid #DCE8F8;padding:10px 14px;border-radius:6px;margin-bottom:14px}
+    .mf label{display:block;font-size:8px;text-transform:uppercase;font-weight:700;color:#8FA5C0;letter-spacing:.6px;margin-bottom:2px}
+    .mf span{font-size:10px;font-weight:600;color:#0D1F3C}
+    .section-title{font-size:9px;font-weight:800;color:#1A56DB;text-transform:uppercase;letter-spacing:.8px;
+      margin-bottom:8px;padding:4px 8px;background:#EBF2FF;border-radius:4px}
+    table{width:100%;border-collapse:collapse;margin-bottom:14px}
+    table thead{background:#0F2D6B}
+    table th{padding:6px 8px;color:rgba(255,255,255,.9);text-align:left;font-weight:700;font-size:9px}
+    table td{padding:5px 8px;border:1px solid #DCE8F8;font-size:9.5px}
+    table tr:nth-child(even) td{background:#F8FAFD}
+    .ok{color:#059669;font-weight:700}
+    .warn{color:#D97706;font-weight:700}
+    .marks{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
+    .mark{padding:2px 8px;background:#EBF2FF;color:#1A56DB;border-radius:10px;font-size:8px;font-weight:700}
+    .sig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px}
+    .sig-box{border-top:2px solid #1A56DB;padding-top:8px}
+    .sig-box .label{font-size:8px;font-weight:700;color:#8FA5C0;text-transform:uppercase;letter-spacing:.5px}
+    .sig-box .value{font-size:10px;font-weight:700;color:#0D1F3C;margin-top:3px}
+    .sig-box .date{font-size:9px;color:#4A6080;margin-top:2px}
+    .footer{margin-top:16px;padding-top:8px;border-top:1px solid #DCE8F8;display:flex;justify-content:space-between;font-size:8px;color:#8FA5C0}
+  </style></head><body>
+  <div class="header">
+    <div class="title">
+      <h1>TQIMS — Material Identification Report</h1>
+      <h2>TEIL Quality Inspection Management System</h2>
+      <h3>Report No: ${mir.reportNo}</h3>
+    </div>
+    <div style="text-align:right">
+      <span class="chip">${sm.label}</span>
+      <div style="font-size:9px;color:#8FA5C0;margin-top:6px;">Date: ${fD(mir.date)}</div>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    ${[['Project Code',mir.projectCode||'—'],['Tag Category',mir.tagCategory||'—'],['Tag No.',mir.tagNo||'—'],
+       ['Client',mir.client||'—'],['Drawing No.',mir.drgNo||'—'],['Code / Standard',mir.code||'—'],
+       ['Inspection By',mir.inspBy||'—'],['Offered By',mir.offeredBy||'—'],['Offered Date',fD(mir.offeredDate)]
+    ].map(([l,v])=>`<div class="mf"><label>${l}</label><span>${v}</span></div>`).join('')}
+  </div>
+
+  <div class="section-title">Material Identification Details</div>
+  <table>
+    <thead><tr>
+      <th>Part No.</th><th>Description</th><th>Qty</th>
+      <th>Req. Material</th><th>Used Material</th>
+      <th>Req. Thickness</th><th>Used Thickness</th>
+      <th>Heat No.</th><th>Plate No.</th><th>TC No.</th>
+      <th>Manufacturer</th><th>UT Remarks</th>
+    </tr></thead>
+    <tbody><tr>
+      <td><strong>${mir.partNo||'—'}</strong></td>
+      <td>${mir.description||'—'}</td>
+      <td style="text-align:center;font-weight:700;color:#1A56DB;">${mir.offeredQty||'—'}</td>
+      <td>${mir.material||'—'}</td>
+      <td class="${matOk?'ok':'warn'}">${mir.usedMaterial||'—'}</td>
+      <td>${mir.thickness||'—'}</td>
+      <td class="${thkOk?'ok':'warn'}">${mir.usedThickness||'—'}</td>
+      <td><strong>${mir.heatNo||'—'}</strong></td>
+      <td>${mir.plateNo||'—'}</td>
+      <td>${mir.tcNo||'—'}</td>
+      <td>${mir.manufacturer||'—'}</td>
+      <td class="ok">${mir.utRemarks||'—'}</td>
+    </tr></tbody>
+  </table>
+
+  ${mir.transferMarks&&mir.transferMarks.length?`
+  <div class="section-title">Transfer Marks</div>
+  <div class="marks">${mir.transferMarks.map(m=>`<span class="mark">${m}</span>`).join('')}</div>
+  <br>`:''}
+
+  ${mir.extraRemarks?`<div style="margin-bottom:12px;font-size:9.5px;"><strong>Remarks: </strong>${mir.extraRemarks}</div>`:''}
+
+  ${mir.qcRemarks||mir.rejectReason?`
+  <div class="section-title">QC Review</div>
+  <div style="padding:8px 12px;background:${mir.qcStatus==='ACCEPTED'?'#ECFDF5':'#FEF2F2'};border-radius:5px;font-size:9.5px;margin-bottom:12px;">
+    <strong>QC Decision: </strong>${mir.qcStatus||'—'} &nbsp;|&nbsp; <strong>By: </strong>${mir.qcBy||'—'} &nbsp;|&nbsp; <strong>Date: </strong>${fD(mir.qcDate)}<br>
+    ${mir.qcRemarks?`<strong>Remarks: </strong>${mir.qcRemarks}`:''}
+    ${mir.rejectReason?`<br><strong>Rejection Reason: </strong><span style="color:#DC2626;">${mir.rejectReason}</span>`:''}
+  </div>`:''}
+
+  <div class="sig-grid">
+    <div class="sig-box">
+      <div class="label">Production / Offered By</div>
+      <div class="value">${mir.offeredBy||'—'}</div>
+      <div class="date">${fD(mir.offeredDate)}</div>
+      <div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:16px;"></div>
+      <div style="font-size:8px;color:#8FA5C0;margin-top:4px;">Signature</div>
+    </div>
+    <div class="sig-box">
+      <div class="label">QC Inspector</div>
+      <div class="value">${mir.qcBy||'Pending QC'}</div>
+      <div class="date">${fD(mir.qcDate)}</div>
+      ${(()=>{const u=DB.users.find(x=>x.name===mir.qcBy);return u&&u.signUrl?'<img src="'+u.signUrl+'" style="max-width:80px;max-height:30px;margin-top:4px;">':'';})()} 
+      <div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:16px;"></div>
+      <div style="font-size:8px;color:#8FA5C0;margin-top:4px;">Signature</div>
+    </div>
+    <div class="sig-box">
+      <div class="label">QC Clearance Status</div>
+      <div class="value" style="color:\${mir.status==='APPROVED'?'#059669':'#D97706'}">\${mir.status==='APPROVED'?'CLEARED':mir.status==='REJECTED'?'REJECTED':'PENDING'}</div>
+      <div class="date">\${fD(mir.qcDate)}</div>
+      <div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:16px;"></div>
+      <div style="font-size:8px;color:#8FA5C0;margin-top:4px;">QC Stamp / Sign</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>TQIMS — TEIL Quality Inspection Management System</span>
+    <span>Generated: ${new Date().toLocaleString('en-IN')}</span>
+    <span>MIR: ${mir.reportNo}</span>
+  </div>
+  </body></html>`);
+  w.document.close();w.focus();
+  setTimeout(()=>w.print(),400);
+}
+
+function mirExportCSV(id){
+  const mir=(DB.mirs||[]).find(m=>m.id===id);if(!mir)return;
+  const hd=['Report No.','Part No.','Description','Qty','Project','Tag No.','Req.Material','Used Material','Heat No.','Plate No.','TC No.','Manufacturer','UT Remarks','Transfer Marks','Status','Offered By','QC By','Approved By'];
+  const row=[mir.reportNo,mir.partNo,mir.description,mir.offeredQty,mir.projectCode,mir.tagNo,mir.material,mir.usedMaterial,mir.heatNo,mir.plateNo,mir.tcNo,mir.manufacturer,mir.utRemarks,(mir.transferMarks||[]).join('; '),MIR_STATUS_META[mir.status]?.label||mir.status,mir.offeredBy,mir.qcBy,mir.approvedBy];
+  const csv=[hd,row].map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download=`MIR_${(mir.reportNo||'report').replace(/\//g,'_')}.csv`;
+  a.click();toast('CSV exported ✓','ok');
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// COMPARE & CHARTS PAGE
+// ══════════════════════════════════════════════════════════════
+let _cmpSelProj=[];
+let _cmpSelTags=[];
+let _cmpMode='project'; // 'project'|'tagcat'|'tag'
+
+function renderComparePage(){
+  const c=$('compare-content');if(!c)return;
+  const projs=DB.projects;
+  const allTags=[...new Set(DB.seams.map(s=>s.tag||s.sec||'').filter(Boolean))];
+  const allCats=[...new Set(DB.seams.map(s=>s.tagCat||'General'))];
+  // Build chart data
+  const projData=projs.map(p=>{
+    const st=overallStats(p.id);
+    return {name:`#${p.number}`,full:p.equipment,accepted:st.a,offered:st.o,ncr:st.r,pending:Math.max(0,st.t-st.a-st.o-st.r),total:st.t,pct:st.p};
+  });
+  const tagData=(_cmpSelTags.length?_cmpSelTags:allTags.slice(0,6)).map(tag=>{
+    const seams=DB.seams.filter(s=>(s.tag||s.sec||'')===tag);
+    let a=0,o=0,r=0,t=0;
+    seams.forEach(s=>{const ss=stageStats(s);a+=ss.a;o+=ss.o;r+=ss.r;t+=ss.t;});
+    const pct=t?Math.round(a/t*100):0;
+    return {name:tag.length>18?tag.slice(0,16)+'…':tag,full:tag,accepted:a,offered:o,ncr:r,pending:Math.max(0,t-a-o-r),total:t,pct};
+  });
+  const catData=allCats.map(cat=>{
+    const seams=DB.seams.filter(s=>(s.tagCat||'General')===cat);
+    let a=0,o=0,r=0,t=0;
+    seams.forEach(s=>{const ss=stageStats(s);a+=ss.a;o+=ss.o;r+=ss.r;t+=ss.t;});
+    const pct=t?Math.round(a/t*100):0;
+    return {name:cat,accepted:a,offered:o,ncr:r,pending:Math.max(0,t-a-o-r),total:t,pct};
+  });
+
+  const dataset=_cmpMode==='project'?projData:_cmpMode==='tag'?tagData:catData;
+  const maxVal=Math.max(...dataset.map(d=>d.total),1);
+
+  // Build SVG bar chart
+  const barH=180,barW=Math.max(60,Math.floor((Math.min(800,dataset.length*80))/Math.max(1,dataset.length)));
+  const chartW=Math.max(300,dataset.length*(barW+16)+40);
+  const bars=dataset.map((d,i)=>{
+    const x=i*(barW+16)+30;
+    const aH=Math.round(d.accepted/maxVal*(barH-10));
+    const oH=Math.round(d.offered/maxVal*(barH-10));
+    const rH=Math.round(d.ncr/maxVal*(barH-10));
+    const pctY=barH-aH-oH-rH-12;
+    return `<g transform="translate(${x},0)">
+      <rect x="0" y="${barH-rH}" width="${barW*0.6}" height="${rH}" fill="#DC2626" rx="2"/>
+      <rect x="0" y="${barH-rH-oH}" width="${barW*0.6}" height="${oH}" fill="#D97706" rx="2"/>
+      <rect x="0" y="${barH-rH-oH-aH}" width="${barW*0.6}" height="${aH}" fill="#059669" rx="2"/>
+      <text x="${barW*0.3}" y="${barH+14}" text-anchor="middle" font-size="9" fill="#6B7280" font-family="monospace">${d.name}</text>
+      ${d.total>0?`<text x="${barW*0.3}" y="${Math.max(10,barH-rH-oH-aH-5)}" text-anchor="middle" font-size="9" fill="#1A56DB" font-weight="700">${d.pct}%</text>`:''}
+    </g>`;
+  }).join('');
+
+  // Progress bars for comparison
+  const progBars=dataset.map(d=>`
+  <div style="margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.name}</div>
+      <div style="display:flex;gap:10px;font-size:10px;">
+        <span style="color:#059669;font-weight:700;">${d.accepted} ✓</span>
+        <span style="color:#D97706;font-weight:700;">${d.offered} ⏳</span>
+        <span style="color:#DC2626;font-weight:700;">${d.ncr} ✗</span>
+        <span style="color:var(--text3);font-weight:700;">${d.total} total</span>
+      </div>
+    </div>
+    <div style="height:12px;border-radius:6px;background:var(--surf3);overflow:hidden;display:flex;">
+      <div style="background:#059669;width:${d.total?d.accepted/d.total*100:0}%;transition:width .6s;"></div>
+      <div style="background:#D97706;width:${d.total?d.offered/d.total*100:0}%;transition:width .6s;"></div>
+      <div style="background:#DC2626;width:${d.total?d.ncr/d.total*100:0}%;transition:width .6s;"></div>
+    </div>
+    <div style="font-size:9px;color:var(--text4);margin-top:2px;text-align:right;font-weight:600;">${d.pct}% complete</div>
+  </div>`).join('');
+
+  c.innerHTML=`
+  <!-- Mode selector -->
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);">Compare by:</div>
+    ${[['project','📁 Projects'],['tagcat','🏷 Tag Categories'],['tag','🔖 Tags']].map(([m,lbl])=>`
+    <button onclick="_cmpMode='${m}';renderComparePage()" style="padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;
+      background:${_cmpMode===m?'var(--blue2)':'var(--surf2)'};color:${_cmpMode===m?'#fff':'var(--text3)'};
+      border:1.5px solid ${_cmpMode===m?'var(--blue2)':'var(--border)'};">${lbl}</button>`).join('')}
+    ${_cmpMode==='tag'?`
+    <div style="margin-left:auto;font-size:11px;color:var(--text3);">Select tags to compare:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;max-width:400px;">
+      ${allTags.map(t=>`
+      <button onclick="cmpToggleTag('${encodeURIComponent(t)}')" style="padding:4px 10px;border-radius:14px;font-size:10px;font-weight:600;cursor:pointer;
+        background:${_cmpSelTags.includes(t)?'var(--blue2)':'var(--surf2)'};color:${_cmpSelTags.includes(t)?'#fff':'var(--text3)'};
+        border:1px solid ${_cmpSelTags.includes(t)?'var(--blue2)':'var(--border)'};">${t.length>20?t.slice(0,18)+'…':t}</button>`).join('')}
+    </div>`:''}
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+    <!-- SVG Bar Chart -->
+    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:0;overflow:hidden;">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📊 Stage Completion — Bar Chart</div>
+      <div style="padding:14px;overflow-x:auto;">
+        <svg width="${chartW}" height="${barH+34}" style="display:block;min-width:100%;">
+          <line x1="24" y1="0" x2="24" y2="${barH}" stroke="var(--border)" stroke-width="1"/>
+          <line x1="24" y1="${barH}" x2="${chartW}" y2="${barH}" stroke="var(--border)" stroke-width="1"/>
+          ${[0,25,50,75,100].map(v=>{
+            const y=barH-Math.round(v/100*(barH-10));
+            return `<text x="20" y="${y+3}" text-anchor="end" font-size="8" fill="#9CA3AF">${v}%</text>
+            <line x1="24" y1="${y}" x2="${chartW}" y2="${y}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
+          }).join('')}
+          ${bars}
+        </svg>
+        <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;font-weight:600;justify-content:center;">
+          <span style="color:#059669;">● Accepted</span>
+          <span style="color:#D97706;">● Offered/QC</span>
+          <span style="color:#DC2626;">● NCR</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Bars -->
+    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📈 Completion Progress</div>
+      <div style="padding:16px 18px;max-height:340px;overflow-y:auto;">${progBars||'<div style="color:var(--text4);font-size:12px;">No data to compare</div>'}</div>
+    </div>
+  </div>
+
+  <!-- Summary table -->
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📋 Comparison Summary Table</div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr>${['Name','Total Stages','Accepted','Awaiting QC','NCR','Pending','% Complete'].map(h=>`<th style="padding:8px 12px;font-size:10px;font-weight:700;color:var(--text4);text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);background:var(--surf2);">${h}</th>`).join('')}</tr></thead>
+        <tbody>${dataset.map((d,i)=>`
+        <tr style="background:${i%2===0?'var(--surf)':'#FAFCFF'};">
+          <td style="padding:9px 12px;font-weight:700;color:var(--text);">${d.full||d.name}</td>
+          <td style="padding:9px 12px;font-weight:700;text-align:center;">${d.total}</td>
+          <td style="padding:9px 12px;font-weight:700;color:#059669;text-align:center;">${d.accepted}</td>
+          <td style="padding:9px 12px;font-weight:700;color:#D97706;text-align:center;">${d.offered}</td>
+          <td style="padding:9px 12px;font-weight:700;color:#DC2626;text-align:center;">${d.ncr}</td>
+          <td style="padding:9px 12px;font-weight:700;color:var(--text3);text-align:center;">${d.pending}</td>
+          <td style="padding:9px 12px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:8px;border-radius:4px;background:var(--surf3);">
+                <div style="height:100%;border-radius:4px;background:${d.pct===100?'#059669':d.pct>50?'#D97706':'#DC2626'};width:${d.pct}%;"></div>
+              </div>
+              <span style="font-weight:800;font-size:12px;color:${d.pct===100?'#059669':d.pct>50?'#D97706':'#DC2626'};min-width:34px;">${d.pct}%</span>
+            </div>
+          </td>
+        </tr>`).join('')||`<tr><td colspan="7" style="padding:28px;text-align:center;color:var(--text4);">No data available</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+function cmpToggleTag(enc){
+  const t=decodeURIComponent(enc);
+  if(_cmpSelTags.includes(t)){_cmpSelTags=_cmpSelTags.filter(x=>x!==t);}
+  else{if(_cmpSelTags.length>=8){toast('Max 8 tags for comparison','warn');return;}_cmpSelTags.push(t);}
+  renderComparePage();
+}
+
+// ══════════════════════════════════════════════════════════════
+// FAQ PAGE
+// ══════════════════════════════════════════════════════════════
+const FAQ_DATA = [
+  {cat:'🚀 Getting Started',items:[
+    {q:'What is TQIMS?',a:'TQIMS (Total TEIL Quality Inspection Management System) is a digital platform for managing welding and fabrication inspection workflows. It replaces paper travellers, WhatsApp approvals and Excel sheets with a structured, role-based system that tracks every stage from material identification to final QC acceptance.'},
+    {q:'Who can use TQIMS and what are the roles?',a:'There are 4 roles: (1) Admin — adds projects, seams, users and manages templates. (2) Production — offers stages for inspection and submits MIRs for material. (3) Quality Engineer — reviews and accepts/rejects offered stages and MIRs. (4) Manager — approves all requests from Admin and signs off MIRs. Each role sees only the features relevant to them.'},
+    {q:'How do I create my account?',a:'Click REGISTER on the login screen. Fill your Name, Mobile, Company, Designation and select your Role. Your account will be created but requires Admin approval before you can log in. Contact your site Admin if approval is pending.'},
+    {q:'How do I log in?',a:'Use your registered mobile number or email address and your password on the LOGIN screen. After login, the system remembers your session — refreshing the page will not log you out. You will only be logged out if you click LOGOUT or if there is 1 minute of no activity.'},
+    {q:'What happens if I refresh the page?',a:'Your login session is preserved. The system automatically reconnects to the database and logs you back in without re-entering your password. The only time you need to re-login is after 1 minute of inactivity or after clicking LOGOUT.'},
+  ]},
+  {cat:'📁 Projects & Structure',items:[
+    {q:'What is the hierarchy in TQIMS?',a:'TQIMS follows a 5-level hierarchy: Project → Tag Category → Tag Number → Component → Seam/Joint. Each level narrows down the work — a Project contains multiple Tag Categories (e.g. Pressure Vessel, Heat Exchanger), each category has Tag Numbers (equipment tags), each tag has Components (Shell, Head, Nozzle), and each component has Seams (weld joints) which have Inspection Stages.'},
+    {q:'How do I add a new project?',a:'Go to Projects & Seams (Admin only). Fill in the Project Number, Equipment Name, Equipment Type, Client and other details. Since Admin actions need Manager approval, the project will appear as "Pending" in the Approvals section. The Manager must approve it before it appears in the system.'},
+    {q:'How do I add a Tag Category?',a:'Tag Categories are entered when adding a new Seam. In the Add Seam form, after selecting a Project, you will see a Tag Category field. Type the category name (e.g. PRESSURE VESSEL, HEAT EXCHANGER, PIPING, STRUCTURAL). The category is auto-created from the seams you add.'},
+    {q:'How do I add a Tag Number?',a:'Tag Numbers are also entered via the Add Seam form. After selecting the Project and Tag Category, enter the Tag Number in the field provided. You can select an existing tag from the dropdown or type a new one using the "+ Add new tag" option.'},
+    {q:'What is a Seam / Joint?',a:'A Seam (also called Joint) is an individual weld or fabrication joint that needs inspection. Each seam belongs to a Component within a Tag Number. You assign inspection stages to each seam — these stages represent the sequence of quality checks from Fit-up to Final NDT.'},
+    {q:'Why does a new seam need Manager approval?',a:'This prevents unauthorized changes to the inspection scope. All additions, edits and deletions of seams go through the Manager\'s Approvals page. This creates a full audit trail and ensures scope control.'},
+  ]},
+  {cat:'📦 MIR — Material Identification Report',items:[
+    {q:'What is a MIR?',a:'A Material Identification Report (MIR) is a document that verifies raw materials used in fabrication. Before any inspection stage can be offered, the materials for that seam must be identified and approved through the MIR workflow. It confirms that the material (heat number, specification, dimensions) matches the required engineering specification.'},
+    {q:'How do I create a MIR?',a:'Go to MIR → New MIR tab. Step 1: Select the Project, Tag Category and Tag Number from the dropdowns (these are auto-populated from your Master Items). Add items to the basket — minimum 2 items are mandatory. Fill Heat No., Used Material, Transfer Marks for each item. Step 2: Fill the MIR Header (Report No., Date, Client, Code). Step 3: Review and Submit. The MIR goes to QC for review.'},
+    {q:'Why is minimum 2 items required in a MIR?',a:'A MIR with only 1 item does not meet the minimum documentation standard. Real fabrication always involves at least 2 material components (e.g. two tubesheets, or a shell plate and a flange). This is enforced to ensure complete material traceability.'},
+    {q:'What is a Master Item?',a:'A Master Item is a registered material in the MIR Items catalog. It defines what material is expected — Project, Tag Category, Tag No., Part No., Description, Required Material, Thickness and Maximum Quantity. Production can only offer items that are pre-registered as Master Items. Admin adds these from MIR → Master Items tab.'},
+    {q:'How does MIR clearance block inspection offering?',a:'When Production tries to offer a stage for inspection, TQIMS checks if all Part Numbers assigned to that seam have an APPROVED MIR. If any part number has a Pending or Rejected MIR (or no MIR at all), a red banner is shown and the offer is blocked. This ensures no inspection happens on uninspected materials.'},
+    {q:'What is the MIR workflow?',a:'(1) Production creates and submits MIR → (2) QC Inspector reviews and accepts or rejects → (3) If accepted, MIR goes to Manager for final approval → (4) Manager approves or sends back → (5) Only after APPROVED status can the related seam stages be offered for inspection.'},
+  ]},
+  {cat:'🔬 Inspection Workflow',items:[
+    {q:'How does the inspection workflow work?',a:'(1) Admin adds seams with stages. (2) Manager approves the seam. (3) Production checks MIR is cleared, then offers a stage for QC inspection. (4) QC Engineer reviews and accepts or raises NCR. (5) Accepted stages unlock the next stage. (6) RT/UT stages require Manager approval for R2 re-inspection. All steps are logged with user name and timestamp.'},
+    {q:'What are Parallel Group stages?',a:'Some ITP stages can be offered simultaneously because they belong to the same Parallel Group (shown as ∥). For example, WEP PT/MT and Fit-up can be offered together. Stages in different parallel groups must be completed in sequence — you cannot skip ahead.'},
+    {q:'What is an NCR?',a:'NCR stands for Non-Conformance Report. When a QC Engineer rejects an inspection stage, it becomes an NCR. The seam shows a red border in the dashboard. Production must rectify the issue, then the Manager must approve a re-offer request before Production can offer the stage again.'},
+    {q:'What are RT and UT stages?',a:'RT (Radiographic Test) and UT (Ultrasonic Test) are volumetric NDT stages. They have a special workflow: R0 is the first attempt. If rejected, it becomes R1 (first repair) with Manager approval required. R1 failure becomes R2 with another Manager approval. These stages have extended forms for company name, logo and NDT details on the printed report.'},
+    {q:'How do I offer a stage for inspection?',a:'Go to the Inspection page. Select the Project, Tag and Seam from the dropdowns. Available stages will be shown as green "Offer" buttons. Click Offer, fill the Location, Drawing Number and any ITP references, then submit. The QC Engineer will see it in their queue immediately.'},
+  ]},
+  {cat:'✅ Approvals & Manager Role',items:[
+    {q:'What needs Manager approval?',a:'The following actions require Manager approval: (1) Add / Edit / Delete Project, (2) Add / Edit / Delete Seam, (3) MIR QC Acceptance → final approval, (4) NCR re-offer by Production, (5) RT/UT R2 re-inspection offer, (6) Backup Restore request, (7) System Reset request.'},
+    {q:'How do I approve multiple requests at once?',a:'Go to Approvals. If there are pending requests, you will see "Approve All" and "Reject All" buttons at the top. Click Approve All to approve every pending request in one action. You can also approve or reject them individually by clicking the ✓ APPROVE or ✗ REJECT button next to each item.'},
+    {q:'Can a Manager approve MIRs in bulk?',a:'Yes. In the MIR → Approvals tab, there is an "Approve All Pending" button that approves all MIRs in PENDING_APPROVAL status in one click. Individual approval is also available by expanding each MIR row.'},
+    {q:'What happens if Manager rejects a request?',a:'The rejected item is removed from the pending list and a rejection log entry is created. For seams and projects, the requestor will need to resubmit. For MIRs, the Manager can send it back to QC (re-open) or override-approve a previously rejected MIR.'},
+  ]},
+  {cat:'🔍 Search & Navigation',items:[
+    {q:'How do I search for anything in the system?',a:'Use the search box in the top navigation bar (visible on all screens after login). It searches across Projects, Seams, MIRs and Users simultaneously. Type at least 2 characters to see results. Click any result to navigate directly to that item. Each page also has its own search/filter bar for more specific filtering.'},
+    {q:'How does the Dashboard hierarchy work?',a:'The Dashboard shows a 5-level drill-down: All Projects → Project → Tag Categories → Tags → Components → Seams. Click any project card to see its Tag Categories. Click a Category to see Tags. Click a Tag to see Components. Click a Component to see Seams. Use the breadcrumb trail at the top to go back to any level.'},
+    {q:'How do I compare progress between projects or tags?',a:'Go to Compare & Charts in the sidebar. Select the comparison mode: Projects, Tag Categories, or Tags. For tag comparison, select specific tags using the toggle buttons. The bar chart and progress bars update live. The summary table shows exact counts of Accepted, Awaiting QC, NCR and Pending stages for each item.'},
+  ]},
+  {cat:'💾 Backup, Sync & Data',items:[
+    {q:'Where is my data stored?',a:'All data is stored in Supabase — a cloud database. This means all users on any device see the same data in real time. Changes made by Production appear instantly for QC and Manager. No data is stored only in your browser (unlike older versions).'},
+    {q:'How do I take a backup?',a:'Go to Backup & Restore (Admin). Click "Download JSON Backup Now". This downloads a complete snapshot of all projects, seams, inspections and users. Save it on Google Drive or email it to yourself. Take a backup at the end of every working day.'},
+    {q:'How do I restore a backup?',a:'Go to Backup & Restore → Restore section. Click "Select JSON Backup File" and choose your saved .json file. This submits a restore request to the Manager. The Manager approves it from the Approvals page. Nothing is changed until the Manager approves.'},
+    {q:'What happens to data if I close the browser?',a:'Your data is safe — it is in Supabase cloud, not in your browser. However, your login session will end when you close the browser (sessionStorage is cleared). You will need to log in again when you reopen the browser.'},
+    {q:'What is the inactivity timeout?',a:'If there is no activity (no mouse movement, clicks or typing) for 45 seconds, a warning banner appears at the bottom of the screen with a countdown. At 60 seconds of total inactivity, you are automatically logged out for security. Simply move your mouse or click "Stay" on the warning banner to reset the timer.'},
+  ]},
+  {cat:'👤 User Management',items:[
+    {q:'How do I approve a new user registration?',a:'New registrations appear in the Users page (Admin only). Users with "Pending" status have a green "Approve" button. Click it to activate their account. Until approved, the user cannot log in.'},
+    {q:'How do I change my password?',a:'Go to My Profile from the sidebar. Enter your current password, then your new password twice. Click Save Password. The change takes effect immediately for all future logins.'},
+    {q:'What if I forget my password?',a:'Contact your site Admin. The Admin can see all users from the Users page and can reset your password directly from there.'},
+    {q:'Can a user be assigned to a specific project?',a:'Yes. During registration or when Admin edits the user, a Project can be assigned. Production users assigned to a project will see that project by default. Admin and Manager users can see all projects.'},
+  ]},
+];
+
+function renderFAQPage(){
+  const q=(document.getElementById('faq-search')?.value||'').toLowerCase();
+  filterFAQ(q);
+}
+function filterFAQ(q){
+  const b=$('faq-body');if(!b)return;
+  const ql=(q||'').toLowerCase();
+  let html='';
+  FAQ_DATA.forEach((cat,ci)=>{
+    const items=ql?cat.items.filter(i=>i.q.toLowerCase().includes(ql)||i.a.toLowerCase().includes(ql)):cat.items;
+    if(!items.length)return;
+    html+=`<div style="margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:800;color:var(--blue2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding:6px 12px;background:var(--blue-lt);border-radius:6px;border-left:3px solid var(--blue2);">${cat.cat}</div>
+      ${items.map((item,i)=>`
+      <div style="background:var(--surf);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;overflow:hidden;">
+        <div onclick="faqToggle('faq-${ci}-${i}')" style="padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;"
+          onmouseover="this.style.background='var(--surf2)'" onmouseout="this.style.background=''">
+          <div style="font-size:13px;font-weight:600;color:var(--text);flex:1;">${item.q}</div>
+          <span id="faq-arr-${ci}-${i}" style="color:var(--text4);font-size:13px;flex-shrink:0;">▼</span>
+        </div>
+        <div id="faq-${ci}-${i}" style="display:none;padding:0 16px 14px;border-top:1px solid var(--border);">
+          <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:10px;">${item.a}</p>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  });
+  b.innerHTML=html||`<div style="text-align:center;padding:36px;color:var(--text4);">No FAQ entries match your search</div>`;
+  // Auto-expand if searching
+  if(ql){document.querySelectorAll('[id^="faq-"]').forEach(el=>{if(el.id!=='faq-search'&&el.id!=='faq-body'&&!el.id.startsWith('faq-arr'))el.style.display='block';});}
+}
+function faqToggle(id){
+  const el=$(id);const arr=$(id.replace('faq-','faq-arr-'));
+  if(!el)return;
+  const open=el.style.display==='block';
+  el.style.display=open?'none':'block';
+  if(arr)arr.textContent=open?'▼':'▲';
+}
+
+
+// ======================================================
+// SAVE CATALOG SELECTION AS TEMPLATE
+// ======================================================
+function nsSaveAsTemplate(){
+  const checked=[...document.querySelectorAll('.ns-cat-cb:checked')];
+  if(!checked.length){toast('Select at least one stage first','err');return;}
+  const name=prompt('Template name:','My Custom Template');
+  if(!name||!name.trim())return;
+  const stages=checked.map(cb=>cb.dataset.name);
+  if(!DB.templates)DB.templates=[];
+  if(DB.templates.find(t=>t.name===name.trim())){toast('Template name already exists','warn');return;}
+  DB.templates.push({id:'t'+Date.now(),name:name.trim(),stages});
+  save();
+  // refresh template dropdown
+  const tmplEl=$('ns-tmpl');
+  if(tmplEl){
+    tmplEl.innerHTML=DB.templates.map(t=>`<option value="${t.id}">${t.name} (${t.stages.length} stages)</option>`).join('');
+  }
+  toast('Template "'+name.trim()+'" saved with '+stages.length+' stages','ok');
+}
+
+// ======================================================
+// MIR BACKUP / RESTORE
+// ======================================================
+function mirRenderBackup(){
+  var items=DB.mirItems||[];
+  var mirs=DB.mirs||[];
+  return '<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;">'
+    +'<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;">💾 MIR Data Backup &amp; Restore</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">'
+    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:16px;">'
+    +'<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">⬇ Export MIR Data</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Download all Master Items ('+items.length+') and MIR records ('+mirs.length+') as JSON backup.</div>'
+    +'<button onclick="mirExportBackup()" style="padding:9px 20px;background:var(--green);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">⬇ Download MIR Backup</button>'
+    +'</div>'
+    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:16px;">'
+    +'<div style="font-size:12px;font-weight:700;color:var(--blue2);margin-bottom:8px;">⬆ Restore MIR Data</div>'
+    +'<div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Upload a previously exported MIR backup JSON file to restore items and records.</div>'
+    +'<label style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--blue2);color:#fff;padding:9px 18px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;">'
+    +'⬆ Select MIR Backup File'
+    +'<input type="file" accept=".json" onchange="mirImportBackup(this)" style="display:none;"></label>'
+    +'<div id="mir-backup-msg" style="margin-top:8px;font-size:12px;"></div>'
+    +'</div></div></div>';
+}
+function mirExportBackup(){
+  var data={mirItems:DB.mirItems||[],mirs:DB.mirs||[],exportedAt:new Date().toISOString()};
+  var blob=JSON.stringify(data,null,2);
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(blob);
+  a.download='TQIMS_MIR_Backup_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();toast('MIR backup downloaded','ok');
+}
+function mirImportBackup(inp){
+  var file=inp.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var data=JSON.parse(e.target.result);
+      if(!data.mirItems&&!data.mirs){$('mir-backup-msg').innerHTML='<span style="color:var(--red);">Invalid MIR backup file</span>';return;}
+      if(data.mirItems){DB.mirItems=data.mirItems;}
+      if(data.mirs){DB.mirs=data.mirs;}
+      save();
+      toast('MIR data restored: '+((data.mirItems||[]).length)+' items, '+((data.mirs||[]).length)+' records','ok');
+      $('mir-backup-msg').innerHTML='<span style="color:var(--green);">✓ Restored successfully</span>';
+      mirSetTab('items');
+    }catch(err){$('mir-backup-msg').innerHTML='<span style="color:var(--red);">Error: '+err.message+'</span>';}
+  };
+  reader.readAsText(file);
+}
+
+// ======================================================
+// DASHBOARD CHARTS (always visible section)
+// ======================================================
+function renderDashCharts(){
+  var el=document.getElementById('dash-charts');
+  if(!el)return;
+  var seams=DB.seams||[];
+  var mirs=DB.mirs||[];
+  var projs=DB.projects||[];
+  if(!projs.length){el.innerHTML='';return;}
+
+  // Per-project completion bars
+  var projBars=projs.map(function(p){
+    var st=overallStats(p.id);
+    var pct=st.p;
+    var col=pct===100?'#16a34a':pct>50?'#b45309':'#dc2626';
+    return '<div style="margin-bottom:10px;">'
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;margin-bottom:3px;">'
+      +'<span style="color:var(--text2);">#'+p.number+' — '+p.equipment+'</span>'
+      +'<span style="color:'+col+';font-weight:700;">'+pct+'%</span></div>'
+      +'<div style="height:10px;border-radius:5px;background:var(--surf3);overflow:hidden;display:flex;">'
+      +'<div style="background:#16a34a;width:'+(st.t?st.a/st.t*100:0)+'%;transition:width .5s;"></div>'
+      +'<div style="background:#b45309;width:'+(st.t?st.o/st.t*100:0)+'%;transition:width .5s;"></div>'
+      +'<div style="background:#dc2626;width:'+(st.t?st.r/st.t*100:0)+'%;transition:width .5s;"></div>'
+      +'</div>'
+      +'<div style="display:flex;gap:12px;margin-top:2px;font-size:9px;color:var(--text4);">'
+      +'<span style="color:#16a34a;">■ '+st.a+' Accepted</span>'
+      +'<span style="color:#b45309;">■ '+st.o+' QC Queue</span>'
+      +'<span style="color:#dc2626;">■ '+st.r+' NCR</span>'
+      +'<span>■ '+st.seams+' Seams</span>'
+      +'</div></div>';
+  }).join('');
+
+  // MIR status mini chart
+  var mirAp=(mirs.filter(function(m){return m.status==='APPROVED';}).length);
+  var mirPQ=(mirs.filter(function(m){return m.status==='PENDING_QC';}).length);
+  var mirRj=(mirs.filter(function(m){return m.status==='REJECTED';}).length);
+  var mirTot=mirs.length||1;
+
+  el.innerHTML='<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px;">'
+    // Project progress
+    +'<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">'
+    +'<div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📊 Project Completion</div>'
+    +'<div style="padding:14px 16px;">'+projBars+'</div>'
+    +'<div style="padding:8px 16px 12px;display:flex;gap:14px;font-size:10px;font-weight:600;">'
+    +'<span style="color:#16a34a;">■ Accepted</span><span style="color:#b45309;">■ Awaiting QC</span><span style="color:#dc2626;">■ NCR</span></div>'
+    +'</div>'
+    // MIR status
+    +'<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">'
+    +'<div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📦 MIR Status</div>'
+    +'<div style="padding:14px 16px;">'
+    +[['Approved',mirAp,'#16a34a'],['Pending QC',mirPQ,'#b45309'],['Rejected',mirRj,'#dc2626']].map(function(d){
+        var pct=Math.round(d[1]/mirTot*100);
+        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">'
+          +'<div style="width:8px;height:8px;border-radius:50%;background:'+d[2]+';flex-shrink:0;"></div>'
+          +'<div style="flex:1;font-size:11px;color:var(--text2);">'+d[0]+'</div>'
+          +'<div style="font-size:12px;font-weight:700;color:'+d[2]+';min-width:20px;">'+d[1]+'</div>'
+          +'<div style="width:80px;height:6px;border-radius:3px;background:var(--surf3);">'
+          +'<div style="height:100%;border-radius:3px;background:'+d[2]+';width:'+pct+'%;"></div></div>'
+          +'</div>';
+      }).join('')
+    +'<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text4);">Total MIRs: <strong>'+mirs.length+'</strong></div>'
+    +'</div></div>'
+    +'</div>';
+}
+
+// ======================================================
+// PROFILE: email, photo, digital signature
+// ======================================================
+function renderProfileExtras(){
+  if(!CU)return;
+  var u=DB.users.find(function(x){return x.id===CU.id;});
+  if(!u)return;
+  var photoHtml=u.photoUrl
+    ?'<img src="'+u.photoUrl+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--blue2);">'
+    :'<div style="width:80px;height:80px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--blue2);">👤</div>';
+  var signHtml=u.signUrl
+    ?'<img src="'+u.signUrl+'" style="max-width:200px;max-height:60px;border:1px solid var(--border);border-radius:6px;padding:4px;background:#fff;">'
+    :'<div style="width:200px;height:60px;border:1.5px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text4);">No signature uploaded</div>';
+  var extras=$('profile-extras');
+  if(!extras)return;
+  extras.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;">'
+    // Profile photo
+    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:8px;">Profile Photo</div>'
+    +photoHtml
+    +'<label style="display:block;margin-top:10px;padding:6px 14px;background:var(--blue2);color:#fff;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;">'
+    +'📷 Upload Photo<input type="file" accept="image/*" onchange="profileUploadPhoto(this)" style="display:none;"></label>'
+    +'</div>'
+    // Digital signature
+    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:8px;">Digital Signature</div>'
+    +signHtml
+    +'<div style="font-size:10px;color:var(--text4);margin:6px 0;">Upload a clear photo of your signature (PNG/JPG)</div>'
+    +'<label style="display:block;margin-top:6px;padding:6px 14px;background:var(--blue2);color:#fff;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;">'
+    +'✍ Upload Signature<input type="file" accept="image/*" onchange="profileUploadSign(this)" style="display:none;"></label>'
+    +'</div>'
+    // Email edit
+    +'<div style="grid-column:span 2;background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">'
+    +'<div style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:8px;">Email Address</div>'
+    +'<div style="display:flex;gap:8px;">'
+    +'<input id="prof-email" value="'+(u.email||'')+'" placeholder="your@email.com" type="email" style="flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">'
+    +'<button onclick="profileSaveEmail()" style="padding:8px 16px;background:var(--blue2);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>'
+    +'</div>'
+    +'</div></div>';
+}
+function profileUploadPhoto(inp){
+  var file=inp.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var u=DB.users.find(function(x){return x.id===CU.id;});
+    if(!u)return;
+    u.photoUrl=e.target.result;CU.photoUrl=e.target.result;
+    save();renderProfileExtras();toast('Profile photo updated','ok');
+  };reader.readAsDataURL(file);
+}
+function profileUploadSign(inp){
+  var file=inp.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var u=DB.users.find(function(x){return x.id===CU.id;});
+    if(!u)return;
+    u.signUrl=e.target.result;CU.signUrl=e.target.result;
+    save();renderProfileExtras();toast('Digital signature saved','ok');
+  };reader.readAsDataURL(file);
+}
+function profileSaveEmail(){
+  var email=document.getElementById('prof-email')?.value.trim()||'';
+  var u=DB.users.find(function(x){return x.id===CU.id;});
+  if(!u)return;
+  u.email=email;CU.email=email;
+  save();toast('Email updated','ok');
+}
+
 // ── Show loading overlay while Supabase data is fetched ──
 document.addEventListener('DOMContentLoaded',()=>{
   const overlay=document.createElement('div');
