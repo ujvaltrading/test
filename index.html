@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#1d4ed8">
-<title>TQIMS — TEIL TEIL Quality Inspection Management System</title>
+<title>TQIMS — Quality Inspection Management System</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
@@ -576,7 +576,7 @@ tr:hover td{background:var(--surf2);}
 <div id="scr-auth">
   <div class="acard">
     <div class="logo-big">TQIMS</div>
-    <div class="logo-sub">TEIL Quality Inspection Management System</div>
+    <div class="logo-sub">Quality Inspection Management System</div>
 
     <div class="atabs">
       <button class="atab on" id="tab-login" onclick="showTab('login')">LOGIN</button>
@@ -638,7 +638,7 @@ tr:hover td{background:var(--surf2);}
       <div class="alink"><a onclick="showTab('login')">← Back to login</a></div>
     </div>
 
-    <div class="credit">© TQIMS · Designed &amp; Developed by Ujval Dharawaparmar</div>
+    <div class="credit">© TQIMS · Designed by Ujval Dharawaparmar</div>
   </div>
 </div>
 
@@ -650,7 +650,7 @@ tr:hover td{background:var(--surf2);}
   <div class="topbar">
     <div class="tb-left">
       <button class="ham" onclick="toggleSidebar()">☰</button>
-      <div class="tb-logo">TQIMS <span>TEIL Quality Inspection</span></div>
+      <div class="tb-logo">TQIMS <span>Quality Inspection</span></div>
     </div>
     <div class="tb-right" style="gap:8px;">
       <!-- Global Search -->
@@ -697,7 +697,7 @@ tr:hover td{background:var(--surf2);}
         <div class="nitem" id="ni-profile" onclick="goPage('profile')"><span class="ni">👤</span>My Profile</div>
         <div class="nitem" id="ni-faq" onclick="goPage('faq')"><span class="ni">❓</span>FAQ / Help</div>
       </div>
-      <div class="credit" style="padding:12px 16px;margin-top:8px;">Designed &amp; Developed by<br>Ujval Dharawaparmar</div>
+      <div class="credit" style="padding:12px 16px;margin-top:8px;">Designed by<br>Ujval Dharawaparmar</div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -735,8 +735,6 @@ tr:hover td{background:var(--surf2);}
         <div id="dash-lv2" style="display:none;"></div>
         <!-- LEVEL 3: Seams for selected component -->
         <div id="dash-lv3" style="display:none;"></div>
-        <!-- Live Charts always visible -->
-        <div id="dash-charts" style="margin-top:20px;"></div>
       </div>
 
       <!-- ── SEAM DETAIL (from dashboard click) ── -->
@@ -749,7 +747,6 @@ tr:hover td{background:var(--surf2);}
       <!-- ── INSPECTION ── -->
       <div class="pg" id="pg-inspection">
         <div class="pgh"><div class="pgt">Inspection Stages</div><div class="pgs" id="insp-hint">Filter by Project → Tag → Component, then offer or inspect stages</div></div>
-        <div id="insp-stats-bar" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-bottom:12px;"></div>
 
         <!-- FILTER BAR: Project → Tag → Component → Seam → Stage Type + Status -->
         <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
@@ -817,11 +814,6 @@ tr:hover td{background:var(--surf2);}
           </div>
         </div>
 
-        <div style="position:relative;margin-bottom:10px;">
-          <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text4);font-size:13px;">🔍</span>
-          <input id="insp-search" oninput="renderInspSeams()" placeholder="Search seams, stage names, NCR…" autocomplete="off"
-            style="width:100%;padding:9px 12px 9px 34px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;background:var(--surf);outline:none;">
-        </div>
         <div id="insp-seams"></div>
       </div>
 
@@ -833,9 +825,40 @@ tr:hover td{background:var(--surf2);}
         </div>
 
         <div class="card">
-          <div class="chead">
-            <div class="ctitle">Projects</div>
-            <button class="abtn ab-blue" onclick="openModal('m-add-proj')">+ ADD PROJECT</button>
+          <div class="chead" style="flex-direction:column;align-items:flex-start;gap:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap;gap:8px;">
+              <div class="ctitle">Projects</div>
+              <span style="font-size:11px;color:var(--text3);font-style:italic;">Projects are created from MIR → Master Items catalog entries</span>
+            </div>
+            <!-- Project search from MIR Catalog -->
+            <div style="width:100%;background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:8px;padding:12px 14px;">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;">
+                <span style="font-size:14px;">🔍</span>
+                <span style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;">Find / Register Project from MIR Catalog</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+                <div style="flex:1;min-width:220px;position:relative;">
+                  <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;">Search by Project Code, Equipment or Client</label>
+                  <input id="proj-catalog-search"
+                    placeholder="Type project code or equipment name…"
+                    autocomplete="off"
+                    oninput="projCatalogSearch(this.value)"
+                    onfocus="projCatalogSearch(this.value)"
+                    onkeydown="projCatalogKeydown(event)"
+                    style="width:100%;padding:9px 12px;border:1.5px solid var(--blue2);border-radius:7px;font-size:13px;background:var(--surf);color:var(--text);outline:none;">
+                  <div id="proj-catalog-dropdown"
+                    style="display:none;position:absolute;top:calc(100%+3px);left:0;right:0;
+                      background:var(--surf);border:1.5px solid var(--blue2);border-radius:9px;
+                      box-shadow:0 8px 28px rgba(26,86,219,.15);z-index:500;max-height:260px;overflow-y:auto;">
+                  </div>
+                </div>
+                <button type="button" onclick="projCatalogRegister()"
+                  class="btn btn-blue" style="padding:9px 18px;white-space:nowrap;font-size:12px;">
+                  ➕ Register Project
+                </button>
+              </div>
+              <div id="proj-catalog-info" style="display:none;margin-top:8px;padding:8px 12px;background:var(--green-lt);border:1px solid #86efac;border-radius:6px;font-size:11px;color:#166534;font-weight:600;"></div>
+            </div>
           </div>
           <div id="proj-list"></div>
         </div>
@@ -845,8 +868,34 @@ tr:hover td{background:var(--surf2);}
 
           <!-- Step 1: Project + Tag + Component -->
           <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
-            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Step 1 — Project → Tag Category → Tag Number → Component</div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">🔗 Project, Tag Category and Tag Number are <strong>auto-loaded from MIR Catalog</strong>. Only Component needs manual entry.</div>
+            <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Step 1 — Project › Tag › Component</div>
+
+            <!-- ── MIR Catalog Smart Search Banner ── -->
+            <div style="background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;">
+                <span style="font-size:15px;">📦</span>
+                <span style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;">Auto-fill from Master Item Catalog</span>
+                <span style="font-size:10px;color:var(--text3);font-weight:400;">— Search a part to fill Tag, Material &amp; Thickness instantly</span>
+              </div>
+              <div style="position:relative;">
+                <input id="ns-mir-search"
+                  placeholder="🔍  Type Part No., Description, Tag No. or Material to search catalog…"
+                  autocomplete="off"
+                  oninput="nsMirCatalogSearch(this.value)"
+                  onfocus="nsMirCatalogSearch(this.value)"
+                  onkeydown="nsMirCatalogKeydown(event)"
+                  style="width:100%;padding:9px 36px 9px 12px;border:1.5px solid var(--blue2);border-radius:7px;font-size:13px;background:var(--surf);color:var(--text);outline:none;">
+                <button type="button" onclick="nsMirCatalogClear()"
+                  style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text4);font-size:18px;cursor:pointer;padding:0;line-height:1;">×</button>
+                <div id="ns-mir-dropdown"
+                  style="display:none;position:absolute;top:calc(100% + 3px);left:0;right:0;
+                    background:var(--surf);border:1.5px solid var(--blue2);border-radius:9px;
+                    box-shadow:0 8px 28px rgba(26,86,219,.15);z-index:500;max-height:260px;overflow-y:auto;">
+                </div>
+              </div>
+              <div id="ns-mir-filled-info" style="display:none;margin-top:8px;padding:8px 12px;background:var(--green-lt);border:1px solid #86efac;border-radius:6px;font-size:11px;color:#166534;font-weight:600;"></div>
+            </div>
+
             <div class="grid2">
               <div>
                 <label class="lbl">Project <span style="color:var(--red);">*</span></label>
@@ -857,20 +906,28 @@ tr:hover td{background:var(--surf2);}
               <div>
                 <label class="lbl">Tag Category <span style="color:var(--red);">*</span></label>
                 <div style="display:flex;gap:6px;">
-                  <select id="ns-tagcat" onchange="refreshNsTag()" style="width:100%;" disabled>
-                  <option value="">— Select Tag Category —</option>
-                </select>
-                <input id="ns-tagcat-new" style="display:none;">
-                <div style="font-size:10px;color:#059669;margin-top:3px;">✓ Auto-loaded from MIR Master Items</div>
+                  <select id="ns-tagcat" onchange="refreshNsTag()" style="flex:1;" disabled>
+                    <option value="">— Select project first —</option>
+                  </select>
+                  <input id="ns-tagcat-new" placeholder="New category…" style="width:120px;display:none;">
+                </div>
+                <div style="margin-top:4px;display:flex;gap:8px;">
+                  <button type="button" onclick="toggleNewTagCat(false)" id="btn-tagcat-existing" style="font-size:10px;color:var(--blue2);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Select existing</button>
+                  <button type="button" onclick="toggleNewTagCat(true)" id="btn-tagcat-new" style="font-size:10px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Add new category</button>
+                </div>
               </div>
               <div>
                 <label class="lbl">Tag Number <span style="color:var(--red);">*</span></label>
                 <div style="display:flex;gap:6px;">
-                  <select id="ns-tag" onchange="refreshNsComp()" style="width:100%;" disabled>
-                  <option value="">— Select Tag Number —</option>
-                </select>
-                <input id="ns-tag-new" style="display:none;">
-                <div style="font-size:10px;color:#059669;margin-top:3px;">✓ Auto-loaded from MIR Master Items</div>
+                  <select id="ns-tag" onchange="refreshNsComp()" style="flex:1;" disabled>
+                    <option value="">— Select category first —</option>
+                  </select>
+                  <input id="ns-tag-new" placeholder="New tag…" style="width:110px;display:none;">
+                </div>
+                <div style="margin-top:4px;display:flex;gap:8px;">
+                  <button type="button" onclick="toggleNewTag(false)" id="btn-tag-existing" style="font-size:10px;color:var(--blue2);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Select existing</button>
+                  <button type="button" onclick="toggleNewTag(true)" id="btn-tag-new" style="font-size:10px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;font-weight:600;">+ Add new tag</button>
+                </div>
               </div>
               <div class="span2">
                 <label class="lbl">Component <span style="color:var(--red);">*</span></label>
@@ -939,7 +996,6 @@ tr:hover td{background:var(--surf2);}
               <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
                 <button type="button" onclick="nsSelectAllCatalog(true)" style="font-size:11px;padding:4px 10px;border:1.5px solid var(--border2);background:var(--surf);border-radius:6px;cursor:pointer;color:var(--blue2);font-weight:600;">☑ All</button>
                 <button type="button" onclick="nsSelectAllCatalog(false)" style="font-size:11px;padding:4px 10px;border:1.5px solid var(--border2);background:var(--surf);border-radius:6px;cursor:pointer;color:var(--text3);font-weight:600;">☐ None</button>
-                <button type="button" onclick="nsSaveAsTemplate()" style="font-size:11px;padding:4px 12px;border:1.5px solid var(--green);background:var(--green-lt);border-radius:6px;cursor:pointer;color:var(--green);font-weight:600;">💾 Save as Template</button>
               </div>
               <div id="ns-catalog-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:6px;max-height:320px;overflow-y:auto;padding:2px;"></div>
             </div>
@@ -1141,8 +1197,7 @@ tr:hover td{background:var(--surf2);}
             </div>
           </div>
         </div>
-      
-        <div id="profile-extras" style="padding:0 4px 16px;"></div></div>
+      </div>
 
       <!-- ── BACKUP & RESTORE ── -->
       <div class="pg" id="pg-backup">
@@ -1181,7 +1236,7 @@ tr:hover td{background:var(--surf2);}
         <!-- STORAGE ALERT -->
         <div style="background:#fef3c7;border:1.5px solid #f59e0b;padding:11px 14px;margin-bottom:16px;border-radius:10px;font-size:12px;color:#78350f;line-height:1.7;display:flex;align-items:flex-start;gap:10px;">
           <span style="font-size:18px;margin-top:1px;">⚠️</span>
-          <div><strong>Data is synced to Supabase cloud.</strong> Open this app from the web (GitHub Pages) for full sync. When opened locally, data is local only. Export a backup regularly.</div>
+          <div><strong>Data lives in this browser only.</strong> Clearing cache or switching devices will erase it. Export a backup after every significant session and store it on Google Drive, email, or a shared drive.</div>
         </div>
 
         <!-- SECTION LABEL: EXPORT -->
@@ -1310,7 +1365,6 @@ tr:hover td{background:var(--surf2);}
           <div class="stab" id="mir-tab-qc" data-mt="qc" onclick="mirSetTab('qc')" style="display:none;">🔍 QC Review</div>
           <!-- MIR Manager approval removed: QC=final -->
           <div class="stab" data-mt="items" onclick="mirSetTab('items')">📦 Master Items</div>
-          <div class="stab" id="mir-tab-backup" data-mt="mirbackup" onclick="mirSetTab('mirbackup')">💾 Backup</div>
         </div>
 
         <div id="mir-content"></div>
@@ -1355,6 +1409,20 @@ tr:hover td{background:var(--surf2);}
     <div class="mhead"><div class="mtitle">📤 Offer for Inspection</div><button class="mclose" onclick="closeModal('m-offer')">✕</button></div>
     <div class="mbody">
       <div id="offer-info"></div>
+      <!-- ── MIR Auto-fill Banner ── -->
+      <div id="of-mir-autofill" style="margin-top:14px;background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:9px;padding:12px 14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:14px;">📦</span>
+          <span style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;">Auto-fill from Approved MIR</span>
+          <span style="font-size:10px;color:var(--text3);font-weight:400;">— Select an approved MIR to pre-fill inspection details</span>
+        </div>
+        <select id="of-mir-select" onchange="offerFillFromMIR(this.value)"
+          style="width:100%;padding:9px 12px;border:1.5px solid var(--blue-mid);border-radius:7px;font-size:13px;background:var(--surf);color:var(--text);font-weight:500;">
+          <option value="">— Choose an approved MIR to auto-fill fields —</option>
+        </select>
+        <div id="of-mir-filled-badge" style="display:none;margin-top:8px;font-size:11px;color:var(--green);font-weight:600;">✅ Fields filled from MIR — you can still edit them manually below.</div>
+      </div>
+
       <!-- Standard fields -->
       <div class="grid2" style="margin-top:14px;" id="of-std-fields">
         <div><label class="lbl">Location / Position</label><input id="of-loc" placeholder="Bay-3, Grid B-4, Bottom NW"></div>
@@ -1783,7 +1851,7 @@ const DEFAULT_STAGES = ['WEP PT/MT','Fit-up Inspection','Root Run / Back Chip PT
 
 // ── ITP STAGE CATALOG — Standard fabrication QC stages for pressure vessels / heat exchangers ──
 const ITP_STAGES=[
-  // S-01 MI removed: handled by MIR system
+  {sid:'S-01',pg:'PG-01',name:'MI'},
   {sid:'S-02',pg:'PG-02',name:'PMI'},
   {sid:'S-03',pg:'PG-03',name:'After forming dimensions'},
   {sid:'S-04',pg:'PG-04',name:'After forming PT'},
@@ -1969,10 +2037,10 @@ function _migrateDB(p){
 
 // ── Load once from Supabase on startup ──
 async function loadFromSupabase(){
-  // If opened from file://, skip Supabase and use defaultDB
+  // ── Guard: local file:// cannot reach Supabase ──
   if(location.protocol === 'file:'){
-    console.log('TQIMS: local file mode - using default DB');
-    return; // DB stays as defaultDB(), user can still use the app
+    _showLocalFileError();
+    return;
   }
   try{
     const res = await fetch(
@@ -2005,7 +2073,33 @@ async function loadFromSupabase(){
   }
 }
 
-function _showLocalFileError(){ /* removed - local files work with defaultDB */ }
+function _showLocalFileError(){
+  // Show a full-screen message when opened as a local file
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const ov = document.getElementById('supa-loading');
+    if(ov) ov.innerHTML = `<div style="position:fixed;inset:0;z-index:99999;background:#0f172a;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:18px;padding:24px;text-align:center;">
+      <div style="font-size:36px;font-weight:900;letter-spacing:6px;color:#60a5fa;">TQIMS</div>
+      <div style="font-size:22px;">&#x1f6ab;</div>
+      <div style="font-size:15px;font-weight:700;color:#f87171;max-width:340px;line-height:1.6;">
+        Cannot connect to database
+      </div>
+      <div style="font-size:13px;color:#94a3b8;max-width:360px;line-height:1.8;">
+        You are opening this file <strong style="color:#fbbf24;">directly from your phone or computer</strong>.
+        TQIMS must be opened from the web to connect to the live database.<br><br>
+        <strong style="color:#a3e635;">Open this URL in your browser instead:</strong>
+      </div>
+      <div style="background:#1e3a5f;border:1px solid #3b82f6;border-radius:10px;padding:12px 20px;
+        font-family:monospace;font-size:14px;color:#60a5fa;word-break:break-all;max-width:340px;">
+        https://YOUR-GITHUB-USERNAME.github.io/TQIMS/
+      </div>
+      <div style="font-size:12px;color:#64748b;max-width:340px;line-height:1.7;">
+        Ask your Admin for the exact URL, or upload this file to GitHub Pages and use that link.
+      </div>
+    </div>`;
+  });
+}
 
 function _showNetworkError(msg){
   const ov = document.getElementById('supa-loading');
@@ -2428,6 +2522,12 @@ function closeSidebar(){$('sidebar').classList.remove('open');$('sov').classList
 document.addEventListener('click',function(e){
   const inp=$('ns-part-inp'),dd=$('ns-part-dropdown');
   if(dd&&inp&&!inp.parentElement.contains(e.target))dd.style.display='none';
+  // MIR catalog dropdown (Add Seam)
+  const mirInp=$('ns-mir-search'),mirDd=$('ns-mir-dropdown');
+  if(mirDd&&mirInp&&!mirInp.parentElement.contains(e.target))mirDd.style.display='none';
+  // Project catalog dropdown (Projects & Seams)
+  const projInp=$('proj-catalog-search'),projDd=$('proj-catalog-dropdown');
+  if(projDd&&projInp&&!projInp.parentElement.contains(e.target))projDd.style.display='none';
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -2484,7 +2584,6 @@ function showDashLevel(lv){
 function renderDashboard(){
   if(!CU)return;
   _updateGlobalStatsBar();
-  setTimeout(renderDashCharts,50);
   // All roles see all projects on dashboard — production/quality work across projects
   const visibleProjs = DB.projects;
   if(!visibleProjs.length){
@@ -2723,57 +2822,8 @@ function onInspTagCatChange(){
   renderInspSeams();
 }
 
-
-// ======================================================
-// INSPECTION PAGE STATS BAR
-// ======================================================
-function _updateInspStatsBar(){
-  var el=document.getElementById('insp-stats-bar');
-  if(!el)return;
-  var pid=($('insp-proj')&&$('insp-proj').value)||'';
-  var tag=($('insp-tag')&&$('insp-tag').value)||'';
-  var comp=($('insp-comp')&&$('insp-comp').value)||'';
-  // Filter seams by current selection
-  var seams=DB.seams.filter(function(s){
-    if(pid&&s.pid!==pid) return false;
-    if(tag&&(s.tag||s.sec||'')!==tag) return false;
-    if(comp&&(s.comp||s.sec||'')!==comp) return false;
-    return true;
-  });
-  var t=0,a=0,o=0,r=0,ret=0,pending=0;
-  seams.forEach(function(s){s.stages.forEach(function(st){
-    t++;
-    if(st.status==='accepted')a++;
-    else if(st.status==='offered')o++;
-    else if(st.status==='rejected')r++;
-    else if(st.status==='returned')ret++;
-    else pending++;
-  });});
-  var pct=t?Math.round(a/t*100):0;
-  var col=pct===100?'#16a34a':pct>50?'#b45309':'#dc2626';
-  // MIR status for selected seams
-  var mirCleared=seams.filter(function(s){return isMIRClearedForSeam(s);}).length;
-  var stats=[
-    {lbl:'Seams',val:seams.length,c:'var(--blue2)',i:'&#128279;'},
-    {lbl:'Total Stages',val:t,c:'var(--blue2)',i:'&#9776;'},
-    {lbl:'Accepted',val:a,c:'#16a34a',i:'&#10003;'},
-    {lbl:'Completion',val:pct+'%',c:col,i:'&#128202;'},
-    {lbl:'Awaiting QC',val:o,c:'#b45309',i:'&#9203;'},
-    {lbl:'NCR',val:r,c:'#dc2626',i:'&#128308;'},
-    {lbl:'Pending',val:pending,c:'var(--text3)',i:'&#9711;'},
-    {lbl:'MIR Cleared',val:mirCleared+'/'+seams.length,c:mirCleared===seams.length&&seams.length>0?'#16a34a':'#D97706',i:'&#128230;'},
-  ];
-  el.innerHTML=stats.map(function(s){
-    return '<div style="background:var(--surf);border:1px solid var(--border);border-top:3px solid '+s.c+';border-radius:8px;padding:9px 10px;text-align:center;">'+
-      '<div style="font-size:17px;font-weight:800;color:'+s.c+';line-height:1.2;">'+s.val+'</div>'+
-      '<div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:2px;letter-spacing:.4px;">'+s.i+' '+s.lbl+'</div>'+
-      '</div>';
-  }).join('');
-}
-
 function renderInspection(){
   if(!CU)return;
-  _updateInspStatsBar();
   if(!DB.projects.length){
     $('insp-seams').innerHTML=`<div style="text-align:center;padding:48px 20px;"><div style="font-size:36px;margin-bottom:12px;">📋</div><div style="font-size:15px;color:var(--text2);">No projects yet. Admin needs to add projects and seams first.</div></div>`;
     return;
@@ -2890,11 +2940,8 @@ function renderInspSeams(){
   const comp   = ($('insp-comp'       )&&$('insp-comp'       ).value)||'';
   const seamId = ($('insp-seam'       )&&$('insp-seam'       ).value)||'';
   const stNmF  = ($('stage-name-filter')&&$('stage-name-filter').value)||'';
-  const inspQ  = ($('insp-search')&&$('insp-search').value.trim().toLowerCase())||'';
 
   // ── Require project selection first ──────────────────────────
-  // Update stats bar on each render
-  _updateInspStatsBar();
   if(!pid){
     $('insp-seams').innerHTML=`<div style="text-align:center;padding:44px 20px;">
       <div style="font-size:36px;margin-bottom:10px;">👆</div>
@@ -2922,13 +2969,6 @@ function renderInspSeams(){
   if(tag)    seams = seams.filter(s => normTag(s)  === tag.trim());
   if(comp)   seams = seams.filter(s => normComp(s) === comp.trim());
   if(seamId) seams = seams.filter(s => s.id === seamId);
-  // Apply search query across seam num, desc, stage names, NCR
-  if(inspQ) seams = seams.filter(function(s){
-    if((s.num||'').toLowerCase().includes(inspQ)) return true;
-    if((s.desc||'').toLowerCase().includes(inspQ)) return true;
-    if(s.stages.some(function(st){return (st.name||'').toLowerCase().includes(inspQ)||(st.ncrNumber||'').toLowerCase().includes(inspQ);})) return true;
-    return false;
-  });
 
   // ── Stage-level filters active? ───────────────────────────────
   const stageFiltered = activeStageFilter !== 'all' || !!stNmF;
@@ -3176,6 +3216,30 @@ function openOfferModal(seamId,idx){
   if($('of-itp-annex')&&st.itpAnnex) $('of-itp-annex').value=st.itpAnnex;
   if($('of-itp-clause')&&st.itpClause) $('of-itp-clause').value=st.itpClause;
   if($('of-mat-grade')&&seam.mat) $('of-mat-grade').value=seam.mat;
+
+  // ── Populate MIR auto-fill dropdown ──
+  const mirBadge=$('of-mir-filled-badge');
+  if(mirBadge)mirBadge.style.display='none';
+  const mirSel=$('of-mir-select');
+  if(mirSel){
+    const projCode=proj?proj.number||proj.code||proj.projectCode||'':'';
+    const tagNo=seam.tag||seam.sec||'';
+    // Find approved MIRs relevant to this seam (match by project or tag number)
+    const relevantMIRs=(DB.mirs||[]).filter(m=>
+      m.status==='APPROVED'&&
+      (m.projectCode===projCode||m.tagNo===tagNo||
+       (projCode&&(m.projectCode||'').includes(projCode))||
+       (tagNo&&(m.tagNo||'').toLowerCase()===tagNo.toLowerCase()))
+    );
+    mirSel.innerHTML='<option value="">— Choose an approved MIR to auto-fill fields —</option>'+
+      relevantMIRs.map(m=>`<option value="${m.id}">[${m.reportNo}] Part: ${m.partNo} · ${m.description||''} · Mat: ${m.usedMaterial||m.material||'—'} · Thk: ${m.usedThickness||m.thickness||'—'}</option>`).join('');
+    // If only one relevant MIR exists, auto-select it
+    if(relevantMIRs.length===1){
+      mirSel.value=relevantMIRs[0].id;
+      offerFillFromMIR(relevantMIRs[0].id,true);
+    }
+  }
+
   // Show/hide RT/UT extra fields
   const isRT=isRTUT(st.name);
   if($('of-rtut-fields')) $('of-rtut-fields').style.display=isRT?'block':'none';
@@ -3217,6 +3281,34 @@ function openOfferModal(seamId,idx){
     <div class="ir"><span class="ir-k">Offered By</span><span class="ir-v">${CU.name} · ${CU.co}</span></div>
   `;
   openModal('m-offer');
+}
+
+// ── Auto-fill Offer Stage fields from a selected MIR ──
+function offerFillFromMIR(mirId,silent){
+  const badge=$('of-mir-filled-badge');
+  if(!mirId){if(badge)badge.style.display='none';return;}
+  const mir=(DB.mirs||[]).find(m=>m.id===mirId);
+  if(!mir)return;
+  // Fill Drawing No. and Rev from MIR's drgNo
+  const drwEl=$('of-drw');
+  if(drwEl&&mir.drgNo&&!drwEl.value) drwEl.value=mir.drgNo;
+  else if(drwEl&&mir.drgNo) drwEl.value=mir.drgNo;
+  // Fill Material Grade (prefer usedMaterial, fallback material)
+  const matEl=$('of-mat-grade');
+  if(matEl&&(mir.usedMaterial||mir.material)) matEl.value=mir.usedMaterial||mir.material||'';
+  // Fill Thickness (for RT/UT thickness field) from usedThickness
+  const thkEl=$('of-thk-total');
+  if(thkEl&&(mir.usedThickness||mir.thickness)) thkEl.value=mir.usedThickness||mir.thickness||'';
+  // Fill ITP reference fields if MIR has them stored (some workflows carry these)
+  if($('of-itp-table')&&!$('of-itp-table').value&&mir.itpTable) $('of-itp-table').value=mir.itpTable;
+  if($('of-itp-annex')&&!$('of-itp-annex').value&&mir.itpAnnex) $('of-itp-annex').value=mir.itpAnnex;
+  if($('of-itp-clause')&&!$('of-itp-clause').value&&mir.itpClause) $('of-itp-clause').value=mir.itpClause;
+  // Fill RT/UT company from MIR inspector (inspBy) if company field is empty
+  const coEl=$('of-rtut-company');
+  if(coEl&&!coEl.value&&mir.inspBy) coEl.value=mir.inspBy;
+  // Show filled badge
+  if(badge&&!silent) badge.style.display='block';
+  else if(badge&&silent){badge.style.display='block';badge.textContent='✅ Fields auto-filled from the only matching MIR — edit as needed.';}
 }
 
 // ── MIR Clearance check ──
@@ -3509,7 +3601,7 @@ function renderProjectsPage(){
         <button class="abtn ab-red" onclick="delProj('${p.id}')">DEL</button>
       </div>
     </div>`;
-  }).join('')||`<div style="text-align:center;padding:36px;color:var(--text3);">No projects yet. Click <strong>+ ADD PROJECT</strong> to get started.</div>`;
+  }).join('')||`<div style="text-align:center;padding:36px;color:var(--text3);">No projects registered yet. Search and register a project from the MIR Catalog above.</div>`;
   populateSelects();
   renderAdminSeams();
 }
@@ -3587,6 +3679,154 @@ function delProj(id){
   DB.pendingActions.push({id:'pa'+Date.now(),type:'del_proj',data:{id},requestedBy:CU.name,requestedAt:now(),desc:`Delete Project: #${p.number} — ${p.equipment}`});
   log(`📋 PENDING APPROVAL — Delete Project #${p.number} requested by ${CU.name}`);save();
   renderProjectsPage();toast('✓ Deletion request sent to Manager for approval','ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROJECT CATALOG SEARCH (Projects & Seams page)
+// — Finds unique projects from MIR Master Items catalog
+// ══════════════════════════════════════════════════════════════
+let _projCatalogDropIdx = -1;
+let _projCatalogSelected = null; // {code, equipment, client, tagCategory}
+
+function _getProjCatalogEntries() {
+  // Build unique project list from mirItems catalog
+  const items = DB.mirItems || [];
+  const seen = new Set();
+  const entries = [];
+  items.forEach(it => {
+    const key = (it.projectCode || '').trim();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    entries.push({
+      code: key,
+      tagCategory: it.tagCategory || '',
+      client: it.client || '',
+      description: it.description || '',
+      material: it.material || '',
+      // Check if already registered as a Project
+      registered: DB.projects.some(p =>
+        String(p.number).trim() === key ||
+        (p.code && String(p.code).trim() === key)
+      )
+    });
+  });
+  return entries;
+}
+
+function projCatalogSearch(q) {
+  const dd = $('proj-catalog-dropdown'); if (!dd) return;
+  _projCatalogDropIdx = -1;
+  const ql = (q || '').trim().toLowerCase();
+  const entries = _getProjCatalogEntries();
+  const matched = ql
+    ? entries.filter(e =>
+        e.code.toLowerCase().includes(ql) ||
+        e.tagCategory.toLowerCase().includes(ql) ||
+        e.client.toLowerCase().includes(ql))
+    : entries;
+
+  if (!matched.length) {
+    dd.innerHTML = `<div style="padding:14px;text-align:center;font-size:12px;color:var(--text4);">
+      ${ql ? 'No catalog entries match "'+q+'"' : 'No MIR Master Items added yet — add via MIR → Master Items'}</div>`;
+    dd.style.display = 'block'; return;
+  }
+
+  dd.innerHTML = matched.map((e, i) => `
+    <div class="proj-cat-opt" data-code="${e.code}"
+      onclick="projCatalogPick('${e.code}')"
+      onmouseenter="projCatalogHover(this)"
+      style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;color:var(--blue2);min-width:70px;">${e.code}</span>
+      <div style="flex:1;">
+        <div style="font-size:12px;font-weight:600;color:var(--text);">${e.tagCategory||'—'}</div>
+        ${e.client?`<div style="font-size:10px;color:var(--text4);">Client: ${e.client}</div>`:''}
+      </div>
+      <span style="font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700;white-space:nowrap;
+        ${e.registered
+          ? 'background:#dcfce7;color:#166534;border:1px solid #86efac;'
+          : 'background:#fef3c7;color:#92400e;border:1px solid #fcd34d;'}">
+        ${e.registered ? '✓ Registered' : '⬆ Not yet registered'}
+      </span>
+    </div>`).join('');
+  dd.style.display = 'block';
+}
+
+function projCatalogHover(el) {
+  document.querySelectorAll('.proj-cat-opt').forEach(e => e.style.background = '');
+  el.style.background = 'var(--blue-lt)';
+}
+
+function projCatalogPick(code) {
+  _projCatalogSelected = _getProjCatalogEntries().find(e => e.code === code) || null;
+  const inp = $('proj-catalog-search');
+  if (inp) inp.value = code;
+  // Hide dropdown
+  const dd = $('proj-catalog-dropdown'); if (dd) dd.style.display = 'none';
+  // Show info
+  const info = $('proj-catalog-info');
+  if (info && _projCatalogSelected) {
+    const already = _projCatalogSelected.registered;
+    info.style.display = 'block';
+    info.style.background = already ? '#dcfce7' : '#fef3c7';
+    info.style.borderColor = already ? '#86efac' : '#fcd34d';
+    info.style.color = already ? '#166534' : '#92400e';
+    info.innerHTML = already
+      ? `✅ Project <strong>${code}</strong> is already registered — you can add seams to it directly.`
+      : `⚠ Project <strong>${code}</strong> found in catalog but not yet registered. Click <strong>➕ Register Project</strong> to add it.`;
+  }
+}
+
+function projCatalogRegister() {
+  if (!_projCatalogSelected) { toast('Search and select a project from catalog first', 'err'); return; }
+  const e = _projCatalogSelected;
+  if (e.registered) { toast(`Project ${e.code} is already registered`, 'warn'); return; }
+
+  // Build a project from catalog data
+  const newProj = {
+    id: 'p' + Date.now(),
+    number: e.code,
+    equipment: e.tagCategory || e.code,
+    eqType: 'Manual',
+    client: e.client || '',
+    process: '',
+    sections: ['General'],
+    code: ''
+  };
+  DB.pendingActions.push({
+    id: 'pa' + Date.now(), type: 'add_proj', data: newProj,
+    requestedBy: CU.name, requestedAt: now(),
+    desc: `Add Project: #${e.code} — ${newProj.equipment} (from MIR Catalog)`
+  });
+  log(`📋 PENDING APPROVAL — Add Project #${e.code} from MIR Catalog by ${CU.name}`);
+  save();
+  _projCatalogSelected = null;
+  const inp = $('proj-catalog-search'); if (inp) inp.value = '';
+  const info = $('proj-catalog-info'); if (info) info.style.display = 'none';
+  renderProjectsPage();
+  toast(`✓ Project ${e.code} registration request sent to Manager for approval`, 'ok');
+}
+
+function projCatalogKeydown(e) {
+  const dd = $('proj-catalog-dropdown');
+  if (!dd || dd.style.display === 'none') return;
+  const opts = [...dd.querySelectorAll('.proj-cat-opt')];
+  if (!opts.length) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _projCatalogDropIdx = Math.min(_projCatalogDropIdx + 1, opts.length - 1);
+    opts.forEach((o, i) => o.style.background = i === _projCatalogDropIdx ? 'var(--blue-lt)' : '');
+    opts[_projCatalogDropIdx].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _projCatalogDropIdx = Math.max(_projCatalogDropIdx - 1, 0);
+    opts.forEach((o, i) => o.style.background = i === _projCatalogDropIdx ? 'var(--blue-lt)' : '');
+    opts[_projCatalogDropIdx].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (_projCatalogDropIdx >= 0 && opts[_projCatalogDropIdx]) opts[_projCatalogDropIdx].click();
+  } else if (e.key === 'Escape') {
+    const dd2 = $('proj-catalog-dropdown'); if (dd2) dd2.style.display = 'none';
+  }
 }
 
 function renderAdminSeams(){
@@ -3675,23 +3915,20 @@ function refreshNsTagComp(){
     compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
     $('ns-proj-info').innerHTML='';return;
   }
-  const proj=getProj(pid);
-  var projNum=proj?String(proj.number):'';
-  var mirItems=DB.mirItems||[];
-  var mirFP=mirItems.filter(function(it){var pc=it.projectCode||'';return pc.replace('PROJ-','')===projNum||pc===('PROJ-'+projNum);});
-  var mirCats=[...new Set(mirFP.map(function(it){return it.tagCategory;}).filter(Boolean))].sort();
-  var seamCats=getTagCats(pid);
-  var allCats=[...new Set([...mirCats,...seamCats])].sort();
+  const cats=getTagCats(pid);
   if(catEl){
-    catEl.innerHTML='<option value="">— Select Tag Category —</option>'+allCats.map(function(c){return '<option>'+c+'</option>';}).join('');
-    catEl.disabled=allCats.length===0;
+    catEl.innerHTML='<option value="">— Select category —</option>'+cats.map(c=>`<option>${c}</option>`).join('');
+    catEl.disabled=false;
   }
   tagEl.innerHTML='<option value="">— Select category first —</option>';tagEl.disabled=true;
   compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
+  const proj=getProj(pid);
   if(proj){
-    var mirNote=mirFP&&mirFP.length?' <span style="color:#059669;font-size:10px;font-weight:600;">✓ '+mirFP.length+' MIR parts</span>':'<span style="color:#D97706;font-size:10px;"> No MIR parts yet</span>';
-    $('ns-proj-info').innerHTML='<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:6px 12px;margin-top:6px;"><strong>Project #'+proj.number+'</strong> — '+proj.equipment+(proj.client?' · '+proj.client:'')+mirNote+'</div>';
+    $('ns-proj-info').innerHTML=`<div style="font-size:12px;color:var(--blue2);background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:6px;padding:6px 12px;margin-top:6px;">
+      <strong>Project #${proj.number}</strong> — ${proj.equipment}${proj.client?' · '+proj.client:''}${proj.code?' · '+proj.code:''}
+    </div>`;
   }
+  // render parts list reset
   renderNsParts();
 }
 
@@ -3701,17 +3938,9 @@ function refreshNsTag(){
   const tagEl=$('ns-tag');
   const compEl=$('ns-comp');
   if(!pid||!cat){tagEl.innerHTML='<option value="">— Select category first —</option>';tagEl.disabled=true;compEl.innerHTML='<option value="">—</option>';compEl.disabled=true;return;}
-  var proj3=getProj(pid);
-  var pn3=proj3?String(proj3.number):'';
-  var mi3=DB.mirItems||[];
-  var mirTags=[...new Set(mi3.filter(function(it){
-    var pc=it.projectCode||'';
-    return (pc.replace('PROJ-','')===pn3||pc===('PROJ-'+pn3))&&it.tagCategory===cat;
-  }).map(function(it){return it.tagNo;}).filter(Boolean))].sort();
-  var seamTags=getTagsByPidCat(pid,cat);
-  var allTags=[...new Set([...mirTags,...seamTags])].sort();
-  tagEl.innerHTML='<option value="">— Select Tag Number —</option>'+allTags.map(function(t){return '<option>'+t+'</option>';}).join('');
-  tagEl.disabled=allTags.length===0;
+  const tags=getTagsByPidCat(pid,cat);
+  tagEl.innerHTML='<option value="">— Select tag —</option>'+tags.map(t=>`<option>${t}</option>`).join('');
+  tagEl.disabled=false;
   compEl.innerHTML='<option value="">— Select tag first —</option>';compEl.disabled=true;
 }
 
@@ -3744,7 +3973,7 @@ function renderNsParts(){
       <span style="flex:1;font-size:12px;color:var(--text3);">${p.desc||'—'}</span>
       <span style="font-size:11px;padding:2px 8px;border-radius:10px;background:#EBF2FF;color:#1A56DB;font-weight:700;">Qty:${p.qty||1}</span>
       <span style="font-size:10px;padding:2px 7px;border-radius:10px;background:var(--blue-lt);
-        color:var(--blue2);font-weight:600;">MIR Part</span>
+        color:var(--blue2);font-weight:600;">MIR Part</span>>
       <button type="button" onclick="_nsParts.splice(${i},1);renderNsParts();"
         style="background:none;border:none;color:var(--red);font-size:15px;cursor:pointer;
         padding:0 4px;line-height:1;" title="Remove">✕</button>
@@ -3805,7 +4034,7 @@ function nsPartSearch(q){
   // MIR-only: no custom part entry
 
   if(!rows){
-    rows='<div style="padding:12px 14px;font-size:12px;color:var(--text4);text-align:center;">No MIR parts match. Add parts in <strong>MIR &rarr; Master Items</strong> first.</div>';
+    rows='<div style="padding:12px 14px;font-size:12px;color:var(--text4);text-align:center;">No matching items — type any part number to add custom</div>';
   }
 
   dd.innerHTML=rows;
@@ -3900,6 +4129,143 @@ function addNsPart(){
   nsPartHideDropdown();
   renderNsParts();
   toast('Part '+no+' added (Qty: '+qty+')','ok');
+}
+
+// ══════════════════════════════════════════════
+// MIR MASTER ITEM CATALOG SMART SEARCH (Add Seam Step 1)
+// ══════════════════════════════════════════════
+let _nsMirDropIdx = -1;
+
+function nsMirCatalogSearch(q) {
+  const dd = $('ns-mir-dropdown'); if (!dd) return;
+  _nsMirDropIdx = -1;
+  const ql = (q || '').trim().toLowerCase();
+  const items = DB.mirItems || [];
+  const matched = ql
+    ? items.filter(it =>
+        (it.partNo||'').toLowerCase().includes(ql) ||
+        (it.description||'').toLowerCase().includes(ql) ||
+        (it.tagNo||'').toLowerCase().includes(ql) ||
+        (it.material||'').toLowerCase().includes(ql) ||
+        (it.tagCategory||'').toLowerCase().includes(ql))
+    : items.slice(0, 30);
+
+  if (!matched.length) {
+    dd.innerHTML = `<div style="padding:14px;text-align:center;font-size:12px;color:var(--text4);">
+      ${ql ? 'No items match "'+q+'"' : 'No Master Items in catalog yet — add via MIR → Master Items'}</div>`;
+    dd.style.display = 'block'; return;
+  }
+
+  dd.innerHTML = matched.map((it, i) => `
+    <div class="ns-mir-opt" data-idx="${i}"
+      onclick="nsMirCatalogPick('${it.id}')"
+      onmouseenter="nsMirCatalogHover(this)"
+      style="display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;
+        padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--blue2);min-width:40px;">${it.partNo}</span>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text);">${it.description||'—'}</div>
+        <div style="font-size:10px;color:var(--text4);">Mat: ${it.material||'—'} &nbsp;|&nbsp; Thk: ${it.thickness||'—'}</div>
+      </div>
+      <span style="font-size:10px;padding:2px 8px;border-radius:10px;background:var(--blue-lt);color:var(--blue2);font-weight:700;white-space:nowrap;">${it.tagNo||''}</span>
+      <span style="font-size:10px;padding:2px 7px;border-radius:10px;background:var(--surf3);color:var(--text3);font-weight:600;white-space:nowrap;">${it.tagCategory||''}</span>
+    </div>`).join('');
+  dd.style.display = 'block';
+}
+
+function nsMirCatalogHover(el) {
+  document.querySelectorAll('.ns-mir-opt').forEach(e => e.style.background = '');
+  el.style.background = 'var(--blue-lt)';
+}
+
+function nsMirCatalogPick(itemId) {
+  const it = (DB.mirItems || []).find(i => i.id === itemId); if (!it) return;
+
+  // 1 — Set Project — match by number (string) or code
+  const projEl = $('ns-proj');
+  if (projEl && it.projectCode) {
+    const proj = DB.projects.find(p =>
+      String(p.number).trim() === String(it.projectCode).trim() ||
+      (p.code && String(p.code).trim() === String(it.projectCode).trim())
+    );
+    if (proj) {
+      projEl.value = proj.id;
+      refreshNsTagComp();
+    }
+  }
+
+  // 2 — Set Tag Category
+  const catSel = $('ns-tagcat'); const catNew = $('ns-tagcat-new');
+  if (catSel && it.tagCategory) {
+    // Make sure select is visible
+    if (catSel.style.display === 'none') toggleNewTagCat(false);
+    // Try existing option
+    const catOpt = [...catSel.options].find(o => o.value === it.tagCategory || o.text === it.tagCategory);
+    if (catOpt) { catSel.value = catOpt.value; refreshNsTag(); }
+    else if (catNew) { toggleNewTagCat(true); catNew.value = it.tagCategory; }
+  }
+
+  // 3 — Set Tag Number
+  const tagSel = $('ns-tag'); const tagNew = $('ns-tag-new');
+  if (tagSel && it.tagNo) {
+    if (tagSel.style.display === 'none') toggleNewTag(false);
+    const tagOpt = [...tagSel.options].find(o => o.value === it.tagNo || o.text === it.tagNo);
+    if (tagOpt) { tagSel.value = tagOpt.value; refreshNsComp(); }
+    else if (tagNew) { toggleNewTag(true); tagNew.value = it.tagNo; }
+  }
+
+  // 4 — Fill Material and Thickness in Step 2
+  const matEl = $('ns-mat'); const thkEl = $('ns-thk');
+  if (matEl && it.material) matEl.value = it.material;
+  if (thkEl && it.thickness) thkEl.value = it.thickness;
+
+  // 5 — Set Description hint (pre-fill ns-desc only if empty)
+  const descEl = $('ns-desc');
+  if (descEl && !descEl.value && it.description) descEl.value = it.description;
+
+  // 6 — Close dropdown, show confirmation
+  nsMirCatalogHideDropdown();
+  const inp = $('ns-mir-search');
+  if (inp) inp.value = `${it.partNo} — ${it.description}`;
+  const info = $('ns-mir-filled-info');
+  if (info) {
+    info.style.display = 'block';
+    info.innerHTML = `✅ <strong>Filled from MIR Catalog:</strong> &nbsp;Part ${it.partNo} · Tag: ${it.tagNo} · Cat: ${it.tagCategory} · Mat: ${it.material} · Thk: ${it.thickness} &nbsp;— All fields are editable.`;
+  }
+}
+
+function nsMirCatalogHideDropdown() {
+  const dd = $('ns-mir-dropdown'); if (dd) dd.style.display = 'none';
+  _nsMirDropIdx = -1;
+}
+
+function nsMirCatalogClear() {
+  const inp = $('ns-mir-search'); if (inp) { inp.value = ''; inp.focus(); }
+  nsMirCatalogHideDropdown();
+  const info = $('ns-mir-filled-info'); if (info) info.style.display = 'none';
+}
+
+function nsMirCatalogKeydown(e) {
+  const dd = $('ns-mir-dropdown');
+  if (!dd || dd.style.display === 'none') return;
+  const opts = [...dd.querySelectorAll('.ns-mir-opt')];
+  if (!opts.length) return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _nsMirDropIdx = Math.min(_nsMirDropIdx + 1, opts.length - 1);
+    opts.forEach((o, i) => o.style.background = i === _nsMirDropIdx ? 'var(--blue-lt)' : '');
+    opts[_nsMirDropIdx].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _nsMirDropIdx = Math.max(_nsMirDropIdx - 1, 0);
+    opts.forEach((o, i) => o.style.background = i === _nsMirDropIdx ? 'var(--blue-lt)' : '');
+    opts[_nsMirDropIdx].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    if (_nsMirDropIdx >= 0 && opts[_nsMirDropIdx]) opts[_nsMirDropIdx].click();
+  } else if (e.key === 'Escape') {
+    nsMirCatalogHideDropdown();
+  }
 }
 function refreshNsComp(){
   const pid=$('ns-proj').value;
@@ -4680,7 +5046,6 @@ function doPrint(){
 // PROFILE
 // ══════════════════════════════════════════════════════════════
 function renderProfile(){
-  setTimeout(renderProfileExtras,50);
   if(!CU)return;
   const p=getProj(CU.pid);
   $('profile-rows').innerHTML=`
@@ -5727,7 +6092,6 @@ function mirSetTab(t){
   });
   const c=$('mir-content');if(!c)return;
   if(t==='dashboard')c.innerHTML=mirRenderDashboard();
-  else if(t==='mirbackup')c.innerHTML=mirRenderBackup();
   else if(t==='list')c.innerHTML=mirRenderList();
   else if(t==='new')c.innerHTML=mirRenderNew();
   else if(t==='qc')c.innerHTML=mirRenderQC();
@@ -6416,7 +6780,7 @@ function mirPrintReport(id){
     .warn{color:#D97706;font-weight:700}
     .marks{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0}
     .mark{padding:2px 8px;background:#EBF2FF;color:#1A56DB;border-radius:10px;font-size:8px;font-weight:700}
-    .sig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px}
+    .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
     .sig-box{border-top:2px solid #1A56DB;padding-top:8px}
     .sig-box .label{font-size:8px;font-weight:700;color:#8FA5C0;text-transform:uppercase;letter-spacing:.5px}
     .sig-box .value{font-size:10px;font-weight:700;color:#0D1F3C;margin-top:3px}
@@ -6426,7 +6790,7 @@ function mirPrintReport(id){
   <div class="header">
     <div class="title">
       <h1>TQIMS — Material Identification Report</h1>
-      <h2>TEIL Quality Inspection Management System</h2>
+      <h2>Quality Inspection Management System</h2>
       <h3>Report No: ${mir.reportNo}</h3>
     </div>
     <div style="text-align:right">
@@ -6494,21 +6858,14 @@ function mirPrintReport(id){
       <div class="label">QC Inspector</div>
       <div class="value">${mir.qcBy||'Pending QC'}</div>
       <div class="date">${fD(mir.qcDate)}</div>
-      ${(()=>{const u=DB.users.find(x=>x.name===mir.qcBy);return u&&u.signUrl?'<img src="'+u.signUrl+'" style="max-width:80px;max-height:30px;margin-top:4px;">':'';})()} 
       <div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:16px;"></div>
       <div style="font-size:8px;color:#8FA5C0;margin-top:4px;">Signature</div>
     </div>
-    <div class="sig-box">
-      <div class="label">QC Clearance Status</div>
-      <div class="value" style="color:\${mir.status==='APPROVED'?'#059669':'#D97706'}">\${mir.status==='APPROVED'?'CLEARED':mir.status==='REJECTED'?'REJECTED':'PENDING'}</div>
-      <div class="date">\${fD(mir.qcDate)}</div>
-      <div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:16px;"></div>
-      <div style="font-size:8px;color:#8FA5C0;margin-top:4px;">QC Stamp / Sign</div>
-    </div>
+
   </div>
 
   <div class="footer">
-    <span>TQIMS — TEIL Quality Inspection Management System</span>
+    <span>TQIMS — Quality Inspection Management System</span>
     <span>Generated: ${new Date().toLocaleString('en-IN')}</span>
     <span>MIR: ${mir.reportNo}</span>
   </div>
@@ -6690,7 +7047,7 @@ function cmpToggleTag(enc){
 // ══════════════════════════════════════════════════════════════
 const FAQ_DATA = [
   {cat:'🚀 Getting Started',items:[
-    {q:'What is TQIMS?',a:'TQIMS (Total TEIL Quality Inspection Management System) is a digital platform for managing welding and fabrication inspection workflows. It replaces paper travellers, WhatsApp approvals and Excel sheets with a structured, role-based system that tracks every stage from material identification to final QC acceptance.'},
+    {q:'What is TQIMS?',a:'TQIMS (Total Quality Inspection Management System) is a digital platform for managing welding and fabrication inspection workflows. It replaces paper travellers, WhatsApp approvals and Excel sheets with a structured, role-based system that tracks every stage from material identification to final QC acceptance.'},
     {q:'Who can use TQIMS and what are the roles?',a:'There are 4 roles: (1) Admin — adds projects, seams, users and manages templates. (2) Production — offers stages for inspection and submits MIRs for material. (3) Quality Engineer — reviews and accepts/rejects offered stages and MIRs. (4) Manager — approves all requests from Admin and signs off MIRs. Each role sees only the features relevant to them.'},
     {q:'How do I create my account?',a:'Click REGISTER on the login screen. Fill your Name, Mobile, Company, Designation and select your Role. Your account will be created but requires Admin approval before you can log in. Contact your site Admin if approval is pending.'},
     {q:'How do I log in?',a:'Use your registered mobile number or email address and your password on the LOGIN screen. After login, the system remembers your session — refreshing the page will not log you out. You will only be logged out if you click LOGOUT or if there is 1 minute of no activity.'},
@@ -6781,211 +7138,6 @@ function faqToggle(id){
   const open=el.style.display==='block';
   el.style.display=open?'none':'block';
   if(arr)arr.textContent=open?'▼':'▲';
-}
-
-
-// ======================================================
-// SAVE CATALOG SELECTION AS TEMPLATE
-// ======================================================
-function nsSaveAsTemplate(){
-  const checked=[...document.querySelectorAll('.ns-cat-cb:checked')];
-  if(!checked.length){toast('Select at least one stage first','err');return;}
-  const name=prompt('Template name:','My Custom Template');
-  if(!name||!name.trim())return;
-  const stages=checked.map(cb=>cb.dataset.name);
-  if(!DB.templates)DB.templates=[];
-  if(DB.templates.find(t=>t.name===name.trim())){toast('Template name already exists','warn');return;}
-  DB.templates.push({id:'t'+Date.now(),name:name.trim(),stages});
-  save();
-  // refresh template dropdown
-  const tmplEl=$('ns-tmpl');
-  if(tmplEl){
-    tmplEl.innerHTML=DB.templates.map(t=>`<option value="${t.id}">${t.name} (${t.stages.length} stages)</option>`).join('');
-  }
-  toast('Template "'+name.trim()+'" saved with '+stages.length+' stages','ok');
-}
-
-// ======================================================
-// MIR BACKUP / RESTORE
-// ======================================================
-function mirRenderBackup(){
-  var items=DB.mirItems||[];
-  var mirs=DB.mirs||[];
-  return '<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px;">'
-    +'<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;">💾 MIR Data Backup &amp; Restore</div>'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">'
-    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:16px;">'
-    +'<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">⬇ Export MIR Data</div>'
-    +'<div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Download all Master Items ('+items.length+') and MIR records ('+mirs.length+') as JSON backup.</div>'
-    +'<button onclick="mirExportBackup()" style="padding:9px 20px;background:var(--green);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;">⬇ Download MIR Backup</button>'
-    +'</div>'
-    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:16px;">'
-    +'<div style="font-size:12px;font-weight:700;color:var(--blue2);margin-bottom:8px;">⬆ Restore MIR Data</div>'
-    +'<div style="font-size:11px;color:var(--text3);margin-bottom:12px;">Upload a previously exported MIR backup JSON file to restore items and records.</div>'
-    +'<label style="display:flex;align-items:center;justify-content:center;gap:8px;background:var(--blue2);color:#fff;padding:9px 18px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;">'
-    +'⬆ Select MIR Backup File'
-    +'<input type="file" accept=".json" onchange="mirImportBackup(this)" style="display:none;"></label>'
-    +'<div id="mir-backup-msg" style="margin-top:8px;font-size:12px;"></div>'
-    +'</div></div></div>';
-}
-function mirExportBackup(){
-  var data={mirItems:DB.mirItems||[],mirs:DB.mirs||[],exportedAt:new Date().toISOString()};
-  var blob=JSON.stringify(data,null,2);
-  var a=document.createElement('a');
-  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(blob);
-  a.download='TQIMS_MIR_Backup_'+new Date().toISOString().slice(0,10)+'.json';
-  a.click();toast('MIR backup downloaded','ok');
-}
-function mirImportBackup(inp){
-  var file=inp.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      var data=JSON.parse(e.target.result);
-      if(!data.mirItems&&!data.mirs){$('mir-backup-msg').innerHTML='<span style="color:var(--red);">Invalid MIR backup file</span>';return;}
-      if(data.mirItems){DB.mirItems=data.mirItems;}
-      if(data.mirs){DB.mirs=data.mirs;}
-      save();
-      toast('MIR data restored: '+((data.mirItems||[]).length)+' items, '+((data.mirs||[]).length)+' records','ok');
-      $('mir-backup-msg').innerHTML='<span style="color:var(--green);">✓ Restored successfully</span>';
-      mirSetTab('items');
-    }catch(err){$('mir-backup-msg').innerHTML='<span style="color:var(--red);">Error: '+err.message+'</span>';}
-  };
-  reader.readAsText(file);
-}
-
-// ======================================================
-// DASHBOARD CHARTS (always visible section)
-// ======================================================
-function renderDashCharts(){
-  var el=document.getElementById('dash-charts');
-  if(!el)return;
-  var seams=DB.seams||[];
-  var mirs=DB.mirs||[];
-  var projs=DB.projects||[];
-  if(!projs.length){el.innerHTML='';return;}
-
-  // Per-project completion bars
-  var projBars=projs.map(function(p){
-    var st=overallStats(p.id);
-    var pct=st.p;
-    var col=pct===100?'#16a34a':pct>50?'#b45309':'#dc2626';
-    return '<div style="margin-bottom:10px;">'
-      +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;margin-bottom:3px;">'
-      +'<span style="color:var(--text2);">#'+p.number+' — '+p.equipment+'</span>'
-      +'<span style="color:'+col+';font-weight:700;">'+pct+'%</span></div>'
-      +'<div style="height:10px;border-radius:5px;background:var(--surf3);overflow:hidden;display:flex;">'
-      +'<div style="background:#16a34a;width:'+(st.t?st.a/st.t*100:0)+'%;transition:width .5s;"></div>'
-      +'<div style="background:#b45309;width:'+(st.t?st.o/st.t*100:0)+'%;transition:width .5s;"></div>'
-      +'<div style="background:#dc2626;width:'+(st.t?st.r/st.t*100:0)+'%;transition:width .5s;"></div>'
-      +'</div>'
-      +'<div style="display:flex;gap:12px;margin-top:2px;font-size:9px;color:var(--text4);">'
-      +'<span style="color:#16a34a;">■ '+st.a+' Accepted</span>'
-      +'<span style="color:#b45309;">■ '+st.o+' QC Queue</span>'
-      +'<span style="color:#dc2626;">■ '+st.r+' NCR</span>'
-      +'<span>■ '+st.seams+' Seams</span>'
-      +'</div></div>';
-  }).join('');
-
-  // MIR status mini chart
-  var mirAp=(mirs.filter(function(m){return m.status==='APPROVED';}).length);
-  var mirPQ=(mirs.filter(function(m){return m.status==='PENDING_QC';}).length);
-  var mirRj=(mirs.filter(function(m){return m.status==='REJECTED';}).length);
-  var mirTot=mirs.length||1;
-
-  el.innerHTML='<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px;">'
-    // Project progress
-    +'<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">'
-    +'<div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📊 Project Completion</div>'
-    +'<div style="padding:14px 16px;">'+projBars+'</div>'
-    +'<div style="padding:8px 16px 12px;display:flex;gap:14px;font-size:10px;font-weight:600;">'
-    +'<span style="color:#16a34a;">■ Accepted</span><span style="color:#b45309;">■ Awaiting QC</span><span style="color:#dc2626;">■ NCR</span></div>'
-    +'</div>'
-    // MIR status
-    +'<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">'
-    +'<div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📦 MIR Status</div>'
-    +'<div style="padding:14px 16px;">'
-    +[['Approved',mirAp,'#16a34a'],['Pending QC',mirPQ,'#b45309'],['Rejected',mirRj,'#dc2626']].map(function(d){
-        var pct=Math.round(d[1]/mirTot*100);
-        return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">'
-          +'<div style="width:8px;height:8px;border-radius:50%;background:'+d[2]+';flex-shrink:0;"></div>'
-          +'<div style="flex:1;font-size:11px;color:var(--text2);">'+d[0]+'</div>'
-          +'<div style="font-size:12px;font-weight:700;color:'+d[2]+';min-width:20px;">'+d[1]+'</div>'
-          +'<div style="width:80px;height:6px;border-radius:3px;background:var(--surf3);">'
-          +'<div style="height:100%;border-radius:3px;background:'+d[2]+';width:'+pct+'%;"></div></div>'
-          +'</div>';
-      }).join('')
-    +'<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text4);">Total MIRs: <strong>'+mirs.length+'</strong></div>'
-    +'</div></div>'
-    +'</div>';
-}
-
-// ======================================================
-// PROFILE: email, photo, digital signature
-// ======================================================
-function renderProfileExtras(){
-  if(!CU)return;
-  var u=DB.users.find(function(x){return x.id===CU.id;});
-  if(!u)return;
-  var photoHtml=u.photoUrl
-    ?'<img src="'+u.photoUrl+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--blue2);">'
-    :'<div style="width:80px;height:80px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:32px;border:3px solid var(--blue2);">👤</div>';
-  var signHtml=u.signUrl
-    ?'<img src="'+u.signUrl+'" style="max-width:200px;max-height:60px;border:1px solid var(--border);border-radius:6px;padding:4px;background:#fff;">'
-    :'<div style="width:200px;height:60px;border:1.5px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text4);">No signature uploaded</div>';
-  var extras=$('profile-extras');
-  if(!extras)return;
-  extras.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;">'
-    // Profile photo
-    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">'
-    +'<div style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:8px;">Profile Photo</div>'
-    +photoHtml
-    +'<label style="display:block;margin-top:10px;padding:6px 14px;background:var(--blue2);color:#fff;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;">'
-    +'📷 Upload Photo<input type="file" accept="image/*" onchange="profileUploadPhoto(this)" style="display:none;"></label>'
-    +'</div>'
-    // Digital signature
-    +'<div style="background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center;">'
-    +'<div style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:8px;">Digital Signature</div>'
-    +signHtml
-    +'<div style="font-size:10px;color:var(--text4);margin:6px 0;">Upload a clear photo of your signature (PNG/JPG)</div>'
-    +'<label style="display:block;margin-top:6px;padding:6px 14px;background:var(--blue2);color:#fff;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;">'
-    +'✍ Upload Signature<input type="file" accept="image/*" onchange="profileUploadSign(this)" style="display:none;"></label>'
-    +'</div>'
-    // Email edit
-    +'<div style="grid-column:span 2;background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:14px;">'
-    +'<div style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;margin-bottom:8px;">Email Address</div>'
-    +'<div style="display:flex;gap:8px;">'
-    +'<input id="prof-email" value="'+(u.email||'')+'" placeholder="your@email.com" type="email" style="flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">'
-    +'<button onclick="profileSaveEmail()" style="padding:8px 16px;background:var(--blue2);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;">Save</button>'
-    +'</div>'
-    +'</div></div>';
-}
-function profileUploadPhoto(inp){
-  var file=inp.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    var u=DB.users.find(function(x){return x.id===CU.id;});
-    if(!u)return;
-    u.photoUrl=e.target.result;CU.photoUrl=e.target.result;
-    save();renderProfileExtras();toast('Profile photo updated','ok');
-  };reader.readAsDataURL(file);
-}
-function profileUploadSign(inp){
-  var file=inp.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    var u=DB.users.find(function(x){return x.id===CU.id;});
-    if(!u)return;
-    u.signUrl=e.target.result;CU.signUrl=e.target.result;
-    save();renderProfileExtras();toast('Digital signature saved','ok');
-  };reader.readAsDataURL(file);
-}
-function profileSaveEmail(){
-  var email=document.getElementById('prof-email')?.value.trim()||'';
-  var u=DB.users.find(function(x){return x.id===CU.id;});
-  if(!u)return;
-  u.email=email;CU.email=email;
-  save();toast('Email updated','ok');
 }
 
 // ── Show loading overlay while Supabase data is fetched ──
