@@ -691,6 +691,7 @@ tr:hover td{background:var(--surf2);}
       </div>
       <div>
         <div class="sg-lbl">Reports</div>
+        <div class="nitem" id="ni-release" onclick="goPage('release')"><span class="ni">🔓</span>Release Control<span class="nbadge" id="nb-release" style="display:none">!</span></div>
         <div class="nitem" id="ni-summary" onclick="goPage('summary')"><span class="ni">📄</span>Print Summary</div>
         <div class="nitem" id="ni-compare" onclick="goPage('compare')"><span class="ni">📊</span>Compare & Charts</div>
         <div class="sg-lbl">Account</div>
@@ -1169,12 +1170,35 @@ tr:hover td{background:var(--surf2);}
 
       <!-- ── PROFILE ── -->
       <div class="pg" id="pg-profile">
-        <div class="pgh"><div class="pgt">My Profile</div><div class="pgs">View your account details and change your password</div></div>
-        <div style="max-width:520px;">
+        <div class="pgh"><div class="pgt">👤 My Profile</div><div class="pgs">Account details · Digital signature for reports · Change password</div></div>
+        <div style="max-width:600px;">
           <div class="card">
             <div class="chead"><div class="ctitle">Account Details</div></div>
             <div id="profile-rows"></div>
           </div>
+
+          <!-- ── DIGITAL SIGNATURE ── -->
+          <div class="card">
+            <div class="chead">
+              <div>
+                <div class="ctitle">🖊 Digital Signature</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:2px;">Automatically printed on Inspection Traveller, MIR reports and stage clearance forms.</div>
+              </div>
+            </div>
+            <div id="sig-current-display" style="min-height:60px;border:1.5px dashed var(--border2);border-radius:8px;padding:12px;background:var(--surf2);display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <span style="font-size:12px;color:var(--text4);">No signature uploaded yet</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+              <label style="flex:1;min-width:160px;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--blue2);">
+                📁 Upload Image
+                <input type="file" id="sig-file-input" accept="image/*" onchange="onSigFileUpload(this)" style="display:none;">
+              </label>
+              <button onclick="openSigDrawModal()" style="flex:1;min-width:160px;padding:9px 14px;background:var(--surf);border:1.5px solid var(--border2);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);">✍️ Draw Signature</button>
+              <button id="sig-clear-btn" onclick="clearSignature()" style="display:none;padding:9px 14px;background:var(--red-lt);border:1.5px solid #fca5a5;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;color:var(--red);">🗑 Remove</button>
+            </div>
+            <div id="sig-save-msg"></div>
+          </div>
+
           <div class="card">
             <div class="chead"><div class="ctitle">Change Password</div></div>
             <div class="fl" style="max-width:360px;gap:12px;display:flex;flex-direction:column;">
@@ -1195,6 +1219,25 @@ tr:hover td{background:var(--surf2);}
               <div id="sk-msg"></div>
               <button class="btn btn-amber" style="width:auto;padding:10px 22px;" onclick="changeSecretKey()">UPDATE SECRET KEY →</button>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SIGNATURE DRAW MODAL ── -->
+      <div class="mbg" id="m-sig-draw">
+        <div class="modal" style="max-width:500px;">
+          <div class="mhead"><div class="mtitle">✍️ Draw Your Signature</div><button class="mclose" onclick="closeModal('m-sig-draw')">✕</button></div>
+          <div class="mbody">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:12px;">Use your mouse or finger to draw your signature in the box below.</div>
+            <canvas id="sig-canvas" width="440" height="160"
+              style="border:2px solid var(--blue2);border-radius:8px;background:#fff;display:block;width:100%;cursor:crosshair;touch-action:none;"></canvas>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button onclick="sigCanvasClear()" class="btn btn-ghost" style="flex:1;padding:8px;">🗑 Clear</button>
+            </div>
+          </div>
+          <div class="mfoot">
+            <button class="btn btn-ghost" style="width:auto;padding:9px 16px;" onclick="closeModal('m-sig-draw')">Cancel</button>
+            <button class="btn btn-blue" style="width:auto;padding:9px 16px;" onclick="saveSigFromCanvas()">✅ Save Signature</button>
           </div>
         </div>
       </div>
@@ -1368,6 +1411,17 @@ tr:hover td{background:var(--surf2);}
         </div>
 
         <div id="mir-content"></div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           RELEASE CONTROL PAGE
+      ══════════════════════════════════════════ -->
+      <div class="pg" id="pg-release">
+        <div class="pgh">
+          <div class="pgt">🔓 Release Control</div>
+          <div class="pgs">PWHT · Hydrotest · Post-Hydro · Final Dispatch — unlocks when all seams in a component are accepted</div>
+        </div>
+        <div id="release-content"></div>
       </div>
 
       <!-- ══════════════════════════════════════════
@@ -1986,22 +2040,30 @@ function defaultDB() {
   return {
     projects:[],
     seams:[],
-    users:[{id:'u0',name:'Admin User',mob:'0000000000',email:'',co:'TQIMS',desig:'System Admin',role:'admin',pid:'',pw:'admin123',approved:true}],
+    users:[{id:'u0',name:'Admin User',mob:'0000000000',email:'',co:'TQIMS',desig:'System Admin',role:'admin',pid:'',pw:'admin123',approved:true,signature:''}],
     templates:[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}],
     log:[],
     pendingActions:[],
     rtutReports:{},
-    mirItems:[],   // Master Items for MIR
-    mirs:[],       // MIR records
+    mirItems:[],
+    mirs:[],
+    releases:{},   // key: "pid::tag::comp::type" → {status, by, at, remarks, sections:{}}
     secretKey:'TQIMS@Admin2024'
   };
 }
 
-// ══════════════════════════════════════════════════════════════
-// ══════════════════════════════════════════════════════════════
-// SUPABASE — Direct REST API (no CDN library needed)
-// Works correctly with new sb_publishable_ key format
-// ══════════════════════════════════════════════════════════════
+// ── Sanitise DB after loading ──
+function _migrateDB(p){
+  if(!p.templates) p.templates=[{id:'t1',name:'Standard Weld Inspection',stages:DEFAULT_STAGES.slice()}];
+  if(!p.secretKey) p.secretKey='TQIMS@Admin2024';
+  if(!p.pendingActions) p.pendingActions=[];
+  if(!p.rtutReports) p.rtutReports={};
+  if(!p.mirItems) p.mirItems=[];
+  if(!p.mirs) p.mirs=[];
+  if(!p.releases) p.releases={};
+  if(p.users) p.users.forEach(u=>{ if(!u.signature) u.signature=''; });
+  return p;
+}
 const SUPA_URL = 'https://dqsugjgvdvwablkdeohg.supabase.co';
 const SUPA_KEY = 'sb_publishable_3VaNmFiGpnCk6jwJjtF5zg_B1cKkiXd';
 const SUPA_REST = SUPA_URL + '/rest/v1';
@@ -2477,8 +2539,9 @@ function loginAs(u, silent=false){
   populateSelects();
   updateApprovalBadge();
   goPage('dashboard');
-  updateMIRBadge();        // update MIR badge on login
-  _resetInactivity();      // start the inactivity timer
+  updateMIRBadge();
+  _updateReleaseBadge();    // update release badge on login
+  _resetInactivity();       // start the inactivity timer
 }
 
 function doLogout(){
@@ -2513,6 +2576,7 @@ function goPage(pg){
   else if(pg==='approvals')renderApprovals();
   else if(pg==='backup'){renderBackupPage();}
   else if(pg==='mir'){renderMIRPage();}
+  else if(pg==='release'){renderReleasePage();}
   else if(pg==='compare'){renderComparePage();}
   else if(pg==='faq'){renderFAQPage();}
 }
@@ -3572,6 +3636,7 @@ function refreshCurrentView(){
   else if(id==='pg-inspection')renderInspection();
   else if(id==='pg-seam')renderSeamDetailContent(activeSeamId);
   updateBadge();
+  _updateReleaseBadge();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -4700,16 +4765,28 @@ function refreshPrintTags(pid){
   el.innerHTML='<option value="">All Tags</option>'+getTags(pid||$('print-proj').value).map(t=>`<option>${t}</option>`).join('');
 }
 
-function _sigBlock(){
+function _sigCell(roleLabel, user){
+  const sigImg = user&&user.signature
+    ? `<img src="${user.signature}" style="max-height:36px;max-width:110px;object-fit:contain;display:block;margin:4px 0 2px;">`
+    : `<div style="height:32px;border-bottom:1px solid #888;margin:4px 0 2px;"></div>`;
+  return`<td style="padding:10px 12px;border:1px solid #ccc;vertical-align:top;width:33%;">
+    <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:4px;">${roleLabel}</div>
+    ${sigImg}
+    <div style="font-size:8px;font-weight:700;color:#111;">${user?user.name:'____________________________'}</div>
+    ${user&&user.desig?`<div style="font-size:7px;color:#555;">${user.desig}</div>`:''}
+    ${user&&user.co?`<div style="font-size:7px;color:#888;">${user.co}</div>`:''}
+    <div style="font-size:7.5px;color:#777;margin-top:3px;">Date: ___________________________</div>
+  </td>`;
+}
+
+function _sigBlock(pid){
+  const prodUser = pid ? DB.users.find(u=>u.role==='production'&&u.pid===pid&&u.approved&&u.signature) : null;
+  const qcUser   = pid ? DB.users.find(u=>u.role==='quality'&&u.pid===pid&&u.approved&&u.signature) : null;
   return`<table style="width:100%;border-collapse:collapse;margin-top:14px;border-top:1.5px solid #999;">
     <tr>
-      ${['Production Representative','Quality Engineer (QE)','Client / CTR Representative'].map(role=>`
-      <td style="padding:10px 12px;border:1px solid #ccc;vertical-align:top;width:33%;">
-        <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:26px;">${role}</div>
-        <div style="border-top:1px solid #888;margin-bottom:5px;"></div>
-        <div style="font-size:8px;color:#777;">Name: ____________________________</div>
-        <div style="font-size:8px;color:#777;margin-top:4px;">Date: ___________________________</div>
-      </td>`).join('')}
+      ${_sigCell('Production Representative', prodUser)}
+      ${_sigCell('Quality Engineer (QE)', qcUser)}
+      ${_sigCell('Client / CTR Representative', null)}
     </tr>
   </table>`;
 }
@@ -4818,7 +4895,7 @@ function buildPrintPreview(){
       }).join('')}
       </tbody>
     </table>
-    ${_sigBlock()}
+    ${_sigBlock(pid)}
     ${pgFooter(1)}
   </div>`;
 
@@ -4939,7 +5016,7 @@ function buildPrintPreview(){
       </table>
       </div>
 
-      ${_sigBlock()}
+      ${_sigBlock(pid)}
       ${pgFooter(pageNum)}
     </div>`;
   });
@@ -5060,6 +5137,325 @@ function renderProfile(){
   $('cp-cur').value='';$('cp-new').value='';$('cp-cnf').value='';$('cp-msg').innerHTML='';
   $('secret-key-card').style.display=CU.role==='admin'?'block':'none';
   if(CU.role==='admin'){$('sk-cur').value='';$('sk-new').value='';$('sk-cnf').value='';$('sk-msg').innerHTML='';}
+  _renderSigPreview();
+}
+
+function _renderSigPreview(){
+  const disp=$('sig-current-display'); if(!disp)return;
+  const clearBtn=$('sig-clear-btn');
+  if(CU&&CU.signature){
+    disp.innerHTML=`<img src="${CU.signature}" style="max-height:80px;max-width:240px;object-fit:contain;display:block;margin:0 auto;">`;
+    if(clearBtn)clearBtn.style.display='inline-block';
+  } else {
+    disp.innerHTML='<span style="font-size:12px;color:var(--text4);">No signature uploaded yet</span>';
+    if(clearBtn)clearBtn.style.display='none';
+  }
+  const msg=$('sig-save-msg');if(msg)msg.innerHTML='';
+}
+
+function onSigFileUpload(inp){
+  const file=inp.files[0];if(!file)return;
+  if(!file.type.startsWith('image/')){toast('Upload an image file (PNG/JPG)','err');return;}
+  const r=new FileReader();
+  r.onload=e=>_saveSigDataUrl(e.target.result);
+  r.readAsDataURL(file);
+}
+
+function _saveSigDataUrl(dataUrl){
+  const u=DB.users.find(u=>u.id===CU.id);
+  if(u){u.signature=dataUrl;CU.signature=dataUrl;}
+  save(); _renderSigPreview();
+  const msg=$('sig-save-msg');
+  if(msg)msg.innerHTML='<div class="msg msg-ok" style="margin-top:8px;">✅ Signature saved — printed on all future reports.</div>';
+  toast('Signature saved','ok');
+}
+
+function clearSignature(){
+  if(!confirm('Remove your saved signature?'))return;
+  const u=DB.users.find(u=>u.id===CU.id);
+  if(u){u.signature='';CU.signature='';}
+  save();_renderSigPreview();toast('Signature removed','ok');
+}
+
+let _sigDrawing=false,_sigCtx=null;
+function openSigDrawModal(){
+  openModal('m-sig-draw');
+  setTimeout(()=>{
+    const c=$('sig-canvas');if(!c)return;
+    _sigCtx=c.getContext('2d');
+    _sigCtx.clearRect(0,0,c.width,c.height);
+    _sigCtx.strokeStyle='#1d4ed8';_sigCtx.lineWidth=2;_sigCtx.lineCap='round';_sigCtx.lineJoin='round';
+    const pos=(e,r)=>[(e.clientX-r.left)*(c.width/r.width),(e.clientY-r.top)*(c.height/r.height)];
+    c.onmousedown=e=>{_sigDrawing=true;const r=c.getBoundingClientRect();_sigCtx.beginPath();_sigCtx.moveTo(...pos(e,r));};
+    c.onmousemove=e=>{if(!_sigDrawing)return;const r=c.getBoundingClientRect();_sigCtx.lineTo(...pos(e,r));_sigCtx.stroke();};
+    c.onmouseup=c.onmouseleave=()=>{_sigDrawing=false;};
+    c.ontouchstart=e=>{e.preventDefault();_sigDrawing=true;const r=c.getBoundingClientRect();const t=e.touches[0];_sigCtx.beginPath();_sigCtx.moveTo((t.clientX-r.left)*(c.width/r.width),(t.clientY-r.top)*(c.height/r.height));};
+    c.ontouchmove=e=>{e.preventDefault();if(!_sigDrawing)return;const r=c.getBoundingClientRect();const t=e.touches[0];_sigCtx.lineTo((t.clientX-r.left)*(c.width/r.width),(t.clientY-r.top)*(c.height/r.height));_sigCtx.stroke();};
+    c.ontouchend=()=>{_sigDrawing=false;};
+  },120);
+}
+function sigCanvasClear(){const c=$('sig-canvas');if(c&&_sigCtx)_sigCtx.clearRect(0,0,c.width,c.height);}
+function saveSigFromCanvas(){
+  const c=$('sig-canvas');if(!c)return;
+  const d=_sigCtx.getImageData(0,0,c.width,c.height).data;
+  if(!d.some((_,i)=>i%4===3&&d[i]>0)){toast('Draw your signature first','err');return;}
+  closeModal('m-sig-draw');
+  _saveSigDataUrl(c.toDataURL('image/png'));
+}
+
+// ══════════════════════════════════════════════════════════════
+// RELEASE CONTROL PAGE
+// Workflow: All seams in a Component accepted → Component released
+// All Components in a Tag released → Tag PWHT/Hydro eligible
+// PWHT → Hydro → Post-Hydro chain → Final Dispatch
+// ══════════════════════════════════════════════════════════════
+
+// Release stages in order as per workflow chart
+const RELEASE_CHAIN = [
+  {key:'pwht',       label:'PWHT',                      icon:'🔥', desc:'Post Weld Heat Treatment',       roles:['production','quality','manager','admin']},
+  {key:'hydro',      label:'Hydrotest',                  icon:'💧', desc:'Pressure / Leak Test',           roles:['production','quality','manager','admin']},
+  {key:'drain_dry',  label:'Draining & Drying',          icon:'🌬️', desc:'Post-hydrotest inspection',      roles:['quality','manager','admin']},
+  {key:'final_paint',label:'Final Paint Inspection',     icon:'🎨', desc:'Surface & coating inspection',   roles:['quality','manager','admin']},
+  {key:'n2_purge',   label:'N₂ Purging & Transport',     icon:'⚗️', desc:'N2 purging + arrangement check', roles:['quality','manager','admin']},
+  {key:'irn',        label:'IRN & Equipment Dispatch',   icon:'🚚', desc:'Inspection Release Note issued',  roles:['manager','admin']}
+];
+
+// HX sections for PWHT and Hydro
+const HX_PWHT_SECTIONS  = ['TTJ Only','Main Shell','Channel Shell / Cone'];
+const HX_HYDRO_SECTIONS = ['Shell Side Hydro','Channel Side Hydro'];
+const PV_HYDRO_SECTIONS = ['Pressure Vessel Hydro Test'];
+
+// ── Check if all seams in a component are fully accepted ──
+function isComponentReleased(pid, tag, comp){
+  const seams = DB.seams.filter(s => s.pid===pid && (s.tag||s.sec||'')===tag && (s.comp||s.sec||'')===comp);
+  if(!seams.length) return false;
+  return seams.every(s => s.stages.length > 0 && s.stages.every(st => st.status==='accepted'));
+}
+
+// ── Check if all components for a tag are released ──
+function isTagReleased(pid, tag){
+  const comps = getComponents(pid, tag);
+  if(!comps.length) return false;
+  return comps.every(c => isComponentReleased(pid, tag, c));
+}
+
+// ── Get release record ──
+function getReleaseKey(pid, tag, releaseType, section){
+  return `${pid}::${tag}::${releaseType}${section?'::'+section:''}`;
+}
+function getRelease(pid, tag, releaseType, section){
+  if(!DB.releases) DB.releases={};
+  return DB.releases[getReleaseKey(pid, tag, releaseType, section)] || null;
+}
+function setRelease(pid, tag, releaseType, section, data){
+  if(!DB.releases) DB.releases={};
+  DB.releases[getReleaseKey(pid, tag, releaseType, section)] = data;
+  save();
+}
+
+// ── Check if a release step is unlocked ──
+function isReleaseUnlocked(pid, tag, stepKey, section, eqType){
+  if(stepKey === 'pwht' || stepKey === 'hydro'){
+    // Gate: all tag seams accepted
+    return isTagReleased(pid, tag);
+  }
+  // For subsequent steps, require previous step completed
+  const chain = RELEASE_CHAIN.map(r=>r.key);
+  const idx = chain.indexOf(stepKey);
+  if(idx <= 0) return isTagReleased(pid, tag);
+  const prevKey = chain[idx-1];
+  if(prevKey === 'hydro'){
+    // hydro may have sections — require at least one hydro section completed
+    const sections = (eqType||'').toLowerCase().includes('heat') ? HX_HYDRO_SECTIONS : PV_HYDRO_SECTIONS;
+    return sections.some(sec => getRelease(pid, tag, 'hydro', sec)?.status === 'COMPLETED');
+  }
+  if(prevKey === 'pwht'){
+    // PWHT is optional — if skipped by Manager, allow proceeding
+    const pwhtRec = getRelease(pid, tag, 'pwht', section);
+    if(pwhtRec?.status === 'SKIPPED' || pwhtRec?.status === 'COMPLETED') return true;
+    // Also allow if all hydro sections done (PWHT not applicable)
+    return false;
+  }
+  return getRelease(pid, tag, prevKey, section)?.status === 'COMPLETED';
+}
+
+function renderReleasePage(){
+  const c=$('release-content'); if(!c)return;
+  if(!DB.projects.length){c.innerHTML='<div style="text-align:center;padding:48px;color:var(--text3);">No projects yet.</div>';return;}
+
+  // Project selector
+  const selPid = document.getElementById('rel-proj-sel')?.value || DB.projects[0]?.id || '';
+  const selTag = document.getElementById('rel-tag-sel')?.value || '';
+
+  let html=`<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:18px;background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
+    <div style="flex:1;min-width:160px;">
+      <label class="lbl">① Project</label>
+      <select id="rel-proj-sel" onchange="renderReleasePage()" style="width:100%;padding:8px 10px;font-size:13px;font-weight:600;border:1.5px solid var(--blue2);color:var(--blue2);border-radius:7px;background:var(--surf2);">
+        ${DB.projects.map(p=>`<option value="${p.id}" ${p.id===selPid?'selected':''}>#${p.number} — ${p.equipment}</option>`).join('')}
+      </select>
+    </div>
+    <div style="flex:1;min-width:140px;">
+      <label class="lbl">② Tag Number</label>
+      <select id="rel-tag-sel" onchange="renderReleasePage()" style="width:100%;padding:8px 10px;font-size:13px;border:1.5px solid var(--border2);border-radius:7px;background:var(--surf2);">
+        <option value="">— All Tags —</option>
+        ${getTags(selPid).map(t=>`<option value="${t}" ${t===selTag?'selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+  </div>`;
+
+  const proj = getProj(selPid); if(!proj){c.innerHTML=html;return;}
+  const eqType = proj.eqType||'';
+  const isHX = eqType.toLowerCase().includes('heat');
+  const tags = selTag ? [selTag] : getTags(selPid);
+
+  if(!tags.length){c.innerHTML=html+'<div style="text-align:center;padding:36px;color:var(--text3);">No tags in this project yet.</div>';return;}
+
+  tags.forEach(tag=>{
+    const tagDone = isTagReleased(selPid, tag);
+    const comps = getComponents(selPid, tag);
+    const compStats = comps.map(comp=>({comp, done: isComponentReleased(selPid, tag, comp), seams: DB.seams.filter(s=>s.pid===selPid&&(s.tag||s.sec||'')===tag&&(s.comp||s.sec||'')===comp)}));
+    const doneCount = compStats.filter(x=>x.done).length;
+
+    html += `<div style="background:var(--surf);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden;box-shadow:var(--shadow-sm);">
+      <!-- Tag header -->
+      <div style="background:${tagDone?'#f0fdf4':'var(--surf2)'};border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:800;color:var(--blue2);">${tag}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">${eqType||'Equipment'} · ${doneCount}/${comps.length} components cleared</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${tagDone
+            ? '<span style="padding:5px 14px;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:20px;font-size:12px;font-weight:700;">✅ All Seams Accepted</span>'
+            : `<span style="padding:5px 14px;background:var(--amber-lt);color:var(--amber);border:1px solid #fcd34d;border-radius:20px;font-size:12px;font-weight:700;">⏳ ${comps.length-doneCount} component(s) pending</span>`}
+        </div>
+      </div>
+
+      <!-- Component progress grid -->
+      <div style="padding:14px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;border-bottom:1px solid var(--border);">
+        ${compStats.map(({comp,done,seams})=>{
+          const acc=seams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
+          const tot=seams.reduce((a,s)=>a+s.stages.length,0);
+          const pct=tot?Math.round(acc/tot*100):0;
+          return`<div style="padding:10px 14px;background:${done?'#f0fdf4':'var(--surf2)'};border:1.5px solid ${done?'#86efac':'var(--border)'};border-radius:8px;">
+            <div style="font-size:12px;font-weight:700;color:${done?'#166534':'var(--text)'};">
+              ${done?'✅':'⬜'} ${comp}
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:3px;">${seams.length} seam${seams.length!==1?'s':''} · ${acc}/${tot} stages</div>
+            <div class="pbar" style="margin-top:5px;"><div class="pfill" style="width:${pct}%;background:${done?'var(--green)':'var(--blue2)'};"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Release Chain -->
+      <div style="padding:14px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Release Sequence</div>
+        ${_renderReleaseChain(selPid, tag, eqType, isHX, tagDone)}
+      </div>
+    </div>`;
+  });
+
+  c.innerHTML=html;
+  // Restore selections
+  if(selPid){const el=document.getElementById('rel-proj-sel');if(el)el.value=selPid;}
+  if(selTag){const el=document.getElementById('rel-tag-sel');if(el)el.value=selTag;}
+  _updateReleaseBadge();
+}
+
+function _renderReleaseChain(pid, tag, eqType, isHX, tagDone){
+  let html='<div style="display:flex;flex-direction:column;gap:10px;">';
+  const canAct = CU&&(CU.role==='manager'||CU.role==='admin'||CU.role==='quality');
+
+  RELEASE_CHAIN.forEach((step,idx)=>{
+    const isFirst = idx===0;
+    // PWHT and Hydro may have sub-sections for HX
+    const sections = step.key==='pwht' && isHX ? HX_PWHT_SECTIONS
+                   : step.key==='hydro' && isHX ? HX_HYDRO_SECTIONS
+                   : step.key==='hydro' ? PV_HYDRO_SECTIONS
+                   : [null]; // no sub-sections
+
+    sections.forEach(section=>{
+      const rec = getRelease(pid, tag, step.key, section);
+      const unlocked = tagDone && isReleaseUnlocked(pid, tag, step.key, section, eqType);
+      const status = rec?.status || 'PENDING';
+      const label = section ? `${step.label} — ${section}` : step.label;
+
+      const statusCfg = {
+        PENDING:   {bg:'var(--surf2)',border:'var(--border)',c:'var(--text4)',badge:'⬜ Pending',badgeBg:'#f1f5f9',badgeC:'#64748b'},
+        COMPLETED: {bg:'#f0fdf4',border:'#86efac',c:'#166534',badge:'✅ Completed',badgeBg:'#dcfce7',badgeC:'#166534'},
+        SKIPPED:   {bg:'#fff7ed',border:'#fed7aa',c:'#c2410c',badge:'⏭ Skipped',badgeBg:'#ffedd5',badgeC:'#c2410c'},
+        IN_PROGRESS:{bg:'#fffbeb',border:'#fcd34d',c:'#92400e',badge:'⏳ In Progress',badgeBg:'#fef3c7',badgeC:'#92400e'},
+      }[status]||{bg:'var(--surf2)',border:'var(--border)',c:'var(--text4)',badge:'⬜ Pending',badgeBg:'#f1f5f9',badgeC:'#64748b'};
+
+      html+=`<div style="background:${statusCfg.bg};border:1.5px solid ${statusCfg.border};border-radius:9px;padding:12px 16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:20px;">${step.icon}</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:${statusCfg.c};">${label}</div>
+              <div style="font-size:11px;color:var(--text3);">${step.desc}</div>
+              ${rec?.by?`<div style="font-size:10px;color:var(--text4);margin-top:2px;">By: ${rec.by} · ${rec.at||''}</div>`:''}
+              ${rec?.remarks?`<div style="font-size:11px;color:var(--text3);margin-top:3px;font-style:italic;">"${rec.remarks}"</div>`:''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="padding:4px 12px;background:${statusCfg.badgeBg};color:${statusCfg.badgeC};border-radius:20px;font-size:11px;font-weight:700;">${statusCfg.badge}</span>
+            ${unlocked && canAct && status!=='COMPLETED' ? `
+              <button onclick="doRelease('${pid}','${tag}','${step.key}',${section?`'${section}'`:'null'},'COMPLETED')"
+                style="padding:6px 14px;background:var(--green);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">✅ Mark Complete</button>
+              ${step.key==='pwht'?`<button onclick="doRelease('${pid}','${tag}','${step.key}',${section?`'${section}'`:'null'},'SKIPPED')"
+                style="padding:6px 12px;background:var(--amber);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;">⏭ Skip (N/A)</button>`:''}
+              <button onclick="doReleaseWithRemark('${pid}','${tag}','${step.key}',${section?`'${section}'`:'null'},'IN_PROGRESS')"
+                style="padding:6px 12px;background:#6366f1;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;">⏳ In Progress</button>
+            `:''}
+            ${unlocked && canAct && status==='COMPLETED' ? `
+              <button onclick="doRelease('${pid}','${tag}','${step.key}',${section?`'${section}'`:'null'},'PENDING')"
+                style="padding:5px 10px;background:none;border:1.5px solid var(--border2);border-radius:6px;font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;">↩ Reset</button>
+            `:''}
+            ${!unlocked&&!tagDone ? `<span style="font-size:10px;color:var(--text4);font-style:italic;">🔒 Complete all seams first</span>` : ''}
+            ${!unlocked&&tagDone&&idx>0 ? `<span style="font-size:10px;color:var(--text4);font-style:italic;">🔒 Complete previous step first</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+
+  html+='</div>';
+  return html;
+}
+
+function doRelease(pid, tag, stepKey, section, status){
+  setRelease(pid, tag, stepKey, section==='null'?null:section, {
+    status, by:CU.name, at:now(), remarks:''
+  });
+  log(`🔓 RELEASE — ${stepKey}${section&&section!=='null'?' ('+section+')':''} | Tag:${tag} | Status:${status} by ${CU.name}`);
+  renderReleasePage(); toast(`${status==='COMPLETED'?'✅ Completed':'Updated'}: ${stepKey}`, 'ok');
+}
+
+function doReleaseWithRemark(pid, tag, stepKey, section, status){
+  const rem = prompt(`Remarks for ${stepKey}${section&&section!=='null'?' ('+section+')':''}:`, '') ;
+  if(rem===null)return;
+  setRelease(pid, tag, stepKey, section==='null'?null:section, {
+    status, by:CU.name, at:now(), remarks:rem
+  });
+  log(`🔓 RELEASE — ${stepKey} | Tag:${tag} | Status:${status} | Rem:${rem} by ${CU.name}`);
+  renderReleasePage(); toast(`Updated: ${stepKey}`, 'ok');
+}
+
+function _updateReleaseBadge(){
+  const badge=$('nb-release'); if(!badge)return;
+  // Count tags where all seams accepted but release chain not yet completed
+  let pending=0;
+  DB.projects.forEach(proj=>{
+    getTags(proj.id).forEach(tag=>{
+      if(isTagReleased(proj.id,tag)){
+        const lastStep=RELEASE_CHAIN[RELEASE_CHAIN.length-1];
+        const rec=getRelease(proj.id,tag,lastStep.key,null);
+        if(!rec||rec.status!=='COMPLETED') pending++;
+      }
+    });
+  });
+  badge.style.display=pending>0?'inline':'none';
+  badge.textContent=pending||'';
 }
 
 function changePassword(){
@@ -6851,17 +7247,16 @@ function mirPrintReport(id){
       <div class="label">Production / Offered By</div>
       <div class="value">${mir.offeredBy||'—'}</div>
       <div class="date">${fD(mir.offeredDate)}</div>
-      <div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:16px;"></div>
+      ${(()=>{const u=DB.users.find(u=>u.name===mir.offeredBy&&u.signature);return u?`<img src="${u.signature}" style="max-height:30px;max-width:100px;object-fit:contain;display:block;margin:6px 0 2px;">`:'<div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:10px;"></div>';})()}
       <div style="font-size:8px;color:#8FA5C0;margin-top:4px;">Signature</div>
     </div>
     <div class="sig-box">
       <div class="label">QC Inspector</div>
       <div class="value">${mir.qcBy||'Pending QC'}</div>
       <div class="date">${fD(mir.qcDate)}</div>
-      <div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:16px;"></div>
+      ${(()=>{const u=DB.users.find(u=>u.name===mir.qcBy&&u.signature);return u?`<img src="${u.signature}" style="max-height:30px;max-width:100px;object-fit:contain;display:block;margin:6px 0 2px;">`:'<div style="height:28px;border-bottom:1px solid #DCE8F8;margin-top:10px;"></div>';})()}
       <div style="font-size:8px;color:#8FA5C0;margin-top:4px;">Signature</div>
     </div>
-
   </div>
 
   <div class="footer">
