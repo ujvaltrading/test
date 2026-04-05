@@ -76,6 +76,75 @@ html{scroll-behavior:smooth;}
 .topbar{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));}
 .main{padding-bottom:max(24px,env(safe-area-inset-bottom));}
 
+/* ── MOBILE RESPONSIVE — v43 ── */
+@media(max-width:720px){
+  /* Main layout */
+  .main{padding:14px 10px 80px;}
+  .app-body{flex-direction:column;}
+  .sidebar{display:none;width:100%;height:auto;position:fixed;top:58px;left:0;right:0;bottom:0;z-index:400;padding:10px 6px 80px;overflow-y:auto;}
+  .sidebar.mob-open{display:block;}
+  .sov{display:none;}
+  .sov.on{display:block;}
+  .ham{display:flex!important;}
+  /* Page header */
+  .pgt{font-size:17px;}
+  /* Stats grid — 2 columns on mobile */
+  .sgrid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .sbox{padding:12px 10px;}
+  .snum{font-size:22px;}
+  .slbl{font-size:10px;}
+  /* Cards */
+  .card{padding:14px 10px;}
+  /* grid2 → single column */
+  .grid2{grid-template-columns:1fr!important;}
+  .span2{grid-column:1/-1;}
+  /* Seam grid tiles */
+  .seam-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px;}
+  .seam-tile{padding:10px;}
+  /* Stage rows */
+  .stage-row{flex-direction:column;gap:8px;padding:10px 12px;}
+  .sr-num{width:auto;}
+  /* SDH inner — stack on mobile */
+  .sdh-inner{flex-direction:column;gap:8px;}
+  .sdh-inner > div:last-child{align-self:flex-start;}
+  /* Section tabs — scrollable */
+  .stabs{overflow-x:auto;flex-wrap:nowrap;}
+  .stab{white-space:nowrap;padding:8px 12px;}
+  /* Dashboard project bar */
+  .projbar{flex-direction:column;gap:6px;padding:12px 14px;}
+  /* Modals — full screen */
+  .modal{max-width:100%!important;max-height:100vh;border-radius:0;}
+  .modal-page-box{max-width:100%!important;max-height:100vh;border-radius:0;}
+  .mbody{max-height:60vh;}
+  .mp-body{max-height:65vh;}
+  /* Print controls — stack */
+  .print-controls > div{min-width:unset!important;width:100%;}
+  /* Topbar */
+  .tb-logo span{display:none;}
+  .tb-user{display:none;}
+  /* Backup export row */
+  #bk-export-row{grid-template-columns:1fr!important;}
+  /* Compare charts — single column */
+  #compare-content > div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
+  /* Tables — horizontal scroll */
+  .tbl-wrap{overflow-x:auto;}
+  /* Seam detail card header */
+  .sdh{flex-direction:column;}
+  /* Stage action buttons */
+  .sr-actions{flex-wrap:wrap;}
+  /* Global stats bar */
+  #dash-global-stats{grid-template-columns:repeat(2,1fr)!important;}
+  /* MIR stats */
+  .mir-stat-row{flex-wrap:wrap;}
+  /* Modal page body scrollable */
+  .modal-page-box{overflow-y:auto;}
+  /* rchips full width */
+  .rchips{flex-direction:column;}
+  .rchip{text-align:left;}
+  /* ITP catalog grid — single col */
+  #ns-catalog-list,#ct-stage-list,#ct-stages{grid-template-columns:1fr!important;}
+}
+
 /* ── SCREENS ── */
 .scr{display:none;}
 .scr.on{display:block;}
@@ -326,36 +395,15 @@ tr:hover td{background:var(--surf2);}
   .sidebar{position:fixed;top:56px;left:0;height:calc(100vh - 56px);z-index:300;transform:translateX(-100%);width:260px;box-shadow:var(--shadow-lg);}
   .sidebar.open{transform:translateX(0);}
   .sov.on{display:block;}
-  .main{padding:8px;}
+  .main{padding:10px;}
 
   /* ── Grids collapse to single column ── */
   .grid2{grid-template-columns:1fr;}
   .grid2 .span2{grid-column:1;}
-  .seam-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));}
+  .seam-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
   .tag-grid{grid-template-columns:1fr 1fr;}
   .comp-grid{grid-template-columns:1fr 1fr;}
   .proj-cards{grid-template-columns:1fr;}
-
-  /* ── Stats/sbox auto-fit on mobile ── */
-  .sgrid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))!important;gap:8px!important;}
-  .sbox{padding:10px 8px!important;}
-  .snum{font-size:20px!important;}
-  .slbl{font-size:9px!important;}
-
-  /* ── tagcat-grid auto fit ── */
-  .tagcat-grid{grid-template-columns:1fr 1fr!important;gap:8px!important;}
-  .tagcat-card{padding:12px!important;}
-
-  /* ── Compare page charts stack ── */
-  #compare-content > div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;}
-
-  /* ── Print controls stack ── */
-  .print-controls{flex-direction:column!important;gap:8px!important;}
-  .print-controls > div{min-width:unset!important;width:100%!important;}
-
-  /* ── Modal body side padding reduce ── */
-  .mp-body{padding:14px 12px!important;}
-  .mp-section-title{font-size:11px!important;}
 
   /* ── Tables — hide non-essential columns ── */
   .tb-user{display:none;}
@@ -930,6 +978,7 @@ tr:hover td{background:var(--surf2);}
       <div id="admin-nav" style="display:none">
         <div class="sg-lbl">Admin Tools</div>
         <div class="nitem" id="ni-projects" onclick="goPage('projects')"><span class="ni">📁</span>Projects & Seams</div>
+        <div class="nitem" id="ni-seam-submissions" onclick="goPage('seam-submissions')"><span class="ni">🔗</span>My Seam Submissions<span class="nbadge" id="nb-seam-submissions" style="display:none">0</span></div>
         <div class="nitem" id="ni-stages" onclick="goPage('stages')"><span class="ni">⚙️</span>Stage Templates</div>
         <div class="nitem" id="ni-users" onclick="goPage('users')"><span class="ni">👥</span>Users</div>
         <div class="nitem" id="ni-backup" onclick="goPage('backup')"><span class="ni">💾</span>Backup & Restore</div>
@@ -1102,6 +1151,32 @@ tr:hover td{background:var(--surf2);}
         <div id="proj-pending-bar" style="display:none;"></div>
 
       </div>
+      <!-- ── ADMIN: MY SEAM SUBMISSIONS ── -->
+      <div class="pg" id="pg-seam-submissions">
+        <div class="pgh" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div class="pgt">🔗 My Seam Submissions</div>
+            <div class="pgs">All seams added by Admin — Approved, Pending Manager approval, and Rejected</div>
+          </div>
+          <button class="btn" style="padding:9px 18px;background:var(--purple);color:#fff;" onclick="openAddSeamModal()">🔗 Add New Seam</button>
+        </div>
+        <!-- Stats strip -->
+        <div id="ss-stats-strip" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px;"></div>
+        <!-- Filter bar -->
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:10px 14px;background:var(--surf);border:1px solid var(--border);border-radius:8px;">
+          <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;flex-shrink:0;">Filter:</span>
+          <button class="fchip on" data-ssf="all" onclick="setSsFilter('all',this)">All</button>
+          <button class="fchip" data-ssf="pending" onclick="setSsFilter('pending',this)">⏳ Pending Approval</button>
+          <button class="fchip" data-ssf="approved" onclick="setSsFilter('approved',this)">✅ Approved</button>
+          <button class="fchip" data-ssf="rejected" onclick="setSsFilter('rejected',this)">❌ Rejected</button>
+          <div style="margin-left:auto;">
+            <input id="ss-search" placeholder="🔍 Search seam / tag / component…" oninput="renderSeamSubmissions()"
+              style="padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;width:220px;">
+          </div>
+        </div>
+        <div id="ss-list"></div>
+      </div>
+
       <div class="pg" id="pg-stages">
         <div class="pgh"><div class="pgt">Stage Templates</div><div class="pgs">Define, edit and manage inspection stage templates for seams</div></div>
 
@@ -1187,8 +1262,8 @@ tr:hover td{background:var(--surf2);}
                 <option value="complete">Completed Only</option>
               </select>
             </div>
-            <div style="flex:1;min-width:160px;">
-              <label class="lbl">🔍 Stage Filter <span style="font-weight:400;color:var(--text3);font-size:10px;">(filter by stage name)</span></label>
+            <div style="flex:1;min-width:180px;">
+              <label class="lbl">Stage Filter (for focused print)</label>
               <select id="print-stage-filter" onchange="buildPrintPreview()" style="width:100%;padding:8px 10px;font-size:13px;background:var(--surf2);border:1.5px solid var(--border2);color:var(--text);border-radius:7px;">
                 <option value="">All Stages</option>
               </select>
@@ -1207,7 +1282,7 @@ tr:hover td{background:var(--surf2);}
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
               <button class="btn btn-blue" style="width:auto;padding:10px 22px;" onclick="doPrint()">🖨️ PRINT / PDF</button>
-              <button class="btn btn-green" style="width:auto;padding:10px 18px;" onclick="exportTravellerExcel()">📊 Export Excel</button>
+              <button class="btn" style="width:auto;padding:10px 18px;background:#16a34a;color:#fff;" onclick="exportTravellerExcel()">📊 Export Excel</button>
             </div>
           </div>
         </div>
@@ -1620,18 +1695,6 @@ tr:hover td{background:var(--surf2);}
 
       <!-- Step 1: Project / Tag / Component -->
       <div class="mp-section-title">① Project › Tag › Component</div>
-      <!-- Auto-fill from catalog -->
-      <div style="background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:9px;padding:11px 14px;margin-bottom:14px;">
-        <div style="font-size:11px;font-weight:700;color:var(--blue2);margin-bottom:6px;">📦 Auto-fill from Master Item Catalog</div>
-        <div style="position:relative;">
-          <input id="ns-mir-search" placeholder="🔍 Type Part No., Tag No. or Description to auto-fill…" autocomplete="off"
-            oninput="nsMirCatalogSearch(this.value)" onfocus="nsMirCatalogSearch(this.value)" onkeydown="nsMirCatalogKeydown(event)"
-            style="width:100%;padding:9px 36px 9px 12px;border:1.5px solid var(--blue2);border-radius:7px;font-size:13px;background:var(--surf);outline:none;">
-          <button type="button" onclick="nsMirCatalogClear()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text4);font-size:18px;cursor:pointer;padding:0;line-height:1;">×</button>
-          <div id="ns-mir-dropdown" style="display:none;position:absolute;top:calc(100%+3px);left:0;right:0;background:var(--surf);border:1.5px solid var(--blue2);border-radius:9px;box-shadow:var(--shadow-lg);z-index:500;max-height:260px;overflow-y:auto;"></div>
-        </div>
-        <div id="ns-mir-filled-info" style="display:none;margin-top:6px;padding:7px 12px;background:var(--green-lt);border:1px solid #6EE7B7;border-radius:6px;font-size:11px;color:#065F46;font-weight:600;"></div>
-      </div>
 
       <div class="grid2" style="gap:10px;margin-bottom:10px;">
         <div>
@@ -1676,29 +1739,20 @@ tr:hover td{background:var(--surf2);}
 
       <!-- Step 2: Seam Details -->
       <div class="mp-section-title" style="margin-top:16px;">② Seam Details</div>
-      <!-- Long Seam special flag -->
-      <div id="ns-longseam-banner" style="display:none;background:#eff6ff;border:1.5px solid #93c5fd;border-radius:8px;padding:9px 13px;margin-bottom:10px;font-size:12px;color:#1d4ed8;line-height:1.6;">
-        <strong>🔵 Long Seam Mode:</strong> Only <strong>1 Part Number</strong> is required. Inspection Stages will be unlocked as soon as that single part's MIR is cleared.
+      <!-- Long Seam toggle — prominent banner -->
+      <div id="ns-longseam-banner" style="margin-bottom:12px;padding:11px 14px;border-radius:9px;border:2px solid var(--border2);background:var(--surf2);display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="nsToggleLongSeam()">
+        <div id="ns-longseam-tick" style="width:22px;height:22px;border-radius:5px;border:2px solid var(--border2);background:var(--surf);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:14px;"></div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);">Long Seam (Longitudinal Seam)</div>
+          <div id="ns-longseam-hint" style="font-size:11px;color:var(--text3);margin-top:2px;">Tick this if the seam is a Long Seam — only <strong>1 Part Number</strong> required (single plate rolled and welded). Inspection Stages will unlock after that 1 part's MIR is Cleared.</div>
+        </div>
       </div>
-      <div id="ns-normal-banner" style="display:none;background:#fefce8;border:1.5px solid #fbbf24;border-radius:8px;padding:9px 13px;margin-bottom:10px;font-size:12px;color:#92400e;line-height:1.6;">
-        <strong>⚠️ Regular Joint Mode:</strong> Minimum <strong>2 Part Numbers</strong> required. Stages unlock only after ALL selected parts' MIR are cleared.
-      </div>
+      <input type="hidden" id="ns-is-longseam" value="0">
       <div class="grid2" style="gap:10px;margin-bottom:10px;">
         <div><label class="lbl">Seam Number <span style="color:var(--red)">*</span></label><input id="ns-num" placeholder="e.g. CS-101"></div>
         <div><label class="lbl">Description <span style="color:var(--red)">*</span></label><input id="ns-desc" placeholder="e.g. Shell Circ. Seam No.1"></div>
-        <div>
-          <label class="lbl">Joint Type</label>
-          <select id="ns-type" onchange="nsJointTypeChange()">
-            <option>Groove</option><option>Fillet</option><option>Shield Run</option>
-            <option value="Long Seam">Long Seam</option>
-            <option>Weld Overlay</option><option>TTJ</option>
-          </select>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;">
-          <input type="checkbox" id="ns-is-long-seam" onchange="nsLongSeamToggle()" style="width:18px;height:18px;accent-color:var(--blue2);cursor:pointer;flex-shrink:0;">
-          <label for="ns-is-long-seam" style="font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;line-height:1.4;">
-            🔵 Long Seam <span style="font-weight:400;color:var(--text3);font-size:11px;">(Single plate rolled — only 1 part needed)</span>
-          </label>
+        <div><label class="lbl">Joint Type</label>
+          <select id="ns-type" onchange="nsTypeChanged(this.value)"><option>Groove</option><option>Fillet</option><option>Shield Run</option><option>Weld Overlay</option><option>TTJ</option><option>Overlap Joint</option><option>Socket Weld</option></select>
         </div>
         <div>
           <label class="lbl">Material <span id="ns-mat-lock" style="display:none;font-size:10px;color:var(--green);font-weight:400;">🔒 From MIR</span></label>
@@ -1735,7 +1789,7 @@ tr:hover td{background:var(--surf2);}
       </div>
 
       <!-- Step 4: Part Numbers -->
-      <div class="mp-section-title" style="margin-top:16px;">④ Part Numbers (MIR Clearance) — <span id="ns-part-req-label" style="font-weight:400;color:var(--text3);font-size:11px;">Min. 2 parts required for regular joints</span></div>
+      <div class="mp-section-title" style="margin-top:16px;">④ Part Numbers (MIR Clearance) — <span id="ns-parts-req-lbl" style="color:var(--amber);font-size:11px;font-weight:700;">Min. 2 parts required (non-Long Seam)</span></div>
       <div style="position:relative;border:1.5px solid var(--border);border-radius:9px;overflow:hidden;margin-bottom:10px;">
         <div style="display:flex;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surf2);">
           <input id="ns-part-inp" placeholder="Search part no., description or material…" autocomplete="off"
@@ -2470,6 +2524,10 @@ const PARALLEL_GROUPS=Object.keys(_pgCounts).filter(pg=>_pgCounts[pg]>1);
 const isParallelPG=pg=>pg&&PARALLEL_GROUPS.includes(pg);
 // ── Central unlock check — single source of truth for all stage locking ──
 function stageUnlocked(seam,i){
+  // ── MIR Gate: stages are locked for Production until MIR is cleared ──
+  // (Long Seam: 1 part cleared; Others: all parts cleared)
+  if(!seamMirCleared(seam)) return false;
+
   const isDone=s=>s.status==='accepted'||s.status==='na'; // na counts as cleared
   if(i===0) return true;
   const stages=seam.stages;
@@ -2578,7 +2636,59 @@ function _migrateDB(p){
   if(!p.tagCats) p.tagCats={};
   if(!p.tagNums) p.tagNums={};
   if(p.users) p.users.forEach(u=>{ if(!u.signature) u.signature=''; });
+  // ── Inject Demo Project & Parts if not already present ──
+  _injectDemoData(p);
   return p;
+}
+
+function _injectDemoData(p){
+  const DEMO_PROJ_NUM='DEMO-001';
+  const DEMO_PROJ_ID='proj-demo-001';
+  // Only inject once — check by id
+  if((p.projects||[]).find(pr=>pr.id===DEMO_PROJ_ID)) return;
+
+  // Add demo project
+  if(!p.projects) p.projects=[];
+  p.projects.unshift({
+    id:DEMO_PROJ_ID, number:DEMO_PROJ_NUM,
+    equipment:'Demo Pressure Vessel',
+    eqType:'Pressure Vessel',
+    client:'DEMO CLIENT',
+    process:'Demo Process',
+    code:'ASME SEC. VIII DIV. 1',
+    sections:['Shell Course Assembly','Head Assembly','Nozzle Welding'],
+    approved:true, createdAt:'2025-01-01'
+  });
+
+  // Register tag category and tag
+  if(!p.tagCats) p.tagCats={};
+  if(!p.tagNums) p.tagNums={};
+  p.tagCats[DEMO_PROJ_ID]=['PRESSURE VESSEL'];
+  p.tagNums[DEMO_PROJ_ID+'::PRESSURE VESSEL']=['342-V-001'];
+
+  // Add 2 demo MIR master items
+  if(!p.mirItems) p.mirItems=[];
+  const demoItems=[
+    {
+      id:'mi-demo-101', projectCode:DEMO_PROJ_NUM,
+      tagCategory:'PRESSURE VESSEL', tagNo:'342-V-001',
+      partNo:'101', description:'Shell Plate — Course 1',
+      itemType:'Plate', material:'SA-516 GR.70',
+      thickness:'2500 × 1500 × 18', maxQty:1,
+      s1:'2500',s2:'1500',s3:'18'
+    },
+    {
+      id:'mi-demo-102', projectCode:DEMO_PROJ_NUM,
+      tagCategory:'PRESSURE VESSEL', tagNo:'342-V-001',
+      partNo:'102', description:'Shell Plate — Course 2',
+      itemType:'Plate', material:'SA-516 GR.70',
+      thickness:'2500 × 1500 × 18', maxQty:1,
+      s1:'2500',s2:'1500',s3:'18'
+    }
+  ];
+  demoItems.forEach(it=>{
+    if(!p.mirItems.find(m=>m.id===it.id)) p.mirItems.push(it);
+  });
 }
 const SUPA_URL = 'https://dqsugjgvdvwablkdeohg.supabase.co';
 const SUPA_KEY = 'sb_publishable_3VaNmFiGpnCk6jwJjtF5zg_B1cKkiXd';
@@ -3082,6 +3192,7 @@ function goPage(pg){
   else if(pg==='inspection')  {renderInspection();updateBadge();}
   else if(pg==='log')          renderLog();
   else if(pg==='projects')     renderProjectsPage();
+  else if(pg==='seam-submissions') renderSeamSubmissions();
   else if(pg==='stages')       renderStagesPage();
   else if(pg==='users')        renderUsers();
   else if(pg==='summary')      renderSummaryPage();
@@ -3249,8 +3360,19 @@ function renderDashboard(){
   visibleProjs.forEach(p=>{
     const st=overallStats(p.id);
     const tags=getTags(p.id);
-    const circ=2*Math.PI*28,off=circ-(st.p/100*circ);
-    const rc=st.p===100?'var(--green)':st.o>0?'var(--amber)':st.r>0?'var(--red)':'var(--blue2)';
+    const projSeams=DB.seams.filter(s=>s.pid===p.id);
+    // Seam-level breakdown
+    let sDone=0,sActive=0,sNcr=0,sPend=0;
+    projSeams.forEach(s=>{
+      const ss=stageStats(s);
+      if(ss.pct===100) sDone++;
+      else if(hasNCR(s)) sNcr++;
+      else if(s.stages.some(st=>st.status==='offered'||st.status==='returned')) sActive++;
+      else sPend++;
+    });
+    const seamPct=projSeams.length?Math.round(sDone/projSeams.length*100):0;
+    const circ=2*Math.PI*28,off=circ-(seamPct/100*circ);
+    const rc=seamPct===100?'var(--green)':sActive>0?'var(--amber)':sNcr>0?'var(--red)':'var(--blue2)';
     html+=`<div class="proj-card" onclick="dashGoL1('${p.id}')">
       <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
         <div style="position:relative;flex-shrink:0;width:60px;height:60px;">
@@ -3259,7 +3381,7 @@ function renderDashboard(){
             <circle cx="30" cy="30" r="26" fill="none" stroke="${rc}" stroke-width="6"
               stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/>
           </svg>
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text);">${st.p}%</div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--text);">${seamPct}%</div>
         </div>
         <div style="flex:1;min-width:0;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--blue2);">#${p.number}</div>
@@ -3270,15 +3392,27 @@ function renderDashboard(){
           </div>
         </div>
       </div>
+      <!-- Seam progress bar -->
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;">
+          <span>🔗 ${projSeams.length} Seams — ${seamPct}% done</span>
+          <span style="color:var(--text3);">${st.p}% stages</span>
+        </div>
+        <div style="height:8px;border-radius:4px;background:var(--surf3);overflow:hidden;display:flex;">
+          <div style="background:#059669;width:${projSeams.length?sDone/projSeams.length*100:0}%;"></div>
+          <div style="background:#D97706;width:${projSeams.length?sActive/projSeams.length*100:0}%;"></div>
+          <div style="background:#DC2626;width:${projSeams.length?sNcr/projSeams.length*100:0}%;"></div>
+        </div>
+      </div>
       <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-weight:500;">${tags.length} tag${tags.length!==1?'s':''}: ${tags.slice(0,3).join(', ')}${tags.length>3?' …':''}</div>
       <div style="display:flex;border-top:1px solid var(--border);padding-top:10px;gap:0;">
-        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--text)">${st.seams}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">Seams</div></div>
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--blue2)">${projSeams.length}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">Seams</div></div>
         <div style="width:1px;background:var(--border)"></div>
-        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--green)">${st.a}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">Accepted</div></div>
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--green)">${sDone}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">✓ Done</div></div>
         <div style="width:1px;background:var(--border)"></div>
-        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--amber)">${st.o}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">Awaiting QC</div></div>
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--amber)">${sActive}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">⚡ Active</div></div>
         <div style="width:1px;background:var(--border)"></div>
-        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--red)">${st.r}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">NCR</div></div>
+        <div style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:700;color:var(--red)">${sNcr}</div><div style="font-size:9px;color:var(--text4);font-weight:600;text-transform:uppercase;">✗ NCR</div></div>
       </div>
     </div>`;
   });
@@ -3297,14 +3431,27 @@ function dashGoL1(pid){
   const cats=getTagCats(dashPid);
   const st=overallStats(dashPid);
   const pending=Math.max(0,st.t-(st.a+st.o+st.r+(st.ret||0)));
+  // Seam-level stats for this project
+  const pSeams=DB.seams.filter(s=>s.pid===dashPid);
+  let psDone=0,psActive=0,psNcr=0,psPend=0;
+  pSeams.forEach(s=>{
+    const ss=stageStats(s);
+    if(ss.pct===100) psDone++;
+    else if(hasNCR(s)) psNcr++;
+    else if(s.stages.some(st=>st.status==='offered'||st.status==='returned')) psActive++;
+    else psPend++;
+  });
   let html=`<div class="sgrid" style="margin-bottom:20px;">
+    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${pSeams.length}</div><div class="slbl">Total Seams</div></div>
+    <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${psDone}</div><div class="slbl">Seams Done</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${pSeams.length?Math.round(psDone/pSeams.length*100):0}%</div></div>
+    <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${psActive}</div><div class="slbl">Seams Active</div></div>
+    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${psNcr}</div><div class="slbl">Seam NCR</div></div>
+    <div class="sbox sb-grey"><div class="snum" style="color:var(--text3)">${psPend}</div><div class="slbl">Seams Pending</div></div>
     <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${cats.length}</div><div class="slbl">Tag Categories</div></div>
     <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${tags.length}</div><div class="slbl">Total Tags</div></div>
-    <div class="sbox sb-blue"><div class="snum" style="color:var(--blue2)">${st.seams}</div><div class="slbl">Seams</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t} stages</div></div>
-    <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Accepted</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t?Math.round(st.a/st.t*100):0}%</div></div>
+    <div class="sbox sb-green"><div class="snum" style="color:var(--green)">${st.a}</div><div class="slbl">Stages Acc.</div><div style="font-size:10px;color:var(--text4);margin-top:2px;">${st.t?Math.round(st.a/st.t*100):0}%</div></div>
     <div class="sbox sb-amber"><div class="snum" style="color:var(--amber)">${st.o}</div><div class="slbl">Awaiting QC</div></div>
-    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">NCR</div></div>
-    <div class="sbox sb-grey"><div class="snum" style="color:var(--text3)">${pending}</div><div class="slbl">Pending</div></div>
+    <div class="sbox sb-red"><div class="snum" style="color:var(--red)">${st.r}</div><div class="slbl">Stage NCR</div></div>
   </div>`;
   if(!tags.length){html+=`<div style="text-align:center;padding:36px;color:var(--text3);">No seams added yet for this project. Admin can add from Projects &amp; Seams.</div>`;
   }else{
@@ -4035,11 +4182,9 @@ function revokeNA(seamId, idx){
 }
 
 // ── MIR Clearance check ──
-// Long seam: only 1 part needs MIR cleared. Regular: ALL parts must be cleared.
 function isMIRClearedForSeam(seam){
   if(!seam.parts||!seam.parts.length) return true;
   const apNos=new Set((DB.mirs||[]).filter(m=>m.status==='APPROVED').map(m=>m.partNo).filter(Boolean));
-  if(seam.isLongSeam) return seam.parts.some(p=>apNos.has(p.no));
   return seam.parts.every(p=>apNos.has(p.no));
 }
 function getUnclearedParts(seam){
@@ -4694,6 +4839,58 @@ function refreshNsTag(){
 }
 
 // tag-cat toggle helpers
+function nsToggleLongSeam(){
+  const cur=document.getElementById('ns-is-longseam');if(!cur)return;
+  const isLong=cur.value==='1';
+  const newVal=isLong?'0':'1';
+  cur.value=newVal;
+  _nsUpdateLongSeamUI(newVal==='1');
+}
+function nsTypeChanged(val){
+  // Long Seam no longer in dropdown — only banner tick controls isLongSeam flag
+  // (no auto-action needed for any joint type)
+}
+function _nsUpdateLongSeamUI(isLong){
+  const banner=document.getElementById('ns-longseam-banner');
+  const tick=document.getElementById('ns-longseam-tick');
+  const hint=document.getElementById('ns-longseam-hint');
+  const reqLbl=document.getElementById('ns-parts-req-lbl');
+  if(banner){
+    banner.style.borderColor=isLong?'var(--green)':'var(--border2)';
+    banner.style.background=isLong?'var(--green-lt)':'var(--surf2)';
+  }
+  if(tick){
+    tick.textContent=isLong?'✓':'';
+    tick.style.background=isLong?'var(--green)':'var(--surf)';
+    tick.style.borderColor=isLong?'var(--green)':'var(--border2)';
+    tick.style.color='#fff';
+  }
+  if(hint){
+    hint.innerHTML=isLong
+      ?'<strong style="color:var(--green);">Long Seam ✓</strong> — Only <strong>1 Part Number</strong> needed. Inspection Stages unlock after that 1 part\'s MIR is Cleared.'
+      :'Tick this if the seam is a Long Seam — only <strong>1 Part Number</strong> required (single plate rolled and welded). Inspection Stages will unlock after that 1 part\'s MIR is Cleared.';
+  }
+  if(reqLbl){
+    reqLbl.textContent=isLong?'1 part required (Long Seam)':'Min. 2 parts required (non-Long Seam)';
+    reqLbl.style.color=isLong?'var(--green)':'var(--amber)';
+  }
+}
+function _nsResetLongSeamUI(){
+  const cur=document.getElementById('ns-is-longseam');if(cur)cur.value='0';
+  _nsUpdateLongSeamUI(false);
+}
+// ── Check if seam's MIR requirement is met (for stage unlock) ──
+function seamMirCleared(seam){
+  if(!seam||!seam.parts||!seam.parts.length) return true; // no parts = no block (admin set it up)
+  const approvedNos=new Set((DB.mirs||[]).filter(m=>m.status==='APPROVED').map(m=>m.partNo).filter(Boolean));
+  const isLong=seam.isLongSeam===true||seam.isLongSeam==='1';
+  if(isLong){
+    return seam.parts.some(p=>approvedNos.has(p.no));
+  } else {
+    return seam.parts.every(p=>approvedNos.has(p.no));
+  }
+}
+
 function toggleNewTagCat(useNew){
   const sel=$('ns-tagcat'),inp=$('ns-tagcat-new');
   if(!sel||!inp)return;
@@ -5116,14 +5313,10 @@ function addSeam(){
   const compFromNew=$('ns-comp-new').value.trim();
   const comp=compFromSel||compFromNew;
   if(!comp){toast('Please select or enter a Component','err');return;}
-
-  // Long Seam flag
-  const isLongSeam=!!($('ns-is-long-seam')?.checked);
-
-  // Validate part numbers — long seam needs min 1, regular needs min 2
+  // Validate part numbers — Long Seam needs ≥1 part, other joints need ≥2
+  const _isLongSeam=$('ns-is-longseam')?.value==='1';
   if(!_nsParts||_nsParts.length<1){toast('Add at least 1 Part Number from MIR Catalog','err');return;}
-  if(!isLongSeam && _nsParts.length<2){toast('Regular joint needs at least 2 Part Numbers. For single-part joints tick the "Long Seam" checkbox.','err');return;}
-
+  if(!_isLongSeam && _nsParts.length<2){toast('Non-Long Seam joints require at least 2 Part Numbers. Tick "Long Seam" above if this is a longitudinal seam.','err');return;}
   const num=$('ns-num').value.trim(),desc=$('ns-desc').value.trim();
   if(!num||!desc){toast('Seam number and description required','err');return;}
 
@@ -5133,6 +5326,7 @@ function addSeam(){
   if(stageSource==='catalog'){
     const checked=[...document.querySelectorAll('.ns-cat-cb:checked')];
     if(!checked.length){toast('Please select at least one ITP stage from the catalog','err');return;}
+    // Build stage objects with sid and pg from catalog
     stages=checked.map(cb=>{
       const catalog=ITP_STAGES.find(s=>s.sid===cb.dataset.sid);
       return {name:cb.dataset.name, sid:cb.dataset.sid, pg:cb.dataset.pg,
@@ -5150,19 +5344,16 @@ function addSeam(){
 
   const proj=getProj(pid);
   const newSeam={id:'s'+Date.now(),pid,tag,comp,sec:comp,tagCat,parts:_nsParts.slice(),num,desc,
-    isLongSeam,
     type:$('ns-type').value,mat:$('ns-mat').value.trim()||'N/A',
     thk:$('ns-thk').value.trim()||'N/A',wps:$('ns-wps').value.trim()||'—',
     itpDoc:$('ns-itp-doc')?.value.trim()||'',
+    isLongSeam:_isLongSeam,
     stages};
   DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),
-    desc:`Add Seam: ${num} [#${proj?proj.number:'?'} / ${tag} / ${comp}]${isLongSeam?' [LONG SEAM]':''}`});
-  log(`📋 PENDING APPROVAL — Add Seam ${num} | Tag: ${tag} | Comp: ${comp} | Project #${proj?proj.number:'?'}${isLongSeam?' | Long Seam':''} by ${CU.name}`);
+    desc:`Add Seam: ${num} [#${proj?proj.number:'?'} / ${tag} / ${comp}]`});
+  log(`📋 PENDING APPROVAL — Add Seam ${num} | Tag: ${tag} | Comp: ${comp} | Project #${proj?proj.number:'?'} by ${CU.name}`);
   save();
   ['ns-num','ns-desc','ns-wps','ns-tag-new','ns-comp-new','ns-itp-doc'].forEach(id=>{const el=$(id);if(el)el.value='';});
-  // Reset long seam checkbox
-  const lsCb=$('ns-is-long-seam');if(lsCb)lsCb.checked=false;
-  nsLongSeamToggle();
   // Unlock material/thickness fields
   const matEl=$('ns-mat'),thkEl=$('ns-thk');
   if(matEl){matEl.value='';matEl.readOnly=false;matEl.style.background='';matEl.style.borderColor='';}
@@ -5173,30 +5364,76 @@ function addSeam(){
   _nsParts=[];_nsPartSel=null;renderNsParts();
   nsPartSearch('');
   nsSelectAllCatalog(false);
+  _nsResetLongSeamUI();
   renderAdminSeams();
-  toast(`✓ Seam "${num}" submitted for Manager approval`,'ok');
+  // ── Show success confirmation dialog ──
+  _showSeamSubmitDialog(num, tag, comp, proj?proj.number:'?');
 }
 
-// ── Long Seam toggle helpers ──
-function nsJointTypeChange(){
-  const sel=$('ns-type');if(!sel)return;
-  const cb=$('ns-is-long-seam');if(!cb)return;
-  if(sel.value==='Long Seam'){cb.checked=true;}
-  else{cb.checked=false;}
-  nsLongSeamToggle();
+function _showSeamSubmitDialog(seamNum, tag, comp, projNum){
+  // First close the modal-page
+  const mp=document.getElementById('m-add-seam');
+  if(mp) mp.classList.remove('on');
+
+  // Remove any existing dialog
+  const old=document.getElementById('m-seam-submitted-dialog');
+  if(old) old.remove();
+
+  // Build and inject fresh dialog into body
+  const div=document.createElement('div');
+  div.id='m-seam-submitted-dialog';
+  div.style.cssText='position:fixed;inset:0;z-index:99999;background:rgba(10,20,60,.62);display:flex;align-items:center;justify-content:center;padding:16px;';
+  div.innerHTML=`
+    <div style="background:#fff;border-radius:16px;box-shadow:0 24px 80px rgba(10,20,70,.32);max-width:460px;width:100%;overflow:hidden;animation:ssd-pop .28s cubic-bezier(.34,1.56,.64,1) both;">
+      <div style="background:linear-gradient(135deg,#059669,#047857);padding:22px 24px 18px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:8px;line-height:1;">✅</div>
+        <div style="font-size:19px;font-weight:800;color:#fff;letter-spacing:-.2px;">Seam Sent for Manager Approval!</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.85);margin-top:5px;">Your seam addition request has been submitted successfully.</div>
+      </div>
+      <div style="padding:20px 24px;">
+        <div style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:800;color:#065f46;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">📋 Submitted Seam Details</div>
+          <div style="font-size:14px;font-weight:800;color:#1d4ed8;font-family:monospace;margin-bottom:4px;">${seamNum}</div>
+          <div style="font-size:12px;color:#374151;">
+            <span style="font-weight:700;">Project:</span> #${projNum} &nbsp;·&nbsp;
+            <span style="font-weight:700;">Tag:</span> ${tag} &nbsp;·&nbsp;
+            <span style="font-weight:700;">Component:</span> ${comp}
+          </div>
+        </div>
+        <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:10px;padding:11px 14px;margin-bottom:20px;font-size:12px;color:#78350f;line-height:1.6;">
+          <strong>⏳ Next Step:</strong> Manager needs to approve this seam from the <strong>Approvals</strong> page. Seam will appear in Inspection section after approval.
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button id="ssd-add-another"
+            style="flex:1;padding:13px 18px;background:linear-gradient(135deg,#1d4ed8,#1547c8);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.2px;box-shadow:0 4px 14px rgba(29,78,216,.35);">
+            ➕ Add Another Seam
+          </button>
+          <button id="ssd-close-btn"
+            style="padding:13px 16px;background:var(--surf2,#f6f9ff);color:#374151;border:1.5px solid #d1d5db;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(div);
+  document.body.style.overflow='hidden';
+
+  // Button handlers
+  document.getElementById('ssd-add-another').onclick=function(){
+    div.remove();
+    document.body.style.overflow='';
+    openAddSeamModal();
+  };
+  document.getElementById('ssd-close-btn').onclick=function(){
+    div.remove();
+    document.body.style.overflow='';
+  };
 }
-function nsLongSeamToggle(){
-  const cb=$('ns-is-long-seam');
-  const isLS=cb?cb.checked:false;
-  const lblEl=$('ns-part-req-label');
-  const lsBanner=$('ns-longseam-banner');
-  const normBanner=$('ns-normal-banner');
-  if(lblEl) lblEl.textContent=isLS?'Only 1 part required (Long Seam)':'Min. 2 parts required for regular joints';
-  if(lsBanner) lsBanner.style.display=isLS?'block':'none';
-  if(normBanner) normBanner.style.display=(!isLS)?'block':'none';
-  // Sync joint type select
-  const sel=$('ns-type');
-  if(sel&&isLS&&sel.value!=='Long Seam') sel.value='Long Seam';
+function _closeSeamSubmitDialog(){
+  const d=document.getElementById('m-seam-submitted-dialog');
+  if(d) d.remove();
+  document.body.style.overflow='';
+  openAddSeamModal();
 }
 
 function openEditSeam(id){
@@ -5532,11 +5769,6 @@ function renderSummaryPage(){
 function refreshPrintTags(pid){
   const el=$('print-tag');if(!el)return;
   el.innerHTML='<option value="">All Tags</option>'+getTags(pid||$('print-proj').value).map(t=>`<option>${t}</option>`).join('');
-  // Also populate stage filter
-  const sf=$('print-stage-filter');if(!sf)return;
-  const seams=DB.seams.filter(s=>s.pid===(pid||$('print-proj').value));
-  const allStageNames=[...new Set(seams.flatMap(s=>s.stages.map(st=>st.name)))].sort();
-  sf.innerHTML='<option value="">All Stages</option>'+allStageNames.map(n=>`<option value="${n}">${n}</option>`).join('');
 }
 
 function _sigCell(roleLabel, user){
@@ -5595,6 +5827,14 @@ function buildPrintPreview(){
   const p=getProj(pid);
   if(!p){$('print-preview').innerHTML=empty('Select a project');return;}
   refreshPrintTags(pid);
+  // ── Populate stage filter dropdown ──
+  const stageEl=$('print-stage-filter');
+  if(stageEl){
+    const allStageNames=[...new Set(DB.seams.filter(s=>s.pid===pid).flatMap(s=>s.stages.map(st=>st.name)))];
+    const prev=stageEl.value;
+    stageEl.innerHTML='<option value="">All Stages</option>'+allStageNames.map(n=>`<option value="${n}"${n===prev?' selected':''}>${n}</option>`).join('');
+    if(prev) stageEl.value=prev;
+  }
 
   const today=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
   const allSeams=DB.seams.filter(s=>s.pid===pid);
@@ -5607,16 +5847,12 @@ function buildPrintPreview(){
   const donSt=allSeams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
   const pct=totSt?Math.round(donSt/totSt*100):0;
 
-  // Stage filter banner
-  const stageFilterBanner=filterStage?`<div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:6px;padding:7px 12px;margin-bottom:10px;font-size:9px;font-weight:700;color:#1d4ed8;">📌 Stage Filter Active: showing only "<strong>${filterStage}</strong>" column</div>`:'';
-
   // ── Count total pages: 1 cover + 1 per visible tag ──
   let visibleTagCount=0;
   tags.forEach(tag=>{
     const tagSeams=allSeams.filter(s=>nT(s)===tag);
     const vis=tagSeams.filter(seam=>{
       if(!seam.stages||!seam.stages.length) return false;
-      if(filterStage&&!seam.stages.some(st=>st.name===filterStage)) return false;
       const ss=stageStats(seam);
       if(filterStatus==='complete') return ss.pct===100;
       if(filterStatus==='incomplete') return ss.pct<100;
@@ -5628,7 +5864,7 @@ function buildPrintPreview(){
 
   // ── Page number footer helper ──
   const pgFooter=(pgNum)=>`<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:5px;border-top:1px solid #e5e7eb;font-size:7px;color:#9ca3af;">
-    <span>TQIMS · Inspection Traveller · Generated: ${today}${filterStage?' · Stage: '+filterStage:''}</span>
+    <span>TQIMS · Inspection Traveller · Generated: ${today}</span>
     <span style="font-weight:700;color:#6b7280;">Page ${pgNum} of ${totalPages}</span>
     <span>Project #${p.number} — ${p.equipment}</span>
   </div>`;
@@ -5637,7 +5873,6 @@ function buildPrintPreview(){
   let html=`<div id="printable" style="font-family:Arial,sans-serif;font-size:9pt;color:#111;">
   <div class="print-page" style="padding:0;">
     ${_pageHeader(p,today)}
-    ${stageFilterBanner}
     <!-- Project info grid -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:9px;margin-bottom:14px;padding:10px 12px;background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;">
       <div><b>Project No.:</b> ${p.number}</div><div><b>Equipment:</b> ${p.equipment}</div><div><b>Type:</b> ${p.eqType||'—'}</div>
@@ -5685,16 +5920,17 @@ function buildPrintPreview(){
     const tagSeams=allSeams.filter(s=>nT(s)===tag);
     const visSeams=tagSeams.filter(seam=>{
       if(!seam.stages||!seam.stages.length) return false; // skip seams with no stages
-      if(filterStage&&!seam.stages.some(st=>st.name===filterStage)) return false;
       const ss=stageStats(seam);
       if(filterStatus==='complete') return ss.pct===100;
       if(filterStatus==='incomplete') return ss.pct<100;
       return true;
     });
     if(!visSeams.length) return;
+    // If stage filter is set, skip tags where that stage doesn't exist in any seam
+    if(filterStage && !visSeams.some(s=>s.stages.some(st=>st.name===filterStage))) return;
 
-    // Stage names — if stage filter active, show ONLY that column; else all stages
-    const stageNames=filterStage?[filterStage]:[...new Set(visSeams.flatMap(s=>s.stages.map(st=>st.name)))];
+    // All unique stage names for this tag (preserve definition order) — filtered if stage filter active
+    const stageNames=[...new Set(visSeams.flatMap(s=>s.stages.map(st=>st.name)))].filter(n=>!filterStage||n===filterStage);
     const tTot=visSeams.reduce((a,s)=>a+s.stages.length,0);
     const tDon=visSeams.reduce((a,s)=>a+s.stages.filter(st=>st.status==='accepted').length,0);
     const tPct=tTot?Math.round(tDon/tTot*100):0;
@@ -5898,6 +6134,66 @@ function doPrint(){
     if(!c){toast('Nothing to print','err');return;}
     openPrintModal(c.outerHTML);
   },200);
+}
+
+// ── Excel Export for Inspection Traveller ──
+function exportTravellerExcel(){
+  const pid=$('print-proj')?.value||DB.projects[0]?.id;
+  const filterTag=$('print-tag')?.value||'';
+  const filterStatus=$('print-status')?.value||'';
+  const filterStage=$('print-stage-filter')?.value||'';
+  const p=getProj(pid);
+  if(!p){toast('Select a project first','err');return;}
+
+  const allSeams=DB.seams.filter(s=>s.pid===pid);
+  const nT=s=>(s.tag||s.sec||'').trim()||'(untagged)';
+  const nC=s=>(s.comp||s.sec||'').trim()||'(general)';
+  let tags=[...new Set(allSeams.map(nT))];
+  if(filterTag) tags=tags.filter(t=>t===filterTag);
+
+  // Build rows
+  const headerBase=['Tag','Component','Seam No.','Description','Type','Material','THK','WPS','% Done','NCR'];
+  // collect stage names
+  let stageNames=[...new Set(allSeams.flatMap(s=>s.stages.map(st=>st.name)))];
+  if(filterStage) stageNames=stageNames.filter(n=>n===filterStage);
+
+  const headers=[...headerBase,...stageNames];
+  const rows=[headers];
+
+  tags.forEach(tag=>{
+    const tagSeams=allSeams.filter(s=>nT(s)===tag);
+    const visSeams=tagSeams.filter(seam=>{
+      if(!seam.stages||!seam.stages.length) return false;
+      if(filterStage && !seam.stages.some(st=>st.name===filterStage)) return false;
+      const ss=stageStats(seam);
+      if(filterStatus==='complete') return ss.pct===100;
+      if(filterStatus==='incomplete') return ss.pct<100;
+      return true;
+    });
+    visSeams.forEach(seam=>{
+      const ss=stageStats(seam);
+      const ncr=seam.stages.filter(st=>st.ncrNumber).map(st=>st.ncrNumber).join(', ');
+      const base=[tag,nC(seam),seam.num,seam.desc,seam.type,seam.mat,seam.thk,seam.wps||'—',ss.pct+'%',ncr||'—'];
+      const stageCells=stageNames.map(n=>{
+        const st=seam.stages.find(s=>s.name===n);
+        if(!st) return 'N/A';
+        const lbl={accepted:'✓ ACC',rejected:'✗ NCR',offered:'⬆ QC',returned:'↩ RET',na:'⊘ N/A',pending:'○ PND'}[st.status]||st.status;
+        const dt=(st.inspectedAt||st.offeredAt||'');
+        return lbl+(dt?' ('+dt.split(',')[0]+')':'');
+      });
+      rows.push([...base,...stageCells]);
+    });
+  });
+
+  // Convert to CSV (Excel-compatible)
+  const csvContent=rows.map(r=>r.map(c=>`"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const proj=p;
+  const fname=`Traveller_${proj.number}_${filterStage?filterStage.replace(/[^A-Z0-9]/gi,'_')+'_':''}${new Date().toISOString().slice(0,10)}.csv`;
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csvContent);
+  a.download=fname;
+  a.click();
+  toast('✅ Excel (CSV) exported: '+fname,'ok');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -6566,47 +6862,6 @@ function exportExcel(){
   toast('✓ CSV downloaded — open in Excel, fill Status column, re-import','ok');
 }
 
-// ── Traveller Excel Export (from Print Summary page, respects stage filter) ──
-function exportTravellerExcel(){
-  const pid=$('print-proj')?.value||DB.projects[0]?.id;
-  const filterTag=$('print-tag')?.value||'';
-  const filterStatus=$('print-status')?.value||'';
-  const filterStage=$('print-stage-filter')?.value||'';
-  const proj=getProj(pid);if(!proj){toast('Select a project','err');return;}
-  const nT=s=>(s.tag||s.sec||'').trim()||'(untagged)';
-  const nC=s=>(s.comp||s.sec||'').trim()||'(general)';
-  const esc=v=>{const s=String(v??'');return(s.includes(',')||s.includes('"')||s.includes('\n'))?`"${s.replace(/"/g,'""')}"`:s;};
-  let seams=DB.seams.filter(s=>s.pid===pid);
-  if(filterTag) seams=seams.filter(s=>nT(s)===filterTag);
-  if(filterStage) seams=seams.filter(s=>s.stages.some(st=>st.name===filterStage));
-  if(filterStatus==='complete') seams=seams.filter(s=>stageStats(s).pct===100);
-  if(filterStatus==='incomplete') seams=seams.filter(s=>stageStats(s).pct<100);
-  if(!seams.length){toast('No seams match the current filter','err');return;}
-  const stageOrder=filterStage?[filterStage]:[...new Set(seams.flatMap(s=>s.stages.map(st=>st.name)))];
-  const fixedHdr=['Project','Tag No.','Component','Seam No.','Description','Joint Type','Material','Thickness(mm)','WPS','Long Seam'];
-  const stageHdr=stageOrder.flatMap(n=>[`${n}|Status`,`${n}|OfferedBy`,`${n}|Date`,`${n}|InspectedBy`,`${n}|InspDate`,`${n}|NCR`,`${n}|Remarks`]);
-  const rows=[[...fixedHdr,...stageHdr].map(esc).join(',')];
-  seams.forEach(seam=>{
-    const row=[proj.number,nT(seam),nC(seam),seam.num,seam.desc,seam.type,seam.mat,seam.thk,seam.wps||'—',seam.isLongSeam?'YES':'NO'];
-    stageOrder.forEach(n=>{
-      const st=seam.stages.find(st=>st.name===n);
-      if(st){row.push(st.status||'pending',st.offeredBy||'',st.offeredAt||'',st.inspectedBy||'',st.inspectedAt||'',st.ncrNumber||'',st.qeRem||st.prodRem||'');}
-      else{row.push('N/A','','','','','','');}
-    });
-    rows.push(row.map(esc).join(','));
-  });
-  const bom='\uFEFF';
-  const blob=new Blob([bom+rows.join('\r\n')],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  const ts=new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
-  const stageSuffix=filterStage?`-${filterStage.replace(/[^a-zA-Z0-9]/g,'_')}`:'';
-  a.href=url; a.download=`TQIMS-Traveller-${proj.number}${stageSuffix}-${ts}.csv`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-  log(`📊 TRAVELLER EXCEL EXPORTED — Project #${proj.number}${filterStage?' Stage:'+filterStage:''} by ${CU.name}`); save();
-  toast(`✓ Traveller Excel downloaded${filterStage?' — Stage: '+filterStage:''}`, 'ok');
-}
-
 function importExcel(input){
   const file=input.files[0]; if(!file)return;
   const msgEl=$('xl-msg');
@@ -7027,27 +7282,41 @@ function _updateGlobalStatsBar(){
     else if(st.status==='offered')stOff++;
     else if(st.status==='rejected')stRej++;
   });});
+  // Seam-level counts
+  var seamDone=0,seamActive=0,seamNcr=0,seamPend=0;
+  seams.forEach(function(s){
+    var ss=stageStats(s);
+    if(ss.pct===100) seamDone++;
+    else if(hasNCR(s)) seamNcr++;
+    else if(s.stages.some(function(st){return st.status==='offered'||st.status==='returned';})) seamActive++;
+    else seamPend++;
+  });
   var mirApproved=mirs.filter(function(m){return m.status==='APPROVED';}).length;
   var mirPendQC=mirs.filter(function(m){return m.status==='PENDING_QC';}).length;
   var pct=stTotal?Math.round(stAcc/stTotal*100):0;
   var col=pct===100?'#16a34a':pct>50?'#b45309':'#dc2626';
   var stats=[
     {lbl:'Projects',val:projs.length,c:'var(--blue2)',i:'&#128193;'},
-    {lbl:'Seams',val:seams.length,c:'var(--blue2)',i:'&#128279;'},
-    {lbl:'Stages Done',val:stAcc+'/'+stTotal,c:'#16a34a',i:'&#9989;'},
+    {lbl:'Total Seams',val:seams.length,c:'var(--blue2)',i:'&#128279;'},
+    {lbl:'Seams Done',val:seamDone+'/'+seams.length,c:'#16a34a',i:'&#9989;'},
+    {lbl:'Seams Active',val:seamActive,c:'#b45309',i:'&#9889;'},
+    {lbl:'Seam NCR',val:seamNcr,c:'#dc2626',i:'&#128308;'},
+    {lbl:'Stages Done',val:stAcc+'/'+stTotal,c:'#059669',i:'&#10003;'},
     {lbl:'Overall',val:pct+'%',c:col,i:'&#128202;'},
     {lbl:'QC Queue',val:stOff,c:'#b45309',i:'&#9203;'},
-    {lbl:'NCR',val:stRej,c:'#dc2626',i:'&#128308;'},
     {lbl:'MC Approved',val:mirApproved,c:'#059669',i:'&#128230;'},
     {lbl:'MC Pending QC',val:mirPendQC,c:'#D97706',i:'&#128203;'},
   ];
   el.innerHTML=stats.map(function(s){return '<div style="background:var(--surf);border:1px solid var(--border);border-top:3px solid '+s.c+';border-radius:8px;padding:10px 12px;text-align:center;box-shadow:var(--shadow-sm);"><div style="font-size:18px;font-weight:800;color:'+s.c+';line-height:1.2;">'+s.val+'</div><div style="font-size:9px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:3px;letter-spacing:.5px;">'+s.i+' '+s.lbl+'</div></div>';}).join('');
+  // Update grid to accommodate more boxes
+  el.style.gridTemplateColumns='repeat(auto-fill,minmax(110px,1fr))';
 }
 
 function updateApprovalBadge(){
   const count=DB.pendingActions.length;
   const nb=$('nb-approvals');
   if(nb){nb.style.display=count>0?'inline':'none';nb.textContent=count;}
+  updateSeamSubmissionsBadge();
 }
 
 function updateMIRBadge(){
@@ -7896,7 +8165,7 @@ function mirRenderItems(){
     </div>
     <div style="overflow-x:auto;">
       <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:900px;">
-        <thead><tr>${['Project','Category','Tag No.','Item No.','Description','Type','Material','Size/Thk','Qty','Used',''].map(h=>`<th style="padding:8px 10px;font-size:10px;font-weight:700;color:var(--text4);text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);background:var(--surf2);">${h}</th>`).join('')}</tr></thead>
+        <thead><tr>${['Project','Category','Tag No.','Item No.','Description','Type','Material','Size/Thk','Qty','Used','Actions'].map(h=>`<th style="padding:8px 10px;font-size:10px;font-weight:700;color:var(--text4);text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);background:var(--surf2);">${h}</th>`).join('')}</tr></thead>
         <tbody>${rows.map((it,i)=>{
           const used=(DB.mirs||[]).filter(m=>m.itemId===it.id&&m.status!=='REJECTED').reduce((a,m)=>a+(Number(m.offeredQty)||0),0);
           const rem=Math.max(0,it.maxQty-used);
@@ -7911,7 +8180,10 @@ function mirRenderItems(){
             <td style="padding:7px 10px;color:var(--text3);font-size:10px;max-width:140px;word-break:break-word;">${it.thickness}</td>
             <td style="padding:7px 10px;text-align:center;font-weight:700;">${it.maxQty}</td>
             <td style="padding:7px 10px;text-align:center;"><span style="font-weight:700;color:${rem===0?'#DC2626':rem<it.maxQty?'#D97706':'#059669'};">${used}/${it.maxQty}</span></td>
-            <td style="padding:7px 10px;"><button onclick="mirDelItem('${it.id}')" style="padding:4px 10px;background:none;border:1.5px solid var(--red);color:var(--red);border-radius:5px;font-size:11px;cursor:pointer;">🗑</button></td>
+            <td style="padding:7px 10px;display:flex;gap:5px;align-items:center;">
+              <button onclick="mirEditItemOpen('${it.id}')" style="padding:4px 10px;background:none;border:1.5px solid var(--blue2);color:var(--blue2);border-radius:5px;font-size:11px;cursor:pointer;font-weight:600;">✏️ Edit</button>
+              <button onclick="mirDelItem('${it.id}')" style="padding:4px 10px;background:none;border:1.5px solid var(--red);color:var(--red);border-radius:5px;font-size:11px;cursor:pointer;">🗑</button>
+            </td>
           </tr>`;
         }).join('')||`<tr><td colspan="11" style="padding:28px;text-align:center;color:var(--text4);">No items yet — add one above.</td></tr>`}
         </tbody>
@@ -8062,6 +8334,48 @@ function mirDelItem(id){
   if(!confirm('Delete this item from catalog?'))return;
   DB.mirItems=(DB.mirItems||[]).filter(i=>i.id!==id);
   save(); toast('Item deleted','ok'); mirSetTab('items');
+}
+
+// ── Edit MIR Master Item ──
+function mirEditItemOpen(id){
+  const it=(DB.mirItems||[]).find(i=>i.id===id); if(!it) return;
+  const d=$('m-mir-edit-item'); if(!d) return;
+  $('mei-id').value=id;
+  $('mei-proj').value=it.projectCode||'';
+  $('mei-cat').value=it.tagCategory||'';
+  $('mei-tag').value=it.tagNo||'';
+  $('mei-partno').value=it.partNo||'';
+  $('mei-desc').value=it.description||'';
+  $('mei-type').value=it.itemType||'';
+  $('mei-mat').value=it.material||'';
+  $('mei-thk').value=it.thickness||'';
+  $('mei-qty').value=it.maxQty||1;
+  d.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function mirEditItemClose(){
+  const d=$('m-mir-edit-item'); if(d){d.style.display='none';}
+  document.body.style.overflow='';
+}
+function mirEditItemSave(){
+  const id=$('mei-id').value;
+  const it=(DB.mirItems||[]).find(i=>i.id===id); if(!it){toast('Item not found','err');return;}
+  const projCode=($('mei-proj').value||'').trim();
+  const partNo=($('mei-partno').value||'').trim();
+  const desc=($('mei-desc').value||'').trim();
+  if(!projCode||!partNo||!desc){toast('Project Code, Item No. and Description are required','err');return;}
+  it.projectCode=projCode;
+  it.tagCategory=($('mei-cat').value||'').trim();
+  it.tagNo=($('mei-tag').value||'').trim();
+  it.partNo=partNo;
+  it.description=desc;
+  it.itemType=($('mei-type').value||'').trim();
+  it.material=($('mei-mat').value||'').trim();
+  it.thickness=($('mei-thk').value||'').trim();
+  it.maxQty=Math.max(1,parseInt($('mei-qty').value)||1);
+  save(); toast('Item updated ✓','ok');
+  mirEditItemClose();
+  mirSetTab('items');
 }
 
 
@@ -8216,80 +8530,126 @@ function renderComparePage(){
   const projs=DB.projects;
   const allTags=[...new Set(DB.seams.map(s=>s.tag||s.sec||'').filter(Boolean))];
   const allCats=[...new Set(DB.seams.map(s=>s.tagCat||'General'))];
-  // Build chart data — include seam counts
+
+  // ── Helper: seam-level stats for a set of seams ──
+  function seamLevelStats(seams){
+    let sDone=0,sActive=0,sNcr=0,sPend=0;
+    seams.forEach(s=>{
+      const ss=stageStats(s);
+      if(ss.pct===100) sDone++;
+      else if(hasNCR(s)) sNcr++;
+      else if(s.stages.some(st=>st.status==='offered'||st.status==='returned')) sActive++;
+      else sPend++;
+    });
+    const pctSeam=seams.length?Math.round(sDone/seams.length*100):0;
+    return {seamTotal:seams.length,seamDone:sDone,seamActive:sActive,seamNcr:sNcr,seamPend:sPend,seamPct:pctSeam};
+  }
+
+  // Build chart data — include both stage stats AND seam stats
   const projData=projs.map(p=>{
     const st=overallStats(p.id);
-    const seamCount=getSeamsByProj(p.id).length;
-    return {name:`#${p.number}`,full:p.equipment,accepted:st.a,offered:st.o,ncr:st.r,pending:Math.max(0,st.t-st.a-st.o-st.r),total:st.t,pct:st.p,seams:seamCount};
+    const sl=seamLevelStats(DB.seams.filter(s=>s.pid===p.id));
+    return {name:`#${p.number}`,full:p.equipment,accepted:st.a,offered:st.o,ncr:st.r,pending:Math.max(0,st.t-st.a-st.o-st.r),total:st.t,pct:st.p,...sl};
   });
   const tagData=(_cmpSelTags.length?_cmpSelTags:allTags.slice(0,6)).map(tag=>{
     const seams=DB.seams.filter(s=>(s.tag||s.sec||'')===tag);
     let a=0,o=0,r=0,t=0;
     seams.forEach(s=>{const ss=stageStats(s);a+=ss.a;o+=ss.o;r+=ss.r;t+=ss.t;});
     const pct=t?Math.round(a/t*100):0;
-    return {name:tag.length>18?tag.slice(0,16)+'…':tag,full:tag,accepted:a,offered:o,ncr:r,pending:Math.max(0,t-a-o-r),total:t,pct,seams:seams.length};
+    const sl=seamLevelStats(seams);
+    return {name:tag.length>18?tag.slice(0,16)+'…':tag,full:tag,accepted:a,offered:o,ncr:r,pending:Math.max(0,t-a-o-r),total:t,pct,...sl};
   });
   const catData=allCats.map(cat=>{
     const seams=DB.seams.filter(s=>(s.tagCat||'General')===cat);
     let a=0,o=0,r=0,t=0;
     seams.forEach(s=>{const ss=stageStats(s);a+=ss.a;o+=ss.o;r+=ss.r;t+=ss.t;});
     const pct=t?Math.round(a/t*100):0;
-    return {name:cat,full:cat,accepted:a,offered:o,ncr:r,pending:Math.max(0,t-a-o-r),total:t,pct,seams:seams.length};
+    const sl=seamLevelStats(seams);
+    return {name:cat,full:cat,accepted:a,offered:o,ncr:r,pending:Math.max(0,t-a-o-r),total:t,pct,...sl};
   });
 
   const dataset=_cmpMode==='project'?projData:_cmpMode==='tag'?tagData:catData;
-  const maxVal=Math.max(...dataset.map(d=>d.total),1);
-  const maxSeams=Math.max(...dataset.map(d=>d.seams),1);
 
-  // ── Stage Completion Bar Chart ──
-  const barH=180,barW=Math.max(60,Math.floor((Math.min(800,dataset.length*80))/Math.max(1,dataset.length)));
-  const chartW=Math.max(300,dataset.length*(barW+16)+40);
-  const bars=dataset.map((d,i)=>{
-    const x=i*(barW+16)+30;
-    const aH=Math.round(d.accepted/maxVal*(barH-10));
-    const oH=Math.round(d.offered/maxVal*(barH-10));
-    const rH=Math.round(d.ncr/maxVal*(barH-10));
-    return `<g transform="translate(${x},0)">
-      <rect x="0" y="${barH-rH}" width="${barW*0.6}" height="${rH}" fill="#DC2626" rx="2"/>
-      <rect x="0" y="${barH-rH-oH}" width="${barW*0.6}" height="${oH}" fill="#D97706" rx="2"/>
-      <rect x="0" y="${barH-rH-oH-aH}" width="${barW*0.6}" height="${aH}" fill="#059669" rx="2"/>
-      <text x="${barW*0.3}" y="${barH+14}" text-anchor="middle" font-size="9" fill="#6B7280" font-family="monospace">${d.name}</text>
-      ${d.total>0?`<text x="${barW*0.3}" y="${Math.max(10,barH-rH-oH-aH-5)}" text-anchor="middle" font-size="9" fill="#1A56DB" font-weight="700">${d.pct}%</text>`:''}
-    </g>`;
-  }).join('');
+  // ── SVG helper ──
+  function makeSvgChart(data,valKey,colorFn,labelFn,title){
+    const vals=data.map(d=>d[valKey]||0);
+    const maxV=Math.max(...vals,1);
+    const barH=160,barW=52,gap=14,padL=32;
+    const chartW=padL+data.length*(barW+gap)+gap;
+    const bars=data.map((d,i)=>{
+      const v=d[valKey]||0;
+      const h=Math.max(2,Math.round(v/maxV*(barH-16)));
+      const x=padL+i*(barW+gap);
+      const col=colorFn(d,v);
+      return `<g>
+        <rect x="${x}" y="${barH-h}" width="${barW}" height="${h}" fill="${col}" rx="3"/>
+        <text x="${x+barW/2}" y="${barH-h-4}" text-anchor="middle" font-size="10" fill="#1d4ed8" font-weight="700">${v}</text>
+        <text x="${x+barW/2}" y="${barH+13}" text-anchor="middle" font-size="8" fill="#6B7280" font-family="monospace">${(d.name||'').slice(0,8)}</text>
+      </g>`;
+    }).join('');
+    const gridLines=[0,25,50,75,100].map(pct=>{
+      const y=barH-Math.round(pct/100*(barH-16));
+      return `<line x1="${padL}" y1="${y}" x2="${chartW}" y2="${y}" stroke="#e5e7eb" stroke-width="0.7" stroke-dasharray="3,3"/>
+        <text x="${padL-4}" y="${y+3}" text-anchor="end" font-size="7" fill="#9CA3AF">${Math.round(maxV*pct/100)}</text>`;
+    }).join('');
+    return `<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;">
+      <div style="padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text);">${title}</div>
+      <div style="padding:12px;overflow-x:auto;">
+        <svg width="${Math.max(300,chartW)}" height="${barH+28}" style="display:block;">
+          <line x1="${padL}" y1="0" x2="${padL}" y2="${barH}" stroke="#d1d5db" stroke-width="1"/>
+          <line x1="${padL}" y1="${barH}" x2="${chartW}" y2="${barH}" stroke="#d1d5db" stroke-width="1"/>
+          ${gridLines}${bars}
+        </svg>
+      </div>
+    </div>`;
+  }
 
-  // ── Seam Count Bar Chart ──
-  const seamBars=dataset.map((d,i)=>{
-    const x=i*(barW+16)+30;
-    const sH=Math.round(d.seams/maxSeams*(barH-10));
-    const barColor=d.seams===maxSeams?'#1d4ed8':'#60a5fa';
-    return `<g transform="translate(${x},0)">
-      <rect x="0" y="${barH-sH}" width="${barW*0.6}" height="${sH}" fill="${barColor}" rx="3"/>
-      <text x="${barW*0.3}" y="${barH+14}" text-anchor="middle" font-size="9" fill="#6B7280" font-family="monospace">${d.name}</text>
-      ${d.seams>0?`<text x="${barW*0.3}" y="${Math.max(10,barH-sH-5)}" text-anchor="middle" font-size="10" fill="#1d4ed8" font-weight="800">${d.seams}</text>`:''}
-    </g>`;
-  }).join('');
+  // ── Seam bar chart — primary ──
+  const seamBarChart=makeSvgChart(
+    dataset,
+    'seamTotal',
+    (d)=> d.seamPct===100?'#059669':d.seamNcr>0?'#DC2626':d.seamActive>0?'#D97706':'#3B82F6',
+    d=>d.name,
+    '🔗 Total Seams per '+((_cmpMode==='project')?'Project':(_cmpMode==='tag')?'Tag':'Category')+' (primary metric)'
+  );
 
-  // Progress bars for comparison
-  const progBars=dataset.map(d=>`
+  // ── Seam progress bars ──
+  const seamProgBars=dataset.map(d=>`
   <div style="margin-bottom:14px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;flex-wrap:wrap;gap:4px;">
-      <div style="font-size:11px;font-weight:700;color:var(--text2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.name}</div>
-      <div style="display:flex;gap:10px;font-size:10px;">
-        <span style="color:#059669;font-weight:700;">${d.accepted} ✓</span>
-        <span style="color:#D97706;font-weight:700;">${d.offered} ⏳</span>
-        <span style="color:#DC2626;font-weight:700;">${d.ncr} ✗</span>
-        <span style="color:var(--text3);font-weight:700;">${d.total} stages</span>
-        <span style="color:var(--blue2);font-weight:700;">${d.seams} seams</span>
+      <div style="font-size:11px;font-weight:700;color:var(--text2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.full||d.name}</div>
+      <div style="display:flex;gap:8px;font-size:10px;flex-wrap:wrap;">
+        <span style="color:#059669;font-weight:700;">${d.seamDone} ✓ Done</span>
+        <span style="color:#D97706;font-weight:700;">${d.seamActive} ⚡ Active</span>
+        <span style="color:#DC2626;font-weight:700;">${d.seamNcr} ✗ NCR</span>
+        <span style="color:var(--text3);font-weight:700;">${d.seamTotal} total seams</span>
       </div>
     </div>
-    <div style="height:12px;border-radius:6px;background:var(--surf3);overflow:hidden;display:flex;">
-      <div style="background:#059669;width:${d.total?d.accepted/d.total*100:0}%;transition:width .6s;"></div>
-      <div style="background:#D97706;width:${d.total?d.offered/d.total*100:0}%;transition:width .6s;"></div>
-      <div style="background:#DC2626;width:${d.total?d.ncr/d.total*100:0}%;transition:width .6s;"></div>
+    <div style="height:10px;border-radius:5px;background:var(--surf3);overflow:hidden;display:flex;">
+      <div style="background:#059669;width:${d.seamTotal?d.seamDone/d.seamTotal*100:0}%;transition:width .6s;"></div>
+      <div style="background:#D97706;width:${d.seamTotal?d.seamActive/d.seamTotal*100:0}%;transition:width .6s;"></div>
+      <div style="background:#DC2626;width:${d.seamTotal?d.seamNcr/d.seamTotal*100:0}%;transition:width .6s;"></div>
     </div>
-    <div style="font-size:9px;color:var(--text4);margin-top:2px;text-align:right;font-weight:600;">${d.pct}% complete · ${d.seams} seam${d.seams!==1?'s':''}</div>
+    <div style="font-size:9px;color:var(--text4);margin-top:2px;text-align:right;font-weight:600;">${d.seamPct}% seams complete</div>
   </div>`).join('');
+
+  // ── Stage bar chart (secondary) ──
+  const maxStageVal=Math.max(...dataset.map(d=>d.total),1);
+  const barH2=150,barW2=Math.max(52,Math.floor((Math.min(900,dataset.length*80))/Math.max(1,dataset.length)));
+  const chartW2=Math.max(300,dataset.length*(barW2+14)+40);
+  const stageBars=dataset.map((d,i)=>{
+    const x=i*(barW2+14)+30;
+    const aH=Math.round(d.accepted/maxStageVal*(barH2-10));
+    const oH=Math.round(d.offered/maxStageVal*(barH2-10));
+    const rH=Math.round(d.ncr/maxStageVal*(barH2-10));
+    return `<g transform="translate(${x},0)">
+      <rect x="0" y="${barH2-rH}" width="${barW2*0.6}" height="${rH}" fill="#DC2626" rx="2"/>
+      <rect x="0" y="${barH2-rH-oH}" width="${barW2*0.6}" height="${oH}" fill="#D97706" rx="2"/>
+      <rect x="0" y="${barH2-rH-oH-aH}" width="${barW2*0.6}" height="${aH}" fill="#059669" rx="2"/>
+      <text x="${barW2*0.3}" y="${barH2+13}" text-anchor="middle" font-size="8" fill="#6B7280" font-family="monospace">${d.name}</text>
+      ${d.total>0?`<text x="${barW2*0.3}" y="${Math.max(10,barH2-rH-oH-aH-4)}" text-anchor="middle" font-size="8" fill="#1A56DB" font-weight="700">${d.pct}%</text>`:''}
+    </g>`;
+  }).join('');
 
   c.innerHTML=`
   <!-- Mode selector -->
@@ -8309,102 +8669,80 @@ function renderComparePage(){
     </div>`:''}
   </div>
 
-  <!-- ── ROW 1: Stage chart + Seam Count chart ── -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-    <!-- Stage Completion Bar Chart -->
-    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:0;overflow:hidden;">
-      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📊 Stage Completion — Bar Chart</div>
-      <div style="padding:14px;overflow-x:auto;">
-        <svg width="${chartW}" height="${barH+34}" style="display:block;min-width:100%;">
-          <line x1="24" y1="0" x2="24" y2="${barH}" stroke="var(--border)" stroke-width="1"/>
-          <line x1="24" y1="${barH}" x2="${chartW}" y2="${barH}" stroke="var(--border)" stroke-width="1"/>
-          ${[0,25,50,75,100].map(v=>{
-            const y=barH-Math.round(v/100*(barH-10));
-            return `<text x="20" y="${y+3}" text-anchor="end" font-size="8" fill="#9CA3AF">${v}%</text>
-            <line x1="24" y1="${y}" x2="${chartW}" y2="${y}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
-          }).join('')}
-          ${bars}
-        </svg>
-        <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;font-weight:600;justify-content:center;">
-          <span style="color:#059669;">● Accepted</span>
-          <span style="color:#D97706;">● Offered/QC</span>
-          <span style="color:#DC2626;">● NCR</span>
-        </div>
-      </div>
+  <!-- ── PRIMARY: Seam Count Section ── -->
+  <div style="background:var(--surf2);border:2px solid var(--blue-mid);border-radius:12px;padding:16px 18px;margin-bottom:20px;">
+    <div style="font-size:13px;font-weight:800;color:var(--blue2);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+      🔗 SEAM-WISE PROGRESS <span style="font-size:10px;font-weight:600;color:var(--text3);background:var(--blue-lt);padding:2px 8px;border-radius:10px;">PRIMARY METRIC</span>
     </div>
-
-    <!-- 🆕 Seam Count Bar Chart -->
-    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:0;overflow:hidden;">
-      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">🔗 Seam Count — Progress Tracker</div>
-      <div style="padding:14px;overflow-x:auto;">
-        <svg width="${chartW}" height="${barH+34}" style="display:block;min-width:100%;">
-          <line x1="24" y1="0" x2="24" y2="${barH}" stroke="var(--border)" stroke-width="1"/>
-          <line x1="24" y1="${barH}" x2="${chartW}" y2="${barH}" stroke="var(--border)" stroke-width="1"/>
-          ${[0,25,50,75,100].map(v=>{
-            const y=barH-Math.round(v/100*(barH-10));
-            const lbl=Math.round(v/100*maxSeams);
-            return `<text x="20" y="${y+3}" text-anchor="end" font-size="8" fill="#9CA3AF">${lbl}</text>
-            <line x1="24" y1="${y}" x2="${chartW}" y2="${y}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
-          }).join('')}
-          ${seamBars}
-        </svg>
-        <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;font-weight:600;justify-content:center;">
-          <span style="color:#1d4ed8;">● Total Seams (darker = max)</span>
-        </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      ${seamBarChart}
+      <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+        <div style="padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--text);">📈 Seam Completion Progress</div>
+        <div style="padding:14px 16px;max-height:300px;overflow-y:auto;">${seamProgBars||'<div style="color:var(--text4);font-size:12px;">No data</div>'}</div>
       </div>
     </div>
   </div>
 
-  <!-- ── ROW 2: Progress bars + Seam-wise progress ── -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
-    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
-      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📈 Stage Completion Progress</div>
-      <div style="padding:16px 18px;max-height:340px;overflow-y:auto;">${progBars||'<div style="color:var(--text4);font-size:12px;">No data to compare</div>'}</div>
-    </div>
-
-    <!-- Seam count summary bars -->
-    <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
-      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">🔗 Seam-wise Progress Overview</div>
-      <div style="padding:16px 18px;max-height:340px;overflow-y:auto;">
-        ${dataset.map(d=>`
-        <div style="margin-bottom:14px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-            <div style="font-size:11px;font-weight:700;color:var(--text2);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.name}</div>
-            <div style="font-size:18px;font-weight:800;color:var(--blue2);">${d.seams}</div>
-          </div>
-          <div style="height:10px;border-radius:5px;background:var(--surf3);overflow:hidden;">
-            <div style="height:100%;border-radius:5px;background:linear-gradient(90deg,#1d4ed8,#60a5fa);width:${maxSeams?d.seams/maxSeams*100:0}%;transition:width .6s;"></div>
-          </div>
-          <div style="font-size:9px;color:var(--text4);margin-top:2px;font-weight:600;">${d.seams} seam${d.seams!==1?'s':''} · ${d.pct}% stages complete</div>
-        </div>`).join('')||'<div style="color:var(--text4);font-size:12px;">No data</div>'}
+  <!-- ── SECONDARY: Stage Completion Chart ── -->
+  <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;overflow:hidden;">
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📊 Stage Completion — Bar Chart <span style="font-size:10px;font-weight:500;color:var(--text3);">(secondary)</span></div>
+    <div style="padding:14px;overflow-x:auto;">
+      <svg width="${chartW2}" height="${barH2+28}" style="display:block;min-width:100%;">
+        <line x1="24" y1="0" x2="24" y2="${barH2}" stroke="var(--border)" stroke-width="1"/>
+        <line x1="24" y1="${barH2}" x2="${chartW2}" y2="${barH2}" stroke="var(--border)" stroke-width="1"/>
+        ${[0,25,50,75,100].map(v=>{
+          const y=barH2-Math.round(v/100*(barH2-10));
+          return `<text x="20" y="${y+3}" text-anchor="end" font-size="7" fill="#9CA3AF">${v}%</text>
+          <line x1="24" y1="${y}" x2="${chartW2}" y2="${y}" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="3,3"/>`;
+        }).join('')}
+        ${stageBars}
+      </svg>
+      <div style="display:flex;gap:14px;margin-top:6px;font-size:10px;font-weight:600;justify-content:center;">
+        <span style="color:#059669;">● Accepted</span>
+        <span style="color:#D97706;">● Offered/QC</span>
+        <span style="color:#DC2626;">● NCR</span>
       </div>
     </div>
   </div>
 
-  <!-- Summary table -->
+  <!-- ── Full Comparison Table ── -->
   <div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
-    <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📋 Comparison Summary Table</div>
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text);">📋 Full Comparison Table</div>
     <div style="overflow-x:auto;">
       <table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <thead><tr>${['Name','Total Seams','Total Stages','Accepted','Awaiting QC','NCR','Pending','% Complete'].map(h=>`<th style="padding:8px 12px;font-size:10px;font-weight:700;color:var(--text4);text-align:left;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);background:var(--surf2);">${h}</th>`).join('')}</tr></thead>
+        <thead>
+          <tr>
+            ${['Name','Total Seams','Seams Done','Seams Active','Seam NCR','Seam %','Total Stages','Accepted','Awaiting QC','Stage NCR','Stage %'].map(h=>`<th style="padding:7px 10px;font-size:9px;font-weight:700;color:var(--text4);text-align:center;text-transform:uppercase;letter-spacing:.4px;border-bottom:1.5px solid var(--border);background:var(--surf2);white-space:nowrap;">${h}</th>`).join('')}
+          </tr>
+        </thead>
         <tbody>${dataset.map((d,i)=>`
         <tr style="background:${i%2===0?'var(--surf)':'#FAFCFF'};">
-          <td style="padding:9px 12px;font-weight:700;color:var(--text);">${d.full||d.name}</td>
-          <td style="padding:9px 12px;font-weight:800;color:var(--blue2);text-align:center;">${d.seams}</td>
-          <td style="padding:9px 12px;font-weight:700;text-align:center;">${d.total}</td>
-          <td style="padding:9px 12px;font-weight:700;color:#059669;text-align:center;">${d.accepted}</td>
-          <td style="padding:9px 12px;font-weight:700;color:#D97706;text-align:center;">${d.offered}</td>
-          <td style="padding:9px 12px;font-weight:700;color:#DC2626;text-align:center;">${d.ncr}</td>
-          <td style="padding:9px 12px;font-weight:700;color:var(--text3);text-align:center;">${d.pending}</td>
-          <td style="padding:9px 12px;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="flex:1;height:8px;border-radius:4px;background:var(--surf3);">
-                <div style="height:100%;border-radius:4px;background:${d.pct===100?'#059669':d.pct>50?'#D97706':'#DC2626'};width:${d.pct}%;"></div>
+          <td style="padding:8px 10px;font-weight:700;color:var(--text);white-space:nowrap;">${d.full||d.name}</td>
+          <td style="padding:8px 10px;font-weight:800;color:var(--blue2);text-align:center;font-size:14px;">${d.seamTotal}</td>
+          <td style="padding:8px 10px;font-weight:700;color:#059669;text-align:center;">${d.seamDone}</td>
+          <td style="padding:8px 10px;font-weight:700;color:#D97706;text-align:center;">${d.seamActive}</td>
+          <td style="padding:8px 10px;font-weight:700;color:#DC2626;text-align:center;">${d.seamNcr}</td>
+          <td style="padding:8px 10px;text-align:center;">
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="flex:1;height:6px;border-radius:3px;background:var(--surf3);min-width:40px;">
+                <div style="height:100%;border-radius:3px;background:${d.seamPct===100?'#059669':d.seamPct>50?'#D97706':'#DC2626'};width:${d.seamPct}%;"></div>
               </div>
-              <span style="font-weight:800;font-size:12px;color:${d.pct===100?'#059669':d.pct>50?'#D97706':'#DC2626'};min-width:34px;">${d.pct}%</span>
+              <span style="font-weight:800;font-size:11px;color:${d.seamPct===100?'#059669':d.seamPct>50?'#D97706':'#DC2626'};min-width:28px;">${d.seamPct}%</span>
             </div>
           </td>
-        </tr>`).join('')||`<tr><td colspan="8" style="padding:28px;text-align:center;color:var(--text4);">No data available</td></tr>`}
+          <td style="padding:8px 10px;font-weight:700;text-align:center;color:var(--text3);">${d.total}</td>
+          <td style="padding:8px 10px;font-weight:700;color:#059669;text-align:center;">${d.accepted}</td>
+          <td style="padding:8px 10px;font-weight:700;color:#D97706;text-align:center;">${d.offered}</td>
+          <td style="padding:8px 10px;font-weight:700;color:#DC2626;text-align:center;">${d.ncr}</td>
+          <td style="padding:8px 10px;">
+            <div style="display:flex;align-items:center;gap:5px;">
+              <div style="flex:1;height:6px;border-radius:3px;background:var(--surf3);min-width:40px;">
+                <div style="height:100%;border-radius:3px;background:${d.pct===100?'#059669':d.pct>50?'#D97706':'#DC2626'};width:${d.pct}%;"></div>
+              </div>
+              <span style="font-weight:800;font-size:11px;color:${d.pct===100?'#059669':d.pct>50?'#D97706':'#DC2626'};min-width:28px;">${d.pct}%</span>
+            </div>
+          </td>
+        </tr>`).join('')||`<tr><td colspan="11" style="padding:28px;text-align:center;color:var(--text4);">No data available</td></tr>`}
         </tbody>
       </table>
     </div>
@@ -8579,7 +8917,30 @@ function closeMp(id){
   document.body.style.overflow='';
 }
 function openSetupModal(){ openMp('m-setup'); }
-function openAddSeamModal(){ openMp('m-add-seam'); }
+function openAddSeamModal(){
+  // ── Full reset before opening ──
+  ['ns-num','ns-desc','ns-wps','ns-mat','ns-thk','ns-tag-new','ns-comp-new','ns-itp-doc'].forEach(id=>{
+    const el=document.getElementById(id); if(el){el.value='';el.readOnly=false;el.style.background='';el.style.borderColor='';}
+  });
+  // Reset locks
+  ['ns-mat-lock','ns-thk-lock'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  // Reset type dropdown
+  const tp=document.getElementById('ns-type'); if(tp) tp.value='Groove';
+  // Reset parts
+  _nsParts=[];_nsPartSel=null;
+  const pr=document.getElementById('ns-part-preview'); if(pr) pr.style.display='none';
+  // Reset long seam
+  _nsResetLongSeamUI();
+  // Reset catalog selection
+  nsSelectAllCatalog(false);
+  // Reset stage source to template
+  const tmplRad=document.querySelector('input[name="ns-stage-src"][value="template"]');
+  if(tmplRad){tmplRad.checked=true; nsStageSourceChange();}
+  // Re-render parts list (shows the "no parts" message)
+  renderNsParts();
+  nsPartSearch('');
+  openMp('m-add-seam');
+}
 function openCreateTemplateModal(){ openMp('m-create-template'); }
 function openAddMirItemModal(){
   const el=document.getElementById('m-add-mir-item');
@@ -8758,6 +9119,167 @@ function nsPopulateProj(){
   const cur=sel.value;
   sel.innerHTML='<option value="">— Select Project —</option>'+DB.projects.map(p=>`<option value="${p.id}">${p.number} — ${p.equipment}</option>`).join('');
   if(cur) sel.value=cur;
+}
+
+// ══════════════════════════════════════════════════════════════
+// SEAM SUBMISSIONS PAGE — Admin's seam tracking window
+// ══════════════════════════════════════════════════════════════
+let _ssFilter='all';
+
+function setSsFilter(f, btn){
+  _ssFilter=f;
+  document.querySelectorAll('[data-ssf]').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  renderSeamSubmissions();
+}
+
+function updateSeamSubmissionsBadge(){
+  const pending=(DB.pendingActions||[]).filter(a=>a.type==='add_seam').length;
+  const nb=document.getElementById('nb-seam-submissions');
+  if(nb){nb.style.display=pending>0?'inline':'none';nb.textContent=pending;}
+}
+
+function renderSeamSubmissions(){
+  const listEl=document.getElementById('ss-list');
+  const statsEl=document.getElementById('ss-stats-strip');
+  if(!listEl) return;
+
+  // Gather all seam submissions:
+  // 1) Pending — still in pendingActions with type=add_seam
+  // 2) Approved — in DB.seams (were approved by manager)
+  // 3) Rejected — in activity log with "REJECTED" + seam context
+  const pending=(DB.pendingActions||[]).filter(a=>a.type==='add_seam');
+  const approved=DB.seams||[];
+  // Log-based rejections for seam adds
+  const rejLog=(DB.log||[]).filter(e=>e.msg&&e.msg.includes('REJECTED')&&e.msg.includes('Add Seam'));
+
+  const q=(document.getElementById('ss-search')?.value||'').toLowerCase().trim();
+
+  // Build unified list
+  let items=[];
+  pending.forEach(a=>{
+    const d=a.data||{};
+    const proj=getProj(d.pid);
+    items.push({
+      status:'pending', num:d.num||'—', desc:d.desc||d.num||'—',
+      tag:d.tag||'—', comp:d.comp||d.sec||'—',
+      projNum:proj?proj.number:'?', projName:proj?proj.equipment:'',
+      type:d.type||'—', mat:d.mat||'—', thk:d.thk||'—',
+      parts:(d.parts||[]).length,
+      submittedBy:a.requestedBy||CU?.name||'—',
+      submittedAt:a.requestedAt||'—',
+      id:a.id, seamId:null
+    });
+  });
+  approved.forEach(s=>{
+    const proj=getProj(s.pid);
+    const ss=stageStats(s);
+    items.push({
+      status:'approved', num:s.num, desc:s.desc,
+      tag:s.tag||'—', comp:s.comp||s.sec||'—',
+      projNum:proj?proj.number:'?', projName:proj?proj.equipment:'',
+      type:s.type||'—', mat:s.mat||'—', thk:s.thk||'—',
+      parts:(s.parts||[]).length,
+      submittedBy:s.submittedBy||'—', submittedAt:s.createdAt||'—',
+      stagePct:ss.pct, stageA:ss.a, stageT:ss.t,
+      id:s.id, seamId:s.id
+    });
+  });
+  rejLog.forEach((e,i)=>{
+    const m=e.msg||'';
+    const numMatch=m.match(/Add Seam[: ]+([^\s|[]+)/);
+    const num=numMatch?numMatch[1]:'?';
+    items.push({
+      status:'rejected', num:num, desc:'—',
+      tag:'—', comp:'—', projNum:'—', projName:'',
+      type:'—', mat:'—', thk:'—', parts:0,
+      submittedBy:'—', submittedAt:e.ts||'—',
+      id:'rej-'+i, seamId:null
+    });
+  });
+
+  // Stats
+  const nPend=items.filter(i=>i.status==='pending').length;
+  const nAppr=items.filter(i=>i.status==='approved').length;
+  const nRej=items.filter(i=>i.status==='rejected').length;
+  if(statsEl) statsEl.innerHTML=[
+    {lbl:'Total Submitted',val:items.length,c:'var(--blue2)'},
+    {lbl:'✅ Approved',val:nAppr,c:'#059669'},
+    {lbl:'⏳ Pending',val:nPend,c:'#D97706'},
+    {lbl:'❌ Rejected',val:nRej,c:'#DC2626'},
+  ].map(s=>`<div style="background:var(--surf);border:1px solid var(--border);border-top:3px solid ${s.c};border-radius:8px;padding:12px 14px;text-align:center;">
+    <div style="font-size:22px;font-weight:800;color:${s.c};">${s.val}</div>
+    <div style="font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;margin-top:3px;">${s.lbl}</div>
+  </div>`).join('');
+
+  // Apply filter
+  if(_ssFilter!=='all') items=items.filter(i=>i.status===_ssFilter);
+
+  // Apply search
+  if(q) items=items.filter(i=>
+    (i.num||'').toLowerCase().includes(q)||
+    (i.tag||'').toLowerCase().includes(q)||
+    (i.comp||'').toLowerCase().includes(q)||
+    (i.desc||'').toLowerCase().includes(q)||
+    (i.projNum||'').toLowerCase().includes(q)
+  );
+
+  if(!items.length){
+    listEl.innerHTML=`<div style="text-align:center;padding:44px 20px;color:var(--text3);">
+      <div style="font-size:32px;margin-bottom:10px;">🔍</div>
+      <div style="font-size:14px;font-weight:600;">${_ssFilter==='all'?'No seams submitted yet.':'No '+_ssFilter+' seams found.'}</div>
+      <div style="font-size:12px;margin-top:6px;">Click "Add New Seam" to submit a seam for Manager approval.</div>
+    </div>`;
+    return;
+  }
+
+  const statusBadge={
+    pending:`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#fffbeb;color:#D97706;border:1px solid #fcd34d;">⏳ Pending Approval</span>`,
+    approved:`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#f0fdf4;color:#059669;border:1px solid #86efac;">✅ Approved</span>`,
+    rejected:`<span style="padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#fef2f2;color:#DC2626;border:1px solid #fca5a5;">❌ Rejected</span>`,
+  };
+
+  listEl.innerHTML=`<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:var(--surf2);">
+          ${['Status','Project','Tag','Component','Seam No.','Description','Type','Material','Thk','Parts','Stage Progress','Submitted By','Date'].map(h=>
+            `<th style="padding:9px 10px;font-size:10px;font-weight:700;color:var(--text4);text-align:left;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--border);white-space:nowrap;">${h}</th>`
+          ).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${items.map((it,i)=>{
+          const progCell=it.status==='approved'&&it.stageT>0
+            ?`<div style="display:flex;align-items:center;gap:6px;">
+                <div style="flex:1;height:6px;border-radius:3px;background:var(--surf3);min-width:50px;">
+                  <div style="height:100%;border-radius:3px;background:${it.stagePct===100?'#059669':'#1d4ed8'};width:${it.stagePct}%;"></div>
+                </div>
+                <span style="font-size:10px;font-weight:700;color:${it.stagePct===100?'#059669':'#1d4ed8'};min-width:28px;">${it.stagePct}%</span>
+              </div>`
+            :it.status==='pending'
+            ?'<span style="font-size:10px;color:var(--text4);">Awaiting approval</span>'
+            :'<span style="font-size:10px;color:#DC2626;">—</span>';
+          return `<tr style="background:${i%2===0?'var(--surf)':'#fafcff'};${it.status==='pending'?'border-left:3px solid #D97706;':it.status==='rejected'?'border-left:3px solid #DC2626;':'border-left:3px solid #059669;'}">
+            <td style="padding:8px 10px;">${statusBadge[it.status]||''}</td>
+            <td style="padding:8px 10px;font-weight:700;color:var(--blue2);font-family:monospace;white-space:nowrap;">#${it.projNum}</td>
+            <td style="padding:8px 10px;font-family:monospace;font-size:11px;font-weight:600;">${it.tag}</td>
+            <td style="padding:8px 10px;font-size:11px;">${it.comp}</td>
+            <td style="padding:8px 10px;font-weight:800;color:var(--text);font-family:monospace;">${it.num}</td>
+            <td style="padding:8px 10px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.desc}</td>
+            <td style="padding:8px 10px;font-size:11px;color:var(--text3);">${it.type}</td>
+            <td style="padding:8px 10px;font-size:11px;color:var(--text3);">${it.mat}</td>
+            <td style="padding:8px 10px;font-size:11px;color:var(--text3);">${it.thk}</td>
+            <td style="padding:8px 10px;text-align:center;font-weight:700;">${it.parts}</td>
+            <td style="padding:8px 10px;min-width:100px;">${progCell}</td>
+            <td style="padding:8px 10px;font-size:11px;color:var(--text3);">${it.submittedBy}</td>
+            <td style="padding:8px 10px;font-size:10px;color:var(--text4);white-space:nowrap;">${it.submittedAt?it.submittedAt.split(',')[0]||it.submittedAt:'—'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+  updateSeamSubmissionsBadge();
 }
 
 // ── Seam Tree View ──
@@ -8939,8 +9461,10 @@ Tag: ${tag} / ${comp}`))return;
   save();
   if(document.getElementById('ns-seam-range'))document.getElementById('ns-seam-range').value='';
   if(document.getElementById('ns-seam-range-preview'))document.getElementById('ns-seam-range-preview').innerHTML='';
-  renderSeamTree(); updateApprovalBadge(); closeMp('m-add-seam');
-  toast(`✓ ${added} seam(s) submitted for Manager approval${skip>0?' ('+skip+' skipped)':''}`, 'ok');
+  renderSeamTree(); updateApprovalBadge();
+  // Show success dialog for range add
+  const rangeLabel=`${added} seam(s) (Range)`;
+  _showSeamSubmitDialog(rangeLabel, tag, comp, getProj(pid)?getProj(pid).number:'?');
 }
 
 // ── Create Template modal ──
@@ -9859,6 +10383,42 @@ function filterMobile(el){el.value=el.value.replace(/[^0-9]/g,"").slice(0,10);}
     <div id="m-rtut-content" style="padding:14px;font-family:Arial,sans-serif;font-size:9pt;color:#111;max-width:794px;margin:0 auto;"></div>
   </div>
 </div>
+<!-- ── MIR MASTER ITEM EDIT MODAL ── -->
+<div id="m-mir-edit-item" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,20,60,.55);align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#fff;border-radius:14px;box-shadow:0 24px 80px rgba(10,20,70,.24);max-width:560px;width:100%;overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#1d4ed8,#1547c8);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="color:#fff;font-size:16px;font-weight:800;">✏️ Edit Master Item</div>
+      <button onclick="mirEditItemClose()" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:7px;padding:5px 12px;cursor:pointer;font-size:13px;font-weight:600;">✕</button>
+    </div>
+    <div style="padding:20px;display:flex;flex-direction:column;gap:12px;max-height:70vh;overflow-y:auto;">
+      <input type="hidden" id="mei-id">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div><label class="lbl">Project Code <span style="color:var(--red)">*</span></label><input id="mei-proj" placeholder="e.g. 1212"></div>
+        <div><label class="lbl">Tag Category</label><input id="mei-cat" placeholder="e.g. PRESSURE VESSEL"></div>
+        <div><label class="lbl">Tag No.</label><input id="mei-tag" placeholder="e.g. 342-V-666"></div>
+        <div><label class="lbl">Item No. (Part No.) <span style="color:var(--red)">*</span></label><input id="mei-partno" placeholder="e.g. 101"></div>
+        <div style="grid-column:1/-1;"><label class="lbl">Description <span style="color:var(--red)">*</span></label><input id="mei-desc" placeholder="e.g. Plate 101"></div>
+        <div>
+          <label class="lbl">Item Type</label>
+          <select id="mei-type" style="width:100%;padding:9px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+            <option value="">— Select Type —</option>
+            <option>Plate</option><option>Pipe</option><option>Forging</option><option>Flange</option>
+            <option>Fitting</option><option>Tube</option><option>Bar</option><option>Bolt</option>
+            <option>Nut</option><option>Washer</option><option>Gasket</option><option>Other</option>
+          </select>
+        </div>
+        <div><label class="lbl">Material</label><input id="mei-mat" placeholder="e.g. SA516 GR.70"></div>
+        <div><label class="lbl">Size / Thickness</label><input id="mei-thk" placeholder="e.g. 2500×1000×10"></div>
+        <div><label class="lbl">Max Quantity</label><input id="mei-qty" type="number" min="1" placeholder="1"></div>
+      </div>
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;background:var(--surf2);">
+      <button onclick="mirEditItemClose()" style="padding:9px 20px;background:var(--surf);border:1.5px solid var(--border2);color:var(--text2);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+      <button onclick="mirEditItemSave()" style="padding:9px 22px;background:linear-gradient(135deg,#1d4ed8,#1547c8);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── PRINT FRAME: always in DOM, written-to and printed, then cleared ── -->
 <div id="print-frame" style="display:none;"></div>
 </body>
