@@ -1811,6 +1811,16 @@ tr:hover td{background:var(--surf2);}
         <div id="ns-seam-range-preview" style="margin-top:6px;font-size:11px;"></div>
       </div>
 
+      <!-- ══ SEAM STATUS PANEL — Live log for Admin/Manager ══ -->
+      <div id="ns-seam-status-panel" style="margin-top:18px;border:1.5px solid var(--border2);border-radius:10px;overflow:hidden;">
+        <div style="background:var(--surf2);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:12px;font-weight:700;color:var(--text2);">📊 Seam Submission Status — Live Log</div>
+          <div style="display:flex;gap:6px;" id="ns-status-counts"></div>
+          <button onclick="renderSeamStatusPanel()" style="padding:4px 10px;background:var(--surf);border:1px solid var(--border);border-radius:6px;font-size:11px;cursor:pointer;color:var(--text3);">↺ Refresh</button>
+        </div>
+        <div id="ns-status-body" style="max-height:220px;overflow-y:auto;"></div>
+      </div>
+
     </div>
     <div class="mp-foot">
       <button class="btn btn-ghost" style="padding:9px 20px;" onclick="closeMp('m-add-seam')">Cancel</button>
@@ -1973,15 +1983,17 @@ tr:hover td{background:var(--surf2);}
         </div>
       </div>
       <!-- RT / UT extended fields — shown only for RT/UT stages -->
-      <div id="of-rtut-fields" style="display:none;margin-top:10px;border-top:2px solid var(--amber);padding-top:12px;">
-        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">🔬 RT / UT Details</div>
-        <div class="grid2" style="gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--border2);">
+      <div id="of-rtut-fields" style="display:none;margin-top:10px;border-top:2px solid var(--amber);padding-top:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">🔬 RT / UT Details — Fill all fields carefully</div>
+
+        <!-- Company + Logo row -->
+        <div class="grid2" style="gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px dashed var(--border2);">
           <div>
-            <label class="lbl">Company Name (for RT/UT Report)</label>
+            <label class="lbl">NDT Company Name</label>
             <input id="of-rtut-company" placeholder="e.g. ABC Engineering Pvt. Ltd.">
           </div>
           <div>
-            <label class="lbl">Company Logo (for RT/UT Report)</label>
+            <label class="lbl">Company Logo</label>
             <label style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surf2);border:1.5px dashed var(--border2);border-radius:7px;cursor:pointer;font-size:12px;color:var(--text3);">
               🖼 Upload Logo
               <input type="file" id="of-rtut-logo" accept="image/*" onchange="onRTUTLogoUpload(this)" style="display:none;">
@@ -1989,10 +2001,12 @@ tr:hover td{background:var(--surf2);}
             <div id="of-rtut-logo-preview" style="margin-top:4px;min-height:12px;font-size:11px;color:var(--green);"></div>
           </div>
         </div>
-        <div class="grid2" style="gap:10px;">
+
+        <!-- NDT Type / Iteration -->
+        <div class="grid2" style="gap:10px;margin-bottom:12px;">
           <div>
             <label class="lbl">NDT Type</label>
-            <select id="of-ndt-type">
+            <select id="of-ndt-type" onchange="ofNdtTypeChange()">
               <option value="RT">RT — Radiographic Test</option>
               <option value="UT">UT — Ultrasonic Test</option>
             </select>
@@ -2008,7 +2022,7 @@ tr:hover td{background:var(--surf2);}
           </div>
           <div>
             <label class="lbl">Iteration</label>
-            <select id="of-ndt-iter">
+            <select id="of-ndt-iter" onchange="ofIterChange()">
               <option value="R0">R0 — First Offer</option>
               <option value="R1">R1 — After Repair (1st)</option>
               <option value="R2">R2 — After Repair (2nd)</option>
@@ -2022,42 +2036,151 @@ tr:hover td{background:var(--surf2);}
               <option>GTAW+SMAW</option><option>GTAW+SAW</option><option>GTAW+SMAW+SAW</option>
             </select>
           </div>
-          <div>
-            <label class="lbl">Welder No.</label>
-            <input id="of-welder-no" placeholder="e.g. 630">
-          </div>
-          <div>
-            <label class="lbl">Spot No. / Coverage</label>
-            <input id="of-spot-no" placeholder="e.g. Spot-3, 100%">
-          </div>
-          <div>
-            <label class="lbl">Thickness incl. Reinf. (mm)</label>
-            <input id="of-thk-total" placeholder="e.g. 25 mm" type="text">
-          </div>
-          <div>
-            <label class="lbl">Weld Length (mm)</label>
-            <input id="of-weld-length" placeholder="e.g. 1440 mm" type="text">
-          </div>
-          <div class="span2">
-            <label class="lbl">Material Grade</label>
-            <input id="of-mat-grade" placeholder="e.g. SA 516 GR.70">
-          </div>
-          <div id="of-r2-warn" style="display:none;" class="span2">
-            <div style="background:#fef2f2;border:2px solid #f87171;border-radius:8px;padding:10px 14px;">
-              <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:4px;">⚠ R2 — Manager Approval Required</div>
-              <div style="font-size:11px;color:#7f1d1d;line-height:1.6;">This is a 2nd repair offer (R2). It will be submitted to the Manager for approval before QC is notified. The stage will not be visible to QC until the Manager approves.</div>
+        </div>
+
+        <!-- Weld Geometry — OD, Thickness, Length with auto-calculations -->
+        <div style="background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:9px;padding:13px 14px;margin-bottom:12px;">
+          <div style="font-size:10px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">📐 Weld Geometry &amp; Auto-Calculation</div>
+          <div class="grid2" style="gap:10px;">
+            <div>
+              <label class="lbl">OD (Outside Diameter, mm) <span style="font-weight:400;color:var(--text3);font-size:10px;">— for CF calculation</span></label>
+              <input id="of-od" type="number" step="0.01" placeholder="e.g. 500" oninput="ofCalcCircumference()" style="font-weight:700;">
+            </div>
+            <div>
+              <label class="lbl">Circumference CF (mm) <span style="font-weight:400;color:var(--green);font-size:10px;">🔒 Auto = OD × π</span></label>
+              <input id="of-cf" type="number" step="0.01" placeholder="Auto-calculated or manual override" style="background:var(--green-lt);border-color:#86efac;font-weight:700;" oninput="ofManualCF()">
+            </div>
+            <div>
+              <label class="lbl">Weld Length (mm) <span style="color:var(--red);">*</span> <span style="font-weight:400;color:var(--text3);font-size:10px;">— for spot count</span></label>
+              <input id="of-weld-length" type="number" step="1" placeholder="e.g. 1200" oninput="ofCalcSpots()" style="font-weight:700;">
+            </div>
+            <div>
+              <label class="lbl">Thickness Base (mm) <span style="color:var(--red);">*</span></label>
+              <input id="of-thk-base" type="number" step="0.1" placeholder="e.g. 20" oninput="ofCalcThkTotal()" style="font-weight:700;">
+            </div>
+            <div>
+              <label class="lbl">Reinforcement Thickness (mm)</label>
+              <input id="of-thk-reinf" type="number" step="0.1" placeholder="e.g. 2.5" oninput="ofCalcThkTotal()">
+            </div>
+            <div>
+              <label class="lbl">Total Thickness incl. Reinf. (mm) <span style="font-weight:400;color:var(--green);font-size:10px;">🔒 Auto</span></label>
+              <input id="of-thk-total" type="number" step="0.1" placeholder="Auto = Base + Reinf." style="background:var(--green-lt);border-color:#86efac;font-weight:700;" readonly>
+            </div>
+            <div class="span2">
+              <label class="lbl">Material Grade</label>
+              <input id="of-mat-grade" placeholder="e.g. SA 516 GR.70">
             </div>
           </div>
-          <div class="span2" style="display:flex;align-items:center;gap:20px;padding:8px 12px;background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;">
-            <div style="font-size:12px;font-weight:600;color:var(--text2);">PT / MT performed before RT/UT?</div>
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
-              <input type="checkbox" id="of-pt-done" style="width:16px;height:16px;accent-color:var(--blue2);"> PT — Found OK
+        </div>
+
+        <!-- RT/UT Coverage Mode — KEY SELECTOR -->
+        <div style="margin-bottom:12px;">
+          <label class="lbl">RT / UT Coverage Mode <span style="color:var(--red);">*</span></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+            <label id="of-mode-tile-spot" onclick="ofSelectCoverageMode('spot')"
+              style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:var(--surf2);cursor:pointer;">
+              <input type="radio" name="of-coverage-mode" value="spot" style="accent-color:var(--amber);margin-top:2px;width:16px;height:16px;flex-shrink:0;">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--amber);">🎯 Spot RT / UT</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">QC/NDT team decides spot location. Production has no right to select spots. QC will assign spots during inspection clearing.</div>
+              </div>
             </label>
-            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
-              <input type="checkbox" id="of-mt-done" style="width:16px;height:16px;accent-color:var(--blue2);"> MT — Found OK
+            <label id="of-mode-tile-full" onclick="ofSelectCoverageMode('full')"
+              style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:2px solid var(--blue2);border-radius:10px;background:var(--blue-lt);cursor:pointer;">
+              <input type="radio" name="of-coverage-mode" value="full" checked style="accent-color:var(--blue2);margin-top:2px;width:16px;height:16px;flex-shrink:0;">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--blue2);">📋 100% / Full RT / UT</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">Full coverage. System auto-generates spot numbers (A–B, B–C…) based on weld length ÷ 300mm pitch. Production assigns welder per spot.</div>
+              </div>
             </label>
           </div>
         </div>
+
+        <!-- Spot interval for full RT -->
+        <div id="of-full-rt-interval-row" style="margin-bottom:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:150px;">
+            <label class="lbl">Spot Pitch / Film Length (mm) <span style="font-weight:400;color:var(--text3);font-size:10px;">default 300mm per ASME</span></label>
+            <input id="of-spot-pitch" type="number" value="300" min="50" max="1000" step="50" oninput="ofCalcSpots()" style="font-weight:700;">
+          </div>
+          <div id="of-spot-count-badge" style="padding:8px 14px;background:var(--blue-lt);border:1.5px solid var(--blue-mid);border-radius:8px;font-size:12px;font-weight:700;color:var(--blue2);white-space:nowrap;">
+            Enter weld length to see spot count
+          </div>
+        </div>
+
+        <!-- Auto-generated Spot Table (Full RT/UT) -->
+        <div id="of-spot-table-wrap" style="margin-bottom:12px;display:none;">
+          <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">📋 Auto-Generated Spots — Assign Welder per Spot</div>
+          <div id="of-spot-table" style="border:1.5px solid var(--border);border-radius:8px;overflow:hidden;"></div>
+        </div>
+
+        <!-- Spot RT — QC assigns, production only enters welder + single spot info -->
+        <div id="of-spot-rt-wrap" style="margin-bottom:12px;display:none;">
+          <div style="padding:10px 14px;background:var(--amber-lt);border:1.5px solid #fbbf24;border-radius:8px;font-size:12px;color:var(--amber);margin-bottom:8px;">
+            🎯 <strong>Spot RT/UT:</strong> QC team will assign the specific spot location during inspection. Enter general welder info below.
+          </div>
+          <div class="grid2" style="gap:10px;">
+            <div>
+              <label class="lbl">Welder No. <span style="color:var(--red);">*</span></label>
+              <input id="of-welder-no-spot" placeholder="e.g. W-630">
+            </div>
+            <div>
+              <label class="lbl">General Spot Info <span style="font-weight:400;color:var(--text3);font-size:10px;">(QC will specify exact location)</span></label>
+              <input id="of-spot-no" placeholder="e.g. To be assigned by QC/NDT">
+            </div>
+          </div>
+        </div>
+
+        <!-- Repair Section — shown for R1/R2 -->
+        <div id="of-repair-section" style="display:none;margin-bottom:12px;background:#fef2f2;border:2px solid #f87171;border-radius:9px;padding:13px 14px;">
+          <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">🔧 Repair Details — Required for R1/R2</div>
+          <div class="grid2" style="gap:10px;">
+            <div>
+              <label class="lbl">Repair Spot(s) <span style="color:var(--red);">*</span></label>
+              <input id="of-repair-spots" placeholder="e.g. B-C, C-D (from previous rejection)" style="border-color:#f87171;">
+            </div>
+            <div>
+              <label class="lbl">Repair Welder No. <span style="color:var(--red);">*</span></label>
+              <input id="of-welder-no" placeholder="e.g. W-631 (may differ from original)" style="border-color:#f87171;">
+            </div>
+            <div>
+              <label class="lbl">PT/MT after Repair?</label>
+              <div style="display:flex;gap:12px;margin-top:6px;padding:8px 10px;background:#fff;border-radius:7px;border:1px solid #fca5a5;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
+                  <input type="checkbox" id="of-pt-done" style="width:16px;height:16px;accent-color:var(--blue2);"> PT — OK
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
+                  <input type="checkbox" id="of-mt-done" style="width:16px;height:16px;accent-color:var(--blue2);"> MT — OK
+                </label>
+              </div>
+            </div>
+            <div>
+              <label class="lbl">Repair Remarks</label>
+              <input id="of-repair-rem" placeholder="e.g. Slag inclusion removed, rewelded">
+            </div>
+          </div>
+        </div>
+
+        <!-- R2 Warning -->
+        <div id="of-r2-warn" style="display:none;margin-bottom:12px;">
+          <div style="background:#fef2f2;border:2px solid #f87171;border-radius:8px;padding:10px 14px;">
+            <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:4px;">⚠ R2 — Manager Approval Required</div>
+            <div style="font-size:11px;color:#7f1d1d;line-height:1.6;">This is a 2nd repair offer (R2). It will be submitted to the Manager for approval before QC is notified.</div>
+          </div>
+        </div>
+
+        <!-- PT/MT for initial offer (R0) -->
+        <div id="of-ptmt-r0" class="span2" style="padding:8px 12px;background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;margin-bottom:4px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;">PT / MT performed before RT/UT?</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
+              <input type="checkbox" id="of-pt-done-r0" style="width:16px;height:16px;accent-color:var(--blue2);"> PT — Found OK
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;">
+              <input type="checkbox" id="of-mt-done-r0" style="width:16px;height:16px;accent-color:var(--blue2);"> MT — Found OK
+            </label>
+          </div>
+        </div>
+
       </div>
     </div>
     <div class="mfoot">
@@ -2078,9 +2201,37 @@ tr:hover td{background:var(--surf2);}
         <div style="font-size:12px;font-weight:800;color:#dc2626;margin-bottom:8px;">🔴 OVERDUE (>8 hours) — Mandatory Fields Required</div>
         <label class="lbl" style="color:#dc2626;">Reason for delay <span style="color:var(--red);">*</span></label>
         <textarea id="ins-overdue-rem" placeholder="e.g. Film processing delay, radiographer unavailable, safety shutdown, client hold..." style="border-color:#f87171;margin-bottom:10px;"></textarea>
-        <label class="lbl" style="color:#dc2626;">Expected Attend Date & Time <span style="color:var(--red);">*</span></label>
+        <label class="lbl" style="color:#dc2626;">Expected Attend Date &amp; Time <span style="color:var(--red);">*</span></label>
         <input type="datetime-local" id="ins-expected-attend" style="border-color:#f87171;" />
       </div>
+
+      <!-- QC Spot Assignment — shown only for Spot RT/UT -->
+      <div id="ins-spot-assign-section" style="display:none;margin-top:12px;background:var(--amber-lt);border:2px solid #fbbf24;border-radius:9px;padding:12px 14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🎯 QC Spot Assignment — Spot RT/UT</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;">Production has offered <strong>Spot RT/UT</strong>. As QC/NDT, assign the specific spot location below.</div>
+        <div class="grid2" style="gap:10px;">
+          <div>
+            <label class="lbl">Assigned Spot Location <span style="color:var(--red);">*</span></label>
+            <input id="ins-spot-location" placeholder="e.g. A-B (start to end from datum)" style="border-color:#fbbf24;font-weight:700;">
+          </div>
+          <div>
+            <label class="lbl">Position on Weld <span style="font-weight:400;color:var(--text3);font-size:10px;">(mm from datum)</span></label>
+            <input id="ins-spot-from-to" placeholder="e.g. 0–300 mm from datum">
+          </div>
+          <div class="span2">
+            <label class="lbl">Spot Assignment Remarks</label>
+            <input id="ins-spot-remark" placeholder="e.g. High-stress zone, per ASME Sec. V criteria">
+          </div>
+        </div>
+      </div>
+
+      <!-- Full RT/UT — Spot-wise QC decision -->
+      <div id="ins-full-rt-spots-section" style="display:none;margin-top:12px;background:var(--surf2);border:1.5px solid var(--border);border-radius:9px;padding:12px 14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">📋 Full RT/UT — Spot-wise QC Decision</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Mark each spot as Accepted or Rejected (repair required). Spots marked Rejected will be flagged for R1 repair offer.</div>
+        <div id="ins-spots-list"></div>
+      </div>
+
       <div style="margin-top:14px;">
         <label class="lbl">Quality Remarks</label>
         <textarea id="ins-rem" placeholder="Enter remarks or HOLD reason..."></textarea>
@@ -4020,15 +4171,23 @@ function openOfferModal(seamId,idx){
   const seam=getSeam(seamId);const st=seam.stages[idx];
   const proj=getProj(seam.pid);
   offerTarget={seamId,idx};
-  // Reset all fields
-  ['of-loc','of-drw','of-drw-rev','of-rem','of-itp-table','of-itp-annex','of-itp-clause','of-welder-no','of-spot-no','of-thk-total','of-weld-length','of-mat-grade','of-rtut-company'].forEach(id=>{const el=$(id);if(el)el.value='';});
-  _rtutLogoDataUrl='';const rPrev=$('of-rtut-logo-preview');if(rPrev)rPrev.innerHTML='';;
+  // Reset all fields — including new NDT fields
+  ['of-loc','of-drw','of-drw-rev','of-rem','of-itp-table','of-itp-annex','of-itp-clause',
+   'of-welder-no','of-welder-no-spot','of-spot-no','of-thk-total','of-weld-length','of-mat-grade',
+   'of-rtut-company','of-od','of-cf','of-thk-base','of-thk-reinf','of-repair-spots','of-repair-rem'
+  ].forEach(id=>{const el=$(id);if(el)el.value='';});
+  if($('of-spot-pitch'))$('of-spot-pitch').value='300';
+  _rtutLogoDataUrl='';const rPrev=$('of-rtut-logo-preview');if(rPrev)rPrev.innerHTML='';
   if($('of-pt-done'))$('of-pt-done').checked=false;
   if($('of-mt-done'))$('of-mt-done').checked=false;
-  // Pre-fill RT/UT company from previous offer
+  if($('of-pt-done-r0'))$('of-pt-done-r0').checked=false;
+  if($('of-mt-done-r0'))$('of-mt-done-r0').checked=false;
+  // Clear spot table
+  const stw=$('of-spot-table-wrap');if(stw)stw.style.display='none';
+  const spb=$('of-spot-count-badge');if(spb)spb.textContent='Enter weld length to see spot count';
+  // Pre-fill from previous stage data
   if($('of-rtut-company')&&st.rtutCompany) $('of-rtut-company').value=st.rtutCompany;
   if(st.rtutLogoDataUrl){ _rtutLogoDataUrl=st.rtutLogoDataUrl; const p=$('of-rtut-logo-preview');if(p)p.innerHTML='✓ Logo loaded'; }
-  // Pre-fill ITP fields from previous offer on this stage if re-offering
   if($('of-itp-table')&&st.itpTable) $('of-itp-table').value=st.itpTable;
   if($('of-itp-annex')&&st.itpAnnex) $('of-itp-annex').value=st.itpAnnex;
   if($('of-itp-clause')&&st.itpClause) $('of-itp-clause').value=st.itpClause;
@@ -4086,6 +4245,8 @@ function openOfferModal(seamId,idx){
     // Show warning if R2
     const r2warn=$('of-r2-warn');
     if(r2warn) r2warn.style.display=allowedIter==='R2'?'block':'none';
+    // Init new NDT fields
+    setTimeout(()=>_initNdtOfferFields(seam,st),30);
   }
   $('offer-info').innerHTML=`
     <div class="ir"><span class="ir-k">Project</span><span class="ir-v">#${proj?proj.number:'?'} — ${proj?proj.equipment:''}</span></div>
@@ -4156,8 +4317,289 @@ function revokeNA(seamId, idx){
   toast(`N/A revoked on "${st.name}" — stage is now Pending`,'ok');
 }
 
-// ── MIR Clearance check ──
-// Long seam: only 1 part needs MIR cleared. Regular: ALL parts must be cleared.
+// ══════════════════════════════════════════════════════════════
+// NDT RT/UT WORKFLOW — Circumference, Spot Generation, Coverage Mode
+// ══════════════════════════════════════════════════════════════
+
+function ofNdtTypeChange(){ /* type change hook — reserved */ }
+
+function ofIterChange(){
+  const iter=$('of-ndt-iter')?.value||'R0';
+  const repSection=$('of-repair-section');
+  const r2warn=$('of-r2-warn');
+  const ptmtR0=$('of-ptmt-r0');
+  if(repSection) repSection.style.display=(iter==='R1'||iter==='R2')?'block':'none';
+  if(r2warn) r2warn.style.display=iter==='R2'?'block':'none';
+  if(ptmtR0) ptmtR0.style.display=iter==='R0'?'block':'none';
+}
+
+function ofSelectCoverageMode(mode){
+  // Update radio
+  document.querySelectorAll('input[name="of-coverage-mode"]').forEach(r=>r.checked=(r.value===mode));
+  // Tile styling
+  const tS=$('of-mode-tile-spot'),tF=$('of-mode-tile-full');
+  if(tS){tS.style.borderColor=mode==='spot'?'#D97706':'var(--border)';tS.style.background=mode==='spot'?'var(--amber-lt)':'var(--surf2)';}
+  if(tF){tF.style.borderColor=mode==='full'?'var(--blue2)':'var(--border)';tF.style.background=mode==='full'?'var(--blue-lt)':'var(--surf2)';}
+  // Show/hide sections
+  const spotWrap=$('of-spot-rt-wrap');
+  const fullInterval=$('of-full-rt-interval-row');
+  const spotTable=$('of-spot-table-wrap');
+  if(spotWrap) spotWrap.style.display=mode==='spot'?'block':'none';
+  if(fullInterval) fullInterval.style.display=mode==='full'?'flex':'none';
+  if(mode==='full') ofCalcSpots(); else {if(spotTable)spotTable.style.display='none';}
+}
+
+function ofCalcCircumference(){
+  const od=parseFloat($('of-od')?.value)||0;
+  const cfEl=$('of-cf');
+  if(!cfEl)return;
+  if(od>0){
+    const cf=parseFloat((od*Math.PI).toFixed(2));
+    cfEl.value=cf;
+    cfEl.style.background='var(--green-lt)';cfEl.style.borderColor='#86efac';
+    // If weld-length is empty, suggest CF as weld length for circ seams
+    const wlEl=$('of-weld-length');
+    if(wlEl&&!wlEl.value) wlEl.value=cf;
+    ofCalcSpots();
+  }
+}
+
+function ofManualCF(){
+  // User manually overrides CF — clear OD auto styling
+  const cfEl=$('of-cf');
+  if(cfEl){cfEl.style.background='var(--surf)';cfEl.style.borderColor='var(--border2)';}
+  ofCalcSpots();
+}
+
+function ofCalcThkTotal(){
+  const base=parseFloat($('of-thk-base')?.value)||0;
+  const reinf=parseFloat($('of-thk-reinf')?.value)||0;
+  const totalEl=$('of-thk-total');
+  if(totalEl&&base>0){
+    totalEl.value=(base+reinf).toFixed(1);
+  }
+}
+
+// Generate spot labels A-B, B-C, C-D, ... up to Z
+function _genSpotLabels(count){
+  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const spots=[];
+  for(let i=0;i<count;i++){
+    const from=i<26?letters[i]:(letters[Math.floor(i/26)-1]+letters[i%26]);
+    const to=(i+1)<26?letters[i+1]:(letters[Math.floor((i+1)/26)-1]+letters[(i+1)%26]);
+    spots.push({label:`${from}-${to}`,from:i,to:i+1,idx:i});
+  }
+  return spots;
+}
+
+function ofCalcSpots(){
+  const mode=document.querySelector('input[name="of-coverage-mode"]:checked')?.value||'full';
+  if(mode!=='full') return;
+
+  const wl=parseFloat($('of-weld-length')?.value)||0;
+  const pitch=parseFloat($('of-spot-pitch')?.value)||300;
+  const badge=$('of-spot-count-badge');
+  const tableWrap=$('of-spot-table-wrap');
+  const tableEl=$('of-spot-table');
+
+  if(!wl||wl<=0){
+    if(badge) badge.textContent='Enter weld length to see spot count';
+    if(tableWrap) tableWrap.style.display='none';
+    return;
+  }
+
+  const count=Math.ceil(wl/pitch);
+  const spots=_genSpotLabels(count);
+
+  if(badge){
+    badge.innerHTML=`<span style="color:var(--blue2);font-size:14px;font-weight:800;">${count}</span> <span style="font-size:11px;">spots × ${pitch}mm</span> = ${wl}mm weld`;
+  }
+
+  if(tableWrap) tableWrap.style.display='block';
+  if(tableEl){
+    // Check if repair iteration — allow welder change per spot
+    const iter=$('of-ndt-iter')?.value||'R0';
+    const isRepair=iter==='R1'||iter==='R2';
+
+    // Get previously rejected spots from stage data if available
+    let rejectedSpots=[];
+    if(isRepair&&offerTarget){
+      const seam=getSeam(offerTarget.seamId);
+      const st=seam?.stages[offerTarget.idx];
+      rejectedSpots=(st?.rejectedSpots||[]);
+    }
+
+    tableEl.innerHTML=`
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="background:var(--blue2);color:#fff;">
+          <th style="padding:7px 10px;text-align:left;font-size:10px;">Spot</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;">Range</th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;">Welder No. <span style="color:#bfdbfe;">(Production fills)</span></th>
+          <th style="padding:7px 10px;text-align:left;font-size:10px;">Thk incl. Reinf. (mm)</th>
+          ${isRepair?'<th style="padding:7px 10px;text-align:left;font-size:10px;">Repair? PT/MT?</th>':''}
+          <th style="padding:7px 10px;text-align:left;font-size:10px;">Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+      ${spots.map((sp,i)=>{
+        const startMm=Math.round(i*pitch);
+        const endMm=Math.min(Math.round((i+1)*pitch),wl);
+        const prevRej=rejectedSpots.includes(sp.label);
+        return`<tr style="background:${prevRej?'#fef2f2':i%2===0?'#fff':'#f8fafc'};${prevRej?'border-left:3px solid #dc2626;':''}">
+          <td style="padding:6px 10px;font-weight:800;color:var(--blue2);font-family:monospace;">${sp.label}</td>
+          <td style="padding:6px 10px;font-size:10px;color:var(--text3);">${startMm}–${endMm}mm</td>
+          <td style="padding:6px 10px;">
+            <input id="of-spot-welder-${i}" placeholder="e.g. W-630" 
+              style="width:100%;padding:5px 8px;border:1.5px solid ${prevRej?'#f87171':'var(--border)'};border-radius:6px;font-size:12px;font-weight:700;background:${prevRej?'#fef2f2':'var(--surf)'};"
+              value="${prevRej?'':''}">
+          </td>
+          <td style="padding:6px 10px;">
+            <input id="of-spot-thk-${i}" placeholder="mm" 
+              style="width:80px;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;">
+          </td>
+          ${isRepair?`<td style="padding:6px 10px;">
+            <label style="display:flex;align-items:center;gap:4px;font-size:11px;cursor:pointer;">
+              <input type="checkbox" id="of-spot-repair-${i}" ${prevRej?'checked':''} style="accent-color:var(--red);width:13px;height:13px;">
+              <span>Repair</span>
+            </label>
+            <div style="display:flex;gap:4px;margin-top:3px;">
+              <label style="display:flex;align-items:center;gap:3px;font-size:10px;cursor:pointer;"><input type="checkbox" id="of-spot-pt-${i}" style="accent-color:var(--blue2);width:12px;height:12px;"> PT</label>
+              <label style="display:flex;align-items:center;gap:3px;font-size:10px;cursor:pointer;"><input type="checkbox" id="of-spot-mt-${i}" style="accent-color:var(--blue2);width:12px;height:12px;"> MT</label>
+            </div>
+          </td>`:''}
+          <td style="padding:6px 10px;">
+            <input id="of-spot-rem-${i}" placeholder="optional" 
+              style="width:100%;padding:5px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:11px;">
+          </td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>
+    </div>
+    <div style="padding:8px 12px;font-size:10px;color:var(--text4);background:var(--surf2);">
+      ${count} spots × ${pitch}mm pitch = ${wl}mm total weld length
+      ${isRepair?'<span style="color:#dc2626;font-weight:700;margin-left:8px;">⚠ Pre-checked spots had previous rejection — verify repair and PT/MT</span>':''}
+    </div>`;
+  }
+}
+
+// ── openOfferModal — inject new NDT init ──
+const _origOpenOfferModal = typeof openOfferModal==='function' ? openOfferModal : null;
+function _initNdtOfferFields(seam, st){
+  // Initialize coverage mode (default full)
+  ofSelectCoverageMode('full');
+  // Initialize iter
+  const iter=st.ndtIteration||'R0';
+  const iterSel=$('of-ndt-iter');
+  if(iterSel){
+    // Set allowed iteration
+    let allowedIter='R0';
+    if(st.ndtIteration==='R0'&&(st.status==='rejected'||st.status==='returned')) allowedIter='R1';
+    else if(st.ndtIteration==='R1'&&(st.status==='rejected'||st.status==='returned')) allowedIter='R2';
+    else if(!st.ndtIteration) allowedIter='R0';
+    iterSel.value=allowedIter;
+  }
+  ofIterChange();
+  // Pre-fill weld length from seam data if available
+  const wlEl=$('of-weld-length');
+  if(wlEl&&seam.weldLength&&!wlEl.value) wlEl.value=seam.weldLength;
+  // Pre-fill material
+  const mgEl=$('of-mat-grade');
+  if(mgEl&&seam.mat&&!mgEl.value) mgEl.value=seam.mat;
+  // Pre-fill thk base from seam
+  const thkBaseEl=$('of-thk-base');
+  if(thkBaseEl&&seam.thk&&!thkBaseEl.value){
+    const numThk=parseFloat(seam.thk);
+    if(!isNaN(numThk)) thkBaseEl.value=numThk;
+    ofCalcThkTotal();
+  }
+}
+
+// ── Collect spot data from table ──
+function _collectSpotData(){
+  const wl=parseFloat($('of-weld-length')?.value)||0;
+  const pitch=parseFloat($('of-spot-pitch')?.value)||300;
+  if(!wl) return [];
+  const count=Math.ceil(wl/pitch);
+  const spots=_genSpotLabels(count);
+  const iter=$('of-ndt-iter')?.value||'R0';
+  return spots.map((sp,i)=>{
+    const wno=($(`of-spot-welder-${i}`)?.value||'').trim();
+    const thk=($(`of-spot-thk-${i}`)?.value||'').trim();
+    const rem=($(`of-spot-rem-${i}`)?.value||'').trim();
+    const isRepair=$(`of-spot-repair-${i}`)?.checked||false;
+    const pt=$(`of-spot-pt-${i}`)?.checked||false;
+    const mt=$(`of-spot-mt-${i}`)?.checked||false;
+    return {label:sp.label,startMm:Math.round(i*pitch),endMm:Math.min(Math.round((i+1)*pitch),wl),
+      welderNo:wno,thk,rem,isRepair,pt,mt};
+  });
+}
+
+// Patch openInspectModal to show RT/UT spot sections
+const _origOpenInspectModal = typeof openInspectModal==='function' ? openInspectModal : null;
+function _showNdtInspectFields(seam, st){
+  const isRT=isRTUT(st.name);
+  const spotSection=$('ins-spot-assign-section');
+  const fullSection=$('ins-full-rt-spots-section');
+  if(spotSection) spotSection.style.display='none';
+  if(fullSection) fullSection.style.display='none';
+  if(!isRT) return;
+
+  const mode=st.coverageMode||'full';
+  if(mode==='spot'){
+    if(spotSection) spotSection.style.display='block';
+    // Clear fields
+    ['ins-spot-location','ins-spot-from-to','ins-spot-remark'].forEach(id=>{const el=$(id);if(el)el.value='';});
+    // Pre-fill if already assigned
+    if(st.qcSpotLocation&&$('ins-spot-location')) $('ins-spot-location').value=st.qcSpotLocation;
+  } else {
+    // Full RT — show spot table for QC marking
+    if(fullSection) fullSection.style.display='block';
+    const spotsList=$('ins-spots-list');
+    if(spotsList){
+      const spots=st.spots||[];
+      if(!spots.length){spotsList.innerHTML='<div style="padding:12px;text-align:center;color:var(--text4);font-size:12px;">No spot data available — Production may not have entered spot details.</div>';return;}
+      spotsList.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr style="background:var(--blue2);color:#fff;">
+          <th style="padding:6px 10px;font-size:10px;">Spot</th>
+          <th style="padding:6px 10px;font-size:10px;">Range (mm)</th>
+          <th style="padding:6px 10px;font-size:10px;">Welder</th>
+          <th style="padding:6px 10px;font-size:10px;">Thk (mm)</th>
+          <th style="padding:6px 10px;font-size:10px;">Prod. Remarks</th>
+          <th style="padding:6px 10px;font-size:10px;">QC Decision</th>
+        </tr></thead>
+        <tbody>
+        ${spots.map((sp,i)=>`
+        <tr style="background:${i%2===0?'#fff':'#f8fafc'};">
+          <td style="padding:5px 10px;font-weight:800;font-family:monospace;color:var(--blue2);">${sp.label}</td>
+          <td style="padding:5px 10px;font-size:10px;color:var(--text3);">${sp.startMm}–${sp.endMm}</td>
+          <td style="padding:5px 10px;font-weight:700;">${sp.welderNo||'—'}</td>
+          <td style="padding:5px 10px;">${sp.thk||'—'}</td>
+          <td style="padding:5px 10px;font-size:10px;color:var(--text3);">${sp.rem||'—'}${sp.isRepair?'<span style="color:#dc2626;font-size:9px;font-weight:700;margin-left:4px;"> [REPAIR]</span>':''}</td>
+          <td style="padding:5px 8px;">
+            <select id="ins-spot-dec-${i}" style="padding:4px 6px;font-size:11px;border:1.5px solid var(--border);border-radius:5px;font-weight:700;">
+              <option value="ok" style="color:#059669;">✓ OK</option>
+              <option value="reject" style="color:#dc2626;">✗ Reject (Repair)</option>
+              <option value="partial" style="color:#D97706;">~ Partial</option>
+            </select>
+          </td>
+        </tr>`).join('')}
+        </tbody>
+      </table>`;
+    }
+  }
+}
+
+// ── Collect QC spot decisions ──
+function _collectQCSpotDecisions(spots){
+  return (spots||[]).map((sp,i)=>{
+    const dec=$(`ins-spot-dec-${i}`)?.value||'ok';
+    return{...sp, qcDecision:dec};
+  });
+}
+
 function isMIRClearedForSeam(seam){
   if(!seam.parts||!seam.parts.length) return true;
   const apNos=new Set((DB.mirs||[]).filter(m=>m.status==='APPROVED').map(m=>m.partNo).filter(Boolean));
@@ -4204,12 +4646,41 @@ function confirmOffer(){
     st.ndtSubType=$('of-ndt-subtype').value;
     st.ndtIteration=$('of-ndt-iter').value;
     st.weldProcess=$('of-weld-proc').value;
-    st.welderNo=$('of-welder-no').value.trim();
-    st.spotNo=$('of-spot-no').value.trim();
-    st.thkTotal=$('of-thk-total').value.trim();
-    st.weldLength=$('of-weld-length').value.trim();
-    st.matGrade=$('of-mat-grade').value.trim();
-    st.ptMtDone=[($('of-pt-done').checked?'PT':''),($('of-mt-done').checked?'MT':'')].filter(Boolean).join('+');
+    // New geometry fields
+    st.odMm=$('of-od')?.value.trim()||'';
+    st.cfMm=$('of-cf')?.value.trim()||'';
+    st.weldLength=$('of-weld-length')?.value.trim()||'';
+    st.thkBase=$('of-thk-base')?.value.trim()||'';
+    st.thkReinf=$('of-thk-reinf')?.value.trim()||'';
+    st.thkTotal=$('of-thk-total')?.value.trim()||'';
+    st.matGrade=$('of-mat-grade')?.value.trim()||'';
+    // Coverage mode
+    const coverageMode=document.querySelector('input[name="of-coverage-mode"]:checked')?.value||'full';
+    st.coverageMode=coverageMode;
+    if(coverageMode==='full'){
+      st.spotPitch=$('of-spot-pitch')?.value||'300';
+      st.spots=_collectSpotData();
+      // Primary welder = first spot's welder
+      st.welderNo=st.spots[0]?.welderNo||$('of-welder-no')?.value.trim()||'';
+      st.spotNo=st.spots.map(s=>s.label).join(', ');
+    } else {
+      st.welderNo=$('of-welder-no-spot')?.value.trim()||'';
+      st.spotNo=$('of-spot-no')?.value.trim()||'QC to assign';
+      st.spots=[];
+    }
+    // Repair data
+    const iter=st.ndtIteration;
+    if(iter==='R1'||iter==='R2'){
+      st.repairSpots=$('of-repair-spots')?.value.trim()||'';
+      st.repairWelder=$('of-welder-no')?.value.trim()||st.welderNo;
+      const ptR=$('of-pt-done')?.checked||false;
+      const mtR=$('of-mt-done')?.checked||false;
+      st.ptMtDone=[ptR?'PT':'',mtR?'MT':''].filter(Boolean).join('+');
+    } else {
+      const pt=$('of-pt-done-r0')?.checked||false;
+      const mt=$('of-mt-done-r0')?.checked||false;
+      st.ptMtDone=[pt?'PT':'',mt?'MT':''].filter(Boolean).join('+');
+    }
     st.reportNo=repNo;
   }
   // R2 requires Manager approval before offering to QC
@@ -4233,14 +4704,15 @@ function confirmOffer(){
   // Find QC users to show in popup
   const qcUsers=DB.users.filter(u=>u.role==='quality'&&u.approved);
   const qcNames=qcUsers.map(u=>u.name).join(', ')||'Quality Engineer';
+  const _capturedSeamId=seamId, _capturedIdx=idx;
   _showActionPopup({
     icon:'📤',
     title:'Stage Offered for Inspection!',
     body:`<strong>${seam.num}</strong> — ${st.name}<br>Location: <strong>${st.location||'—'}</strong> · Offered by: <strong>${CU.name}</strong>`,
     goingTo:`Sent to QC Engineer's inspection queue → <strong>${qcNames}</strong>`,
     actions:[
-      {label:'✓ OK, Close',color:'var(--blue2)',fn:()=>{}},
-      {label:'📲 WhatsApp QC',color:'#25D366',fn:()=>{sendWA(seamId,idx);}},
+      {label:'✓ OK, Close', color:'var(--blue2)', fn:()=>{}},
+      {label:'📲 WhatsApp QC', color:'#25D366', fn:()=>{sendWA(_capturedSeamId,_capturedIdx);}},
     ]
   });
 }
@@ -4341,8 +4813,13 @@ function openInspectModal(seamId,idx){
     ${(st.itpTable||st.itpAnnex||st.itpClause)?`<div class="ir"><span class="ir-k">ITP Table</span><span class="ir-v">${st.itpTable||'—'}</span></div><div class="ir"><span class="ir-k">ITP Annexure</span><span class="ir-v">${st.itpAnnex||'—'}</span></div><div class="ir"><span class="ir-k">ITP Clause</span><span class="ir-v">${st.itpClause||'—'}</span></div>`:st.itpRef?`<div class="ir"><span class="ir-k">ITP Ref.</span><span class="ir-v">${st.itpRef}</span></div>`:''}
     ${st.welderNo?`<div class="ir"><span class="ir-k">Welder No.</span><span class="ir-v">${st.welderNo}</span></div>`:''}
     ${st.ndtIteration&&isRTUT(st.name)?`<div class="ir"><span class="ir-k">NDT Iteration</span><span class="ir-v" style="font-weight:700;color:var(--amber);">${st.ndtIteration} — ${st.ndtSubType||''}</span></div>`:''}
-    ${st.thkTotal?`<div class="ir"><span class="ir-k">Thickness incl. Reinf.</span><span class="ir-v">${st.thkTotal}</span></div>`:''}
-    ${st.weldLength?`<div class="ir"><span class="ir-k">Weld Length</span><span class="ir-v">${st.weldLength}</span></div>`:''}
+    ${st.coverageMode?`<div class="ir"><span class="ir-k">Coverage Mode</span><span class="ir-v" style="font-weight:700;color:${st.coverageMode==='full'?'var(--blue2)':'var(--amber)'};">${st.coverageMode==='full'?'📋 Full RT/UT':'🎯 Spot RT/UT'}</span></div>`:''}
+    ${st.odMm?`<div class="ir"><span class="ir-k">OD (mm)</span><span class="ir-v">${st.odMm} mm</span></div>`:''}
+    ${st.cfMm?`<div class="ir"><span class="ir-k">Circumference CF</span><span class="ir-v">${st.cfMm} mm</span></div>`:''}
+    ${st.thkBase?`<div class="ir"><span class="ir-k">Base Thickness</span><span class="ir-v">${st.thkBase} mm</span></div>`:''}
+    ${st.thkReinf?`<div class="ir"><span class="ir-k">Reinf. Thickness</span><span class="ir-v">${st.thkReinf} mm</span></div>`:''}
+    ${st.thkTotal?`<div class="ir"><span class="ir-k">Total Thk incl. Reinf.</span><span class="ir-v" style="font-weight:700;">${st.thkTotal} mm</span></div>`:''}
+    ${st.weldLength?`<div class="ir"><span class="ir-k">Weld Length</span><span class="ir-v">${st.weldLength} mm${st.spots&&st.spots.length?' · '+st.spots.length+' spots':''}</span></div>`:''}
     ${st.matGrade?`<div class="ir"><span class="ir-k">Material Grade</span><span class="ir-v">${st.matGrade}</span></div>`:''}
     ${st.weldProcess?`<div class="ir"><span class="ir-k">Weld Process</span><span class="ir-v">${st.weldProcess}</span></div>`:''}
     ${st.ptMtDone?`<div class="ir"><span class="ir-k">PT/MT Before</span><span class="ir-v" style="color:var(--green);font-weight:600;">✓ ${st.ptMtDone} — Found OK</span></div>`:''}
@@ -4350,6 +4827,8 @@ function openInspectModal(seamId,idx){
     ${st.prodRem?`<div class="ir"><span class="ir-k">Prod. Remarks</span><span class="ir-v">${st.prodRem}</span></div>`:''}
     <div class="ir"><span class="ir-k">Material</span><span class="ir-v">${seam.mat} · ${seam.thk}mm · ${seam.type}</span></div>
   `;
+  // Show NDT spot fields for RT/UT
+  setTimeout(()=>_showNdtInspectFields(seam,st),30);
   openModal('m-inspect');
 }
 
@@ -4405,6 +4884,27 @@ function submitInspect(result,ncrNumber){
   }
   const{seamId,idx}=inspTarget;
   const seam=getSeam(seamId);const st=seam.stages[idx];
+
+  // Save QC spot data for Spot RT/UT
+  if(isRTUT(st.name)&&st.coverageMode==='spot'){
+    const spotLoc=($('ins-spot-location')?.value||'').trim();
+    if(!spotLoc&&result==='accepted'){
+      toast('Please assign the spot location before accepting','err');
+      $('ins-spot-location')?.focus();
+      return;
+    }
+    st.qcSpotLocation=spotLoc;
+    st.qcSpotFromTo=($('ins-spot-from-to')?.value||'').trim();
+    st.qcSpotRemark=($('ins-spot-remark')?.value||'').trim();
+  }
+
+  // Save QC decisions for Full RT/UT spots
+  if(isRTUT(st.name)&&st.coverageMode==='full'&&st.spots&&st.spots.length){
+    st.spots=_collectQCSpotDecisions(st.spots);
+    // If any spot rejected, flag them for repair
+    const rejSpots=st.spots.filter(sp=>sp.qcDecision==='reject').map(sp=>sp.label);
+    if(rejSpots.length) st.rejectedSpots=rejSpots;
+  }
 
   // RT/UT rejection — send to Manager approval for repair + R1/R2 re-offer
   if(result==='rejected' && isRTUT(st.name)){
@@ -4818,6 +5318,8 @@ function refreshNsTagComp(){
   const preview=$('ns-part-preview');if(preview)preview.style.display='none';
   // Refresh part dropdown
   nsPartSearch($('ns-part-inp')?.value||'');
+  // Update status panel for selected project
+  setTimeout(renderSeamStatusPanel, 80);
 }
 
 function refreshNsTag(){
@@ -5301,12 +5803,9 @@ function addSeam(){
   log(`📋 PENDING APPROVAL — Add Seam ${num} | Tag: ${tag} | Comp: ${comp} | Project #${proj?proj.number:'?'}${isLongSeam?' | Long Seam':''} by ${CU.name}`);
   save();
   renderAdminSeams();
-  // Show confirmation popup, then reset form for next entry
-  _showSeamConfirmPopup(
-    'Sent for Manager Approval',
-    `Seam <strong>${num}</strong> — "${desc}"<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong><br><br>Manager will review and approve this seam before it appears in the system.`,
-    _resetSeamForm
-  );
+  renderSeamStatusPanel();
+  // Show confirmation popup — modal stays open, form resets on button click
+  _showSeamConfirmPopup(num, desc, tag, comp, false, 1);
 }
 
 // ── Joint Category selector (radio tiles) ──
@@ -5345,38 +5844,165 @@ function nsJointTypeChange(){/* no-op — category now set by radio tiles */}
 
 // ══════════════════════════════════════════════════════════════
 // UNIVERSAL ACTION CONFIRMATION POPUP
-// Shows after ANY significant action — seam add, MIR submit, offer, etc.
+// Shows after ANY significant action
 // ══════════════════════════════════════════════════════════════
+window._actionPopupCallbacks = {};
+
 function _showActionPopup(opts){
-  // opts: {icon, title, body, goingTo, actions:[{label,color,fn}], onClose}
   const old=document.getElementById('_action-popup');if(old)old.remove();
+  const popupId='_action-popup';
   const popup=document.createElement('div');
-  popup.id='_action-popup';
-  popup.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(10,20,70,.5);backdrop-filter:blur(2px);';
+  popup.id=popupId;
+  popup.style.cssText='position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(10,20,70,.55);backdrop-filter:blur(3px);';
+
   const icon=opts.icon||'✅';
-  const goingToHtml=opts.goingTo?`<div style="margin:12px 0;padding:10px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;font-size:12px;color:#166534;line-height:1.6;">📬 ${opts.goingTo}</div>`:'';
-  const actBtns=(opts.actions||[]).map(a=>`<button onclick="(${a.fn.toString()})();document.getElementById('_action-popup')?.remove();" style="flex:1;padding:11px 16px;background:${a.color||'var(--blue2)'};color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">${a.label}</button>`).join('');
-  popup.innerHTML=`<div style="background:#fff;border-radius:16px;box-shadow:0 28px 80px rgba(10,20,70,.32);max-width:440px;width:92%;padding:28px 26px 22px;text-align:center;animation:_popIn .22s cubic-bezier(.34,1.56,.64,1);">
-    <div style="font-size:44px;margin-bottom:10px;">${icon}</div>
-    <div style="font-size:17px;font-weight:800;color:#09111F;margin-bottom:8px;">${opts.title||'Action Completed'}</div>
-    <div style="font-size:13px;color:#475569;line-height:1.65;margin-bottom:4px;">${opts.body||''}</div>
+  const goingToHtml=opts.goingTo
+    ?`<div style="margin:12px 0;padding:10px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;font-size:12px;color:#166534;line-height:1.7;text-align:left;">📬 ${opts.goingTo}</div>`
+    :'';
+
+  // Store callbacks by index to avoid toString() issues
+  const cbKey='popup_'+Date.now();
+  window._actionPopupCallbacks[cbKey]=opts.actions||[];
+
+  const actBtns=(opts.actions||[]).map((a,i)=>
+    `<button onclick="window._actionPopupCallbacks['${cbKey}'][${i}].fn();document.getElementById('_action-popup')?.remove();"
+      style="flex:1;padding:11px 16px;background:${a.color||'var(--blue2)'};color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;"
+      onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${a.label}</button>`
+  ).join('');
+
+  popup.innerHTML=`
+  <div style="background:#fff;border-radius:18px;box-shadow:0 32px 80px rgba(10,20,70,.36);max-width:460px;width:93%;padding:32px 28px 24px;text-align:center;animation:_popIn .25s cubic-bezier(.34,1.56,.64,1);">
+    <div style="font-size:52px;margin-bottom:12px;line-height:1;">${icon}</div>
+    <div style="font-size:19px;font-weight:800;color:#09111F;margin-bottom:8px;letter-spacing:-.3px;">${opts.title||'Action Completed'}</div>
+    <div style="font-size:13px;color:#475569;line-height:1.7;margin-bottom:4px;">${opts.body||''}</div>
     ${goingToHtml}
-    <div style="display:flex;gap:8px;margin-top:16px;">${actBtns}</div>
+    <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;">${actBtns||'<button onclick="document.getElementById(\'_action-popup\')?.remove();" style="flex:1;padding:11px;background:var(--blue2);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">✓ OK</button>'}</div>
   </div>
-  <style>@keyframes _popIn{from{transform:scale(.8) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}</style>`;
+  <style>@keyframes _popIn{from{transform:scale(.78) translateY(24px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}</style>`;
+
   document.body.appendChild(popup);
-  // Backdrop close
   popup.addEventListener('click',e=>{
-    if(e.target===popup){popup.remove();if(typeof opts.onClose==='function')opts.onClose();}
+    if(e.target===popup){
+      popup.remove();
+      delete window._actionPopupCallbacks[cbKey];
+      if(typeof opts.onClose==='function')opts.onClose();
+    }
   });
-  // Auto-close safeguard after 30s
-  setTimeout(()=>{const p=document.getElementById('_action-popup');if(p)p.remove();},30000);
+  setTimeout(()=>{
+    const p=document.getElementById('_action-popup');
+    if(p){p.remove();delete window._actionPopupCallbacks[cbKey];}
+  },60000);
 }
 
-// Legacy wrapper kept for backward compat
-function _showSeamConfirmPopup(title, body, onClose){
-  _showActionPopup({icon:'✅',title,body,goingTo:'Manager\'s Approval Queue — Manager must approve before the seam appears in the system.',
-    actions:[{label:'+ Add Another Seam',color:'var(--blue2)',fn:()=>{if(typeof onClose==='function')onClose();}}]});
+// Seam-specific popup — modal stays open, form resets after user clicks button
+function _showSeamConfirmPopup(seamNum, seamDesc, tag, comp, isGroup, count, skip){
+  const mgrs=DB.users.filter(u=>u.role==='manager'&&u.approved);
+  const mgrNames=mgrs.length?mgrs.map(u=>u.name).join(', '):'Manager';
+  skip=skip||0;
+  _showActionPopup({
+    icon:'✅',
+    title: isGroup ? `${count} Seam${count!==1?'s':''} Submitted!` : 'Seam Submitted for Approval!',
+    body: isGroup
+      ? `<strong>${count}</strong> seam${count!==1?'s':''} queued for Manager approval.${skip?`<br><span style="color:#D97706;font-size:12px;">${skip} skipped (already exist)</span>`:''}<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`
+      : `Seam <strong>${seamNum}</strong> — "${seamDesc}"<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`,
+    goingTo:`Approval Request → <strong>${mgrNames}</strong><br>Seam${isGroup&&count>1?'s':''} will appear in the component list <em>after</em> Manager approves. See <strong>Seam Status Panel</strong> below for live status.`,
+    actions:[
+      {label:'+ Add Another Seam', color:'var(--blue2)', fn: _resetSeamForm},
+      {label:'📋 View Status', color:'#059669', fn: ()=>{ document.getElementById('_action-popup')?.remove(); _scrollToSeamStatus(); }},
+    ]
+  });
+}
+
+function _scrollToSeamStatus(){
+  const mpBody=document.querySelector('#m-add-seam .mp-body');
+  const statusPanel=document.getElementById('ns-seam-status-panel');
+  if(mpBody&&statusPanel){
+    mpBody.scrollTo({top:statusPanel.offsetTop-20,behavior:'smooth'});
+  }
+}
+
+// ── Seam Status Panel — live log of pending and approved seams ──
+function renderSeamStatusPanel(){
+  const countsEl=document.getElementById('ns-status-counts');
+  const bodyEl=document.getElementById('ns-status-body');
+  if(!bodyEl)return;
+
+  // Only Admin and Manager see this
+  if(!CU||(CU.role!=='admin'&&CU.role!=='manager')){
+    const panel=document.getElementById('ns-seam-status-panel');
+    if(panel)panel.style.display='none';
+    return;
+  }
+
+  const pid=document.getElementById('ns-proj')?.value||'';
+
+  // Pending seams (in pendingActions)
+  const pending=(DB.pendingActions||[]).filter(a=>a.type==='add_seam'&&(!pid||a.data?.pid===pid));
+  // Approved seams (in DB.seams) — those added via approvals recently (last 7 days or all if few)
+  const approvedSeams=DB.seams.filter(s=>(!pid||s.pid===pid));
+
+  // Count badges
+  if(countsEl){
+    countsEl.innerHTML=`
+      <span style="padding:3px 10px;background:#fef3c7;border:1px solid #fbbf24;border-radius:12px;font-size:10px;font-weight:700;color:#92400e;">⏳ ${pending.length} Pending</span>
+      <span style="padding:3px 10px;background:#dcfce7;border:1px solid #86efac;border-radius:12px;font-size:10px;font-weight:700;color:#166534;">✅ ${approvedSeams.length} Approved</span>`;
+  }
+
+  if(!pending.length&&!approvedSeams.length){
+    bodyEl.innerHTML='<div style="text-align:center;padding:20px;color:var(--text4);font-size:12px;">No seam submissions yet for this session.</div>';
+    return;
+  }
+
+  let html='';
+
+  // Show pending first
+  if(pending.length){
+    html+=`<div style="padding:8px 14px;font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;background:var(--amber-lt);border-bottom:1px solid var(--border);">⏳ Pending Manager Approval (${pending.length})</div>`;
+    pending.forEach(a=>{
+      const d=a.data||{};
+      html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);background:#fff;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#D97706;flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;">${d.num||'—'}</div>
+          <div style="font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.desc||''} · ${d.tag||d.sec||''} / ${d.comp||''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:9px;color:var(--amber);font-weight:700;padding:2px 7px;background:var(--amber-lt);border-radius:10px;">AWAITING APPROVAL</div>
+          <div style="font-size:9px;color:var(--text4);margin-top:2px;">By: ${a.requestedBy||'—'}</div>
+          <div style="font-size:9px;color:var(--text4);">${a.requestedAt||''}</div>
+        </div>
+      </div>`;
+    });
+  }
+
+  // Show approved seams (most recent first, limited to 20)
+  if(approvedSeams.length){
+    const recent=approvedSeams.slice().reverse().slice(0,20);
+    html+=`<div style="padding:8px 14px;font-size:10px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.5px;background:var(--green-lt);border-bottom:1px solid var(--border);">✅ Approved & Active Seams (${approvedSeams.length})</div>`;
+    recent.forEach(s=>{
+      const tag=s.tag||s.sec||'—';
+      const comp=s.comp||s.sec||'—';
+      const stTotal=s.stages.length;
+      const stDone=s.stages.filter(st=>st.status==='accepted'||st.status==='na').length;
+      html+=`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);background:#fff;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#059669;flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:700;color:var(--blue2);font-family:'JetBrains Mono',monospace;">${s.num}</div>
+          <div style="font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.desc||''} · ${tag} / ${comp}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:9px;color:#059669;font-weight:700;padding:2px 7px;background:#dcfce7;border-radius:10px;">APPROVED ✓</div>
+          <div style="font-size:9px;color:var(--text4);margin-top:2px;">Stages: ${stDone}/${stTotal}</div>
+          ${s.isLongSeam?'<div style="font-size:8px;color:var(--blue2);font-weight:700;">🔵 LONG SEAM</div>':''}
+        </div>
+      </div>`;
+    });
+    if(approvedSeams.length>20){
+      html+=`<div style="padding:8px 14px;text-align:center;font-size:10px;color:var(--text4);">... and ${approvedSeams.length-20} more approved seams</div>`;
+    }
+  }
+
+  bodyEl.innerHTML=html;
 }
 
 // ── Reset the Add Seam form fields (but keep project/tag/comp selection) ──
@@ -6985,16 +7611,51 @@ function printRTUTReport(seamId, idx){
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Welder No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.welderNo||'—'}</td>
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Joint Type</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${seam.type||'—'}</td></tr>
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Material Grade</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.matGrade||seam.mat||'—'}</td>
-        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Thickness incl. Reinf.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.thkTotal||seam.thk||'—'}</td></tr>
-    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Weld Length (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.weldLength||'—'}</td>
-        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">WPS No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${seam.wps||'—'}</td></tr>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Base Thickness (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.thkBase||seam.thk||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Reinf. Thickness (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.thkReinf||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Total Thk incl. Reinf. (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;font-weight:700;color:#1d4ed8;">${st.thkTotal||seam.thk||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">OD (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.odMm||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Circumference CF (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;font-weight:700;">${st.cfMm||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Weld Length (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;font-weight:700;">${st.weldLength||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Coverage Mode</td><td style="padding:5px 8px;border:1px solid #d1d5db;font-weight:700;color:${st.coverageMode==='full'?'#1d4ed8':'#D97706'};">${st.coverageMode==='full'?'📋 100% / Full RT/UT':'🎯 Spot RT/UT'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">WPS No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${seam.wps||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Spot Pitch (mm)</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.spotPitch||'300'}</td></tr>
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Drawing No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.drawing||'—'}</td>
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Drawing Revision</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.drawingRev||'—'}</td></tr>
     ${(st.itpTable||st.itpAnnex||st.itpClause||st.itpRef)?`
-    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;width:20%;">ITP Table No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpTable||'—'}</td>
-        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;width:20%;">ITP Annexure No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpAnnex||'—'}</td></tr>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">ITP Table No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpTable||'—'}</td>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">ITP Annexure No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpAnnex||'—'}</td></tr>
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">ITP Clause No.</td><td colspan="3" style="padding:5px 8px;border:1px solid #d1d5db;">${st.itpClause||st.itpRef||'—'}</td></tr>`:''}
+    ${st.qcSpotLocation?`<tr><td style="background:#fff7ed;font-weight:700;padding:5px 8px;border:1px solid #fed7aa;color:#c2410c;">QC Assigned Spot</td><td style="padding:5px 8px;border:1px solid #d1d5db;font-weight:700;color:#c2410c;">${st.qcSpotLocation}</td>
+        <td style="background:#fff7ed;font-weight:700;padding:5px 8px;border:1px solid #fed7aa;color:#c2410c;">Spot Position</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.qcSpotFromTo||'—'}</td></tr>`:''}
   </table>
+
+  ${st.spots&&st.spots.length?`
+  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">Spot-wise RT/UT Details (${st.spots.length} Spots × ${st.spotPitch||300}mm)</div>
+  <table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:10px;">
+    <thead><tr style="background:#1d4ed8;color:#fff;">
+      <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Spot</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;">Range (mm)</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;">Welder No.</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;">Thk (mm)</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;">Repair?</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;">QC Decision</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Remarks</th>
+    </tr></thead>
+    <tbody>
+    ${st.spots.map((sp,i)=>`
+    <tr style="background:${sp.qcDecision==='reject'?'#fef2f2':i%2===0?'#fff':'#f8fafc'};">
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;font-weight:800;font-family:monospace;color:#1d4ed8;">${sp.label}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;font-size:7.5pt;">${sp.startMm}–${sp.endMm}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;font-weight:700;">${sp.welderNo||'—'}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;">${sp.thk||'—'}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;">${sp.isRepair?'<span style="color:#dc2626;font-weight:700;">Yes</span>':'No'}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;font-weight:700;color:${sp.qcDecision==='reject'?'#dc2626':sp.qcDecision==='partial'?'#d97706':'#059669'};">${sp.qcDecision==='reject'?'✗ Repair':sp.qcDecision==='partial'?'~ Partial':'✓ OK'}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;font-size:7.5pt;">${sp.rem||'—'}</td>
+    </tr>`).join('')}
+    </tbody>
+  </table>`:''}
+
 
   <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">PT / MT Clearance Before RT/UT</div>
   <table style="width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:10px;">
@@ -7306,6 +7967,8 @@ function approveAction(id){
     const d=a.data;
     DB.seams.push({id:d.id||('s'+Date.now()),pid:d.pid,num:d.num,desc:d.desc||d.num,type:d.type||'Groove',mat:d.mat||'',thk:d.thk||'',wps:d.wps||'',itpDoc:d.itpDoc||'',tag:d.tag||'',tagCat:d.tagCat||'General',comp:d.comp||d.sec||'',sec:d.comp||d.sec||'',parts:d.parts||[],isLongSeam:!!d.isLongSeam,stages:d.stages||mkStages(DEFAULT_STAGES)});
     log('✅ SEAM APPROVED — '+d.num+' by Manager '+CU.name);
+    // Refresh status panel if open
+    setTimeout(()=>renderSeamStatusPanel(),100);
   } else if(a.type==='edit_seam'){
     const seam=getSeam(a.data.id);
     if(seam) Object.assign(seam,a.data);
@@ -8815,7 +9478,10 @@ function openSetupModal(){ openMp('m-setup'); }
 function openAddSeamModal(){
   openMp('m-add-seam');
   // Initialize joint category radio to Long Seam (default)
-  setTimeout(()=>nsSelectJointCat('long'), 50);
+  setTimeout(()=>{
+    nsSelectJointCat('long');
+    renderSeamStatusPanel();
+  }, 60);
 }
 function openCreateTemplateModal(){ openMp('m-create-template'); }
 function openAddMirItemModal(){
@@ -9177,11 +9843,8 @@ Tag: ${tag} / ${comp}`))return;
   if(document.getElementById('ns-seam-range'))document.getElementById('ns-seam-range').value='';
   if(document.getElementById('ns-seam-range-preview'))document.getElementById('ns-seam-range-preview').innerHTML='';
   renderSeamTree(); updateApprovalBadge();
-  _showSeamConfirmPopup(
-    'Range Sent for Manager Approval',
-    `<strong>${added}</strong> seam(s) submitted for Manager approval${skip>0?`<br><span style="color:#D97706;">${skip} skipped (already exist)</span>`:''}.<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`,
-    _resetSeamForm
-  );
+  renderSeamStatusPanel();
+  _showSeamConfirmPopup(null, null, tag, comp, true, added, skip);
 }
 
 // ── Create Template modal ──
