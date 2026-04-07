@@ -134,6 +134,7 @@ textarea{resize:vertical;min-height:64px;}
 .rp-admin{color:#92400e;border-color:#f59e0b;background:#fef3c7;}
 .rp-production{color:#1e40af;border-color:#60a5fa;background:#dbeafe;}
 .rp-quality{color:#166534;border-color:#4ade80;background:#dcfce7;}
+.rp-ndt{color:#0c4a6e;border-color:#38bdf8;background:#e0f2fe;}
 .rp-manager{color:#5b21b6;border-color:#a78bfa;background:#ede9fe;}
 .tb-user{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:var(--text2);}
 .tb-logout{background:none;border:1.5px solid var(--border);color:var(--text3);padding:6px 14px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.3px;cursor:pointer;border-radius:7px;transition:all .2s;}
@@ -853,6 +854,7 @@ tr:hover td{background:var(--surf2);}
           <div class="rchips">
             <div class="rchip" data-r="production" onclick="pickRole(this)">Production</div>
             <div class="rchip" data-r="quality" onclick="pickRole(this)">Quality Eng.</div>
+            <div class="rchip" data-r="ndt" onclick="pickRole(this)">NDT QC</div>
             <div class="rchip" data-r="manager" onclick="pickRole(this)">Manager</div>
           </div>
         </div>
@@ -2002,13 +2004,37 @@ tr:hover td{background:var(--surf2);}
           </div>
         </div>
 
-        <!-- NDT Type / Iteration -->
+        <!-- NDT Type / RT-UT Classification / Iteration -->
         <div class="grid2" style="gap:10px;margin-bottom:12px;">
           <div>
-            <label class="lbl">NDT Type</label>
-            <select id="of-ndt-type" onchange="ofNdtTypeChange()">
+            <label class="lbl">NDT Method <span style="color:var(--red);">*</span></label>
+            <select id="of-ndt-type" onchange="ofNdtTypeChange()" style="font-weight:700;">
               <option value="RT">RT — Radiographic Test</option>
               <option value="UT">UT — Ultrasonic Test</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl" id="of-rttype-lbl">RT Type <span style="color:var(--red);">*</span> <span style="font-weight:400;color:var(--text3);font-size:10px;">— controls spot generation</span></label>
+            <select id="of-rt-type" onchange="ofRTTypeChange()" style="font-weight:700;border-color:var(--amber);">
+              <option value="Full RT">📋 Full RT (100%) — UW-11(a) / E=1.0</option>
+              <option value="Spot RT">🎯 Spot RT — UW-11(b) / E=0.85</option>
+              <option value="No RT">⊘ No RT — UW-11(c) / E=0.70</option>
+              <option value="10% RT">10% RT — B31.3 Normal Service</option>
+              <option value="20% RT">20% RT — Client / EPC Spec</option>
+              <option value="25% RT">25% RT — Insurance / Owner Spec</option>
+              <option value="33% RT">33% RT — Client Enhanced</option>
+              <option value="50% RT">50% RT — Category M / Critical</option>
+            </select>
+          </div>
+          <div id="of-ut-type-wrap" style="display:none;">
+            <label class="lbl">UT Type <span style="color:var(--red);">*</span></label>
+            <select id="of-ut-type" onchange="ofRTTypeChange()" style="font-weight:700;border-color:var(--blue2);">
+              <option value="Full UT">📋 Full UT (100%) — TOFD / PAUT / Conv.</option>
+              <option value="Spot UT">🎯 Spot UT — Sampling</option>
+              <option value="TOFD">TOFD — Time of Flight Diffraction</option>
+              <option value="PAUT">PAUT — Phased Array UT</option>
+              <option value="Conv UT">Conventional UT (A-Scan)</option>
+              <option value="Recordable UT">Recordable UT</option>
             </select>
           </div>
           <div>
@@ -2073,26 +2099,18 @@ tr:hover td{background:var(--surf2);}
           </div>
         </div>
 
-        <!-- RT/UT Coverage Mode — KEY SELECTOR -->
-        <div style="margin-bottom:12px;">
-          <label class="lbl">RT / UT Coverage Mode <span style="color:var(--red);">*</span></label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-            <label id="of-mode-tile-spot" onclick="ofSelectCoverageMode('spot')"
-              style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:var(--surf2);cursor:pointer;">
-              <input type="radio" name="of-coverage-mode" value="spot" style="accent-color:var(--amber);margin-top:2px;width:16px;height:16px;flex-shrink:0;">
-              <div>
-                <div style="font-size:13px;font-weight:700;color:var(--amber);">🎯 Spot RT / UT</div>
-                <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">QC/NDT team decides spot location. Production has no right to select spots. QC will assign spots during inspection clearing.</div>
-              </div>
-            </label>
-            <label id="of-mode-tile-full" onclick="ofSelectCoverageMode('full')"
-              style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:2px solid var(--blue2);border-radius:10px;background:var(--blue-lt);cursor:pointer;">
-              <input type="radio" name="of-coverage-mode" value="full" checked style="accent-color:var(--blue2);margin-top:2px;width:16px;height:16px;flex-shrink:0;">
-              <div>
-                <div style="font-size:13px;font-weight:700;color:var(--blue2);">📋 100% / Full RT / UT</div>
-                <div style="font-size:11px;color:var(--text3);margin-top:2px;line-height:1.4;">Full coverage. System auto-generates spot numbers (A–B, B–C…) based on weld length ÷ 300mm pitch. Production assigns welder per spot.</div>
-              </div>
-            </label>
+        <!-- RT/UT Coverage Mode — only shown when Full RT or Full UT selected -->
+        <div id="of-coverage-mode-wrap" style="margin-bottom:12px;display:block;">
+          <div id="of-rt-type-info" style="padding:9px 14px;background:var(--amber-lt);border:1.5px solid #fbbf24;border-radius:8px;font-size:12px;color:var(--amber);margin-bottom:10px;display:none;">
+            🎯 <strong>Spot RT selected</strong> — QC/NDT team will assign the exact spot location during inspection. Enter welder info below.
+          </div>
+          <div id="of-no-rt-info" style="padding:9px 14px;background:var(--surf2);border:1.5px dashed var(--border2);border-radius:8px;font-size:12px;color:var(--text3);margin-bottom:10px;display:none;">
+            ⊘ <strong>No RT / Exempted</strong> — UW-11(c). Only visual inspection. No spot generation required. E=0.70 — wall thickness compensated.
+          </div>
+          <!-- Full RT/UT spot generation panel -->
+          <div id="of-full-coverage-panel" style="display:block;">
+            <div style="font-size:10px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">📋 Full Coverage — Spot Auto-Generation</div>
+            <input type="hidden" name="of-coverage-mode" id="of-coverage-mode-val" value="full">
           </div>
         </div>
 
@@ -2207,8 +2225,8 @@ tr:hover td{background:var(--surf2);}
 
       <!-- QC Spot Assignment — shown only for Spot RT/UT -->
       <div id="ins-spot-assign-section" style="display:none;margin-top:12px;background:var(--amber-lt);border:2px solid #fbbf24;border-radius:9px;padding:12px 14px;">
-        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🎯 QC Spot Assignment — Spot RT/UT</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;">Production has offered <strong>Spot RT/UT</strong>. As QC/NDT, assign the specific spot location below.</div>
+        <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🎯 NDT QC Spot Assignment — Spot RT/UT</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.6;">Production has offered <strong>Spot RT/UT</strong>. As NDT QC, assign the specific spot location and RT date below.</div>
         <div class="grid2" style="gap:10px;">
           <div>
             <label class="lbl">Assigned Spot Location <span style="color:var(--red);">*</span></label>
@@ -2218,6 +2236,24 @@ tr:hover td{background:var(--surf2);}
             <label class="lbl">Position on Weld <span style="font-weight:400;color:var(--text3);font-size:10px;">(mm from datum)</span></label>
             <input id="ins-spot-from-to" placeholder="e.g. 0–300 mm from datum">
           </div>
+          <div>
+            <label class="lbl">RT / UT Taken Date <span style="color:var(--red);">*</span></label>
+            <input type="date" id="ins-spot-rt-date" style="border-color:#fbbf24;font-weight:700;">
+          </div>
+          <div>
+            <label class="lbl">Spot Status <span style="color:var(--red);">*</span></label>
+            <select id="ins-spot-single-status" onchange="insSpotSingleStatusChange()" style="font-weight:700;border-color:#fbbf24;">
+              <option value="Cleared">✅ Cleared / OK</option>
+              <option value="Retake">🔄 Retake Required</option>
+              <option value="Reshoot">📷 Reshoot</option>
+              <option value="DRS/MRS">📋 DRS / MRS</option>
+              <option value="Repair">🔧 Repair Required</option>
+            </select>
+          </div>
+          <div id="ins-spot-single-repair-wrap" style="display:none;" class="span2">
+            <label class="lbl">Repair Reason / Defect Details <span style="color:var(--red);">*</span></label>
+            <input id="ins-spot-single-repair-reason" placeholder="e.g. Porosity found — 2mm dia — Grind & Reweld" style="border-color:#dc2626;">
+          </div>
           <div class="span2">
             <label class="lbl">Spot Assignment Remarks</label>
             <input id="ins-spot-remark" placeholder="e.g. High-stress zone, per ASME Sec. V criteria">
@@ -2225,10 +2261,10 @@ tr:hover td{background:var(--surf2);}
         </div>
       </div>
 
-      <!-- Full RT/UT — Spot-wise QC decision -->
+      <!-- Full RT/UT — Spot-wise NDT QC clearance (5-status per spot) -->
       <div id="ins-full-rt-spots-section" style="display:none;margin-top:12px;background:var(--surf2);border:1.5px solid var(--border);border-radius:9px;padding:12px 14px;">
-        <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">📋 Full RT/UT — Spot-wise QC Decision</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Mark each spot as Accepted or Rejected (repair required). Spots marked Rejected will be flagged for R1 repair offer.</div>
+        <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">🔬 NDT QC — Spot-wise RT/UT Clearance</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5;">Each spot ka status individually select karo. Repair spots mein defect reason aur RT date mandatory hai.</div>
         <div id="ins-spots-list"></div>
       </div>
 
@@ -2534,7 +2570,7 @@ tr:hover td{background:var(--surf2);}
         <div><label class="lbl">Company</label><input id="au-co" placeholder="Company name"></div>
         <div><label class="lbl">Designation</label><input id="au-desig" placeholder="e.g. QC Engineer"></div>
         <div><label class="lbl">Role</label>
-          <select id="au-role"><option value="production">Production</option><option value="quality">Quality Engineer</option><option value="manager">Manager</option><option value="admin">Admin</option></select>
+          <select id="au-role"><option value="production">Production</option><option value="quality">Quality Engineer</option><option value="ndt">NDT QC</option><option value="manager">Manager</option><option value="admin">Admin</option></select>
         </div>
         <div><label class="lbl">Project</label><select id="au-proj"></select></div>
         <div class="span2"><label class="lbl">Password</label><input id="au-pw" type="password" placeholder="Set password"></div>
@@ -3230,7 +3266,7 @@ function loginAs(u, silent=false){
   if(warnBtn) warnBtn.style.display=u.role==='admin'?'block':'none';
   const goB=$('btn-group-offer'),giB=$('btn-group-inspect');
   if(goB) goB.style.display=(u.role==='production')?'block':'none';
-  if(giB) giB.style.display=(u.role==='quality')?'block':'none';
+  if(giB) giB.style.display=(u.role==='quality'||u.role==='ndt')?'block':'none';
   const uaNav=document.getElementById('ni-user-approvals');
   if(uaNav) uaNav.parentElement.style.display=u.role==='admin'?'block':'none';
   populateSelects();
@@ -4043,7 +4079,8 @@ function renderStageRow(seam, st, i){
   const locked = !stageUnlocked(seam, i);
 
   const canOffer   = CU && CU.role==='production';
-  const canInspect = CU && CU.role==='quality';
+  const canInspect = CU && (CU.role==='quality' || CU.role==='ndt');
+  const isNDTQC    = CU && CU.role==='ndt';
 
   // ── Overdue QC alert — offered but not inspected >8h ──
   let overdueHtml='';
@@ -4092,8 +4129,17 @@ function renderStageRow(seam, st, i){
   }
   else if(canOffer && !locked && st.status==='rejected')
     action=`<button class="abtn ab-amber" style="min-width:90px;font-weight:700;" onclick="openNcrOfferModal('${seam.id}',${i})">🔴 NCR Re-Offer</button>`;
-  if(canInspect && st.status==='offered')
-    action=`<button class="abtn ab-green" style="min-width:90px;font-weight:700;" onclick="openInspectModal('${seam.id}',${i})">✔ Inspect</button>`;
+  if(canInspect && st.status==='offered'){
+    const stIsRT=isRTUT(st.name);
+    if(stIsRT && isNDTQC)
+      action=`<button class="abtn ab-green" style="min-width:90px;font-weight:700;" onclick="openInspectModal('${seam.id}',${i})">🔬 NDT Clear</button>`;
+    else if(!stIsRT && CU.role==='quality')
+      action=`<button class="abtn ab-green" style="min-width:90px;font-weight:700;" onclick="openInspectModal('${seam.id}',${i})">✔ Inspect</button>`;
+    else if(stIsRT && CU.role==='quality')
+      action=`<span style="font-size:11px;color:var(--amber);font-weight:700;padding:6px 10px;background:var(--amber-lt);border:1px solid #fbbf24;border-radius:7px;">🔬 Awaiting NDT QC</span>`;
+    else if(!stIsRT && isNDTQC)
+      action=`<span style="font-size:11px;color:var(--text4);padding:6px 10px;">— Not NDT stage</span>`;
+  }
   // Manager: revoke NA stages
   const canRevoke = CU && CU.role==='manager';
   let revokeBtn='';
@@ -4115,6 +4161,7 @@ function renderStageRow(seam, st, i){
   } else if(st.itpRef) detail+=` · ITP: ${st.itpRef}`;
   if(st.welderNo)    detail+=` · Welder: ${st.welderNo}`;
   if(st.ndtIteration&&isRTUT(st.name)) detail+=` · Iteration: ${st.ndtIteration}`;
+  if(st.ndtClassification&&isRTUT(st.name)) detail+=` · 🔬 ${st.ndtClassification}`;
   if(st.reportNo)    detail+=` · Rpt: ${st.reportNo}`;
   if(st.inspectedAt) detail+=`\nInspected by ${st.inspectedBy} @ ${st.inspectedAt}`;
   if(st.ncrNumber)   detail+=`\n🔴 NCR: ${st.ncrNumber}`;
@@ -4321,7 +4368,58 @@ function revokeNA(seamId, idx){
 // NDT RT/UT WORKFLOW — Circumference, Spot Generation, Coverage Mode
 // ══════════════════════════════════════════════════════════════
 
-function ofNdtTypeChange(){ /* type change hook — reserved */ }
+function ofNdtTypeChange(){
+  const ndtType=$('of-ndt-type')?.value||'RT';
+  const rtTypeLbl=$('of-rttype-lbl');
+  const rtTypeWrap=$('of-rt-type')?.parentElement;
+  const utTypeWrap=$('of-ut-type-wrap');
+  // Show RT Type or UT Type dropdown
+  if(ndtType==='UT'){
+    if(rtTypeWrap) rtTypeWrap.style.display='none';
+    if(utTypeWrap) utTypeWrap.style.display='block';
+  } else {
+    if(rtTypeWrap) rtTypeWrap.style.display='block';
+    if(utTypeWrap) utTypeWrap.style.display='none';
+  }
+  // Reset coverage logic
+  ofRTTypeChange();
+}
+
+// Called when RT Type or UT Type changes — controls spot table visibility
+function ofRTTypeChange(){
+  const ndtType=$('of-ndt-type')?.value||'RT';
+  let selectedType='';
+  if(ndtType==='RT') selectedType=$('of-rt-type')?.value||'Full RT';
+  else selectedType=$('of-ut-type')?.value||'Full UT';
+
+  const isFullCoverage=(selectedType==='Full RT'||selectedType==='Full UT');
+  const isSpot=(selectedType==='Spot RT'||selectedType==='Spot UT');
+  const isNoRT=(selectedType==='No RT');
+  const isPercent=!isFullCoverage&&!isSpot&&!isNoRT;
+
+  // Info banners
+  const rtInfo=$('of-rt-type-info');
+  const noRTInfo=$('of-no-rt-info');
+  const fullPanel=$('of-full-coverage-panel');
+  const intervalRow=$('of-full-rt-interval-row');
+  const spotRtWrap=$('of-spot-rt-wrap');
+  const spotTableWrap=$('of-spot-table-wrap');
+
+  if(rtInfo) rtInfo.style.display=(isSpot||isPercent)?'block':'none';
+  if(rtInfo && isPercent) rtInfo.innerHTML=`📊 <strong>${selectedType} selected</strong> — QC/NDT team will randomly select the required percentage of welds for RT. Enter welder info below.`;
+  if(rtInfo && isSpot) rtInfo.innerHTML=`🎯 <strong>Spot RT/UT selected</strong> — QC/NDT team will assign the exact spot location during inspection. Enter welder info below.`;
+  if(noRTInfo) noRTInfo.style.display=isNoRT?'block':'none';
+  if(fullPanel) fullPanel.style.display=isFullCoverage?'block':'none';
+  if(intervalRow) intervalRow.style.display=isFullCoverage?'flex':'none';
+  if(spotRtWrap) spotRtWrap.style.display=(isSpot||isPercent||isNoRT)?'block':'none';
+  if(spotTableWrap&&!isFullCoverage) spotTableWrap.style.display='none';
+
+  // Update hidden coverage mode value for data saving
+  const cmVal=$('of-coverage-mode-val');
+  if(cmVal) cmVal.value=isFullCoverage?'full':'spot';
+
+  if(isFullCoverage) ofCalcSpots();
+}
 
 function ofIterChange(){
   const iter=$('of-ndt-iter')?.value||'R0';
@@ -4334,19 +4432,10 @@ function ofIterChange(){
 }
 
 function ofSelectCoverageMode(mode){
-  // Update radio
-  document.querySelectorAll('input[name="of-coverage-mode"]').forEach(r=>r.checked=(r.value===mode));
-  // Tile styling
-  const tS=$('of-mode-tile-spot'),tF=$('of-mode-tile-full');
-  if(tS){tS.style.borderColor=mode==='spot'?'#D97706':'var(--border)';tS.style.background=mode==='spot'?'var(--amber-lt)':'var(--surf2)';}
-  if(tF){tF.style.borderColor=mode==='full'?'var(--blue2)':'var(--border)';tF.style.background=mode==='full'?'var(--blue-lt)':'var(--surf2)';}
-  // Show/hide sections
-  const spotWrap=$('of-spot-rt-wrap');
-  const fullInterval=$('of-full-rt-interval-row');
-  const spotTable=$('of-spot-table-wrap');
-  if(spotWrap) spotWrap.style.display=mode==='spot'?'block':'none';
-  if(fullInterval) fullInterval.style.display=mode==='full'?'flex':'none';
-  if(mode==='full') ofCalcSpots(); else {if(spotTable)spotTable.style.display='none';}
+  // Legacy compat — now driven by ofRTTypeChange; just call it
+  const cmVal=$('of-coverage-mode-val');
+  if(cmVal) cmVal.value=mode;
+  ofRTTypeChange();
 }
 
 function ofCalcCircumference(){
@@ -4393,7 +4482,8 @@ function _genSpotLabels(count){
 }
 
 function ofCalcSpots(){
-  const mode=document.querySelector('input[name="of-coverage-mode"]:checked')?.value||'full';
+  // Read coverage mode from new hidden input (driven by RT Type dropdown)
+  const mode=$('of-coverage-mode-val')?.value||'full';
   if(mode!=='full') return;
 
   const wl=parseFloat($('of-weld-length')?.value)||0;
@@ -4488,13 +4578,22 @@ function ofCalcSpots(){
 // ── openOfferModal — inject new NDT init ──
 const _origOpenOfferModal = typeof openOfferModal==='function' ? openOfferModal : null;
 function _initNdtOfferFields(seam, st){
-  // Initialize coverage mode (default full)
-  ofSelectCoverageMode('full');
+  // Set NDT method type (RT or UT) based on stage name
+  const ndtTypeEl=$('of-ndt-type');
+  if(ndtTypeEl){
+    if(st.name.includes('UT')) ndtTypeEl.value='UT';
+    else ndtTypeEl.value='RT';
+  }
+  // Set RT Type from previously saved value (for re-offers)
+  const rtTypeEl=$('of-rt-type');
+  const utTypeEl=$('of-ut-type');
+  if(rtTypeEl && st.rtType) rtTypeEl.value=st.rtType;
+  if(utTypeEl && st.utType) utTypeEl.value=st.utType;
+  // Fire type change to show correct dropdown + coverage panel
+  ofNdtTypeChange();
   // Initialize iter
-  const iter=st.ndtIteration||'R0';
   const iterSel=$('of-ndt-iter');
   if(iterSel){
-    // Set allowed iteration
     let allowedIter='R0';
     if(st.ndtIteration==='R0'&&(st.status==='rejected'||st.status==='returned')) allowedIter='R1';
     else if(st.ndtIteration==='R1'&&(st.status==='rejected'||st.status==='returned')) allowedIter='R2';
@@ -4550,53 +4649,115 @@ function _showNdtInspectFields(seam, st){
   const mode=st.coverageMode||'full';
   if(mode==='spot'){
     if(spotSection) spotSection.style.display='block';
-    // Clear fields
+    // Clear and pre-fill fields
     ['ins-spot-location','ins-spot-from-to','ins-spot-remark'].forEach(id=>{const el=$(id);if(el)el.value='';});
-    // Pre-fill if already assigned
     if(st.qcSpotLocation&&$('ins-spot-location')) $('ins-spot-location').value=st.qcSpotLocation;
+    // Set today's date as default RT date
+    const rtDateEl=$('ins-spot-rt-date');
+    if(rtDateEl&&!rtDateEl.value) rtDateEl.value=new Date().toISOString().split('T')[0];
+    const ssStatus=$('ins-spot-single-status');
+    if(ssStatus) ssStatus.value='Cleared';
+    insSpotSingleStatusChange();
   } else {
-    // Full RT — show spot table for QC marking
+    // Full RT/UT — show spot-wise 5-status NDT QC clearance table
     if(fullSection) fullSection.style.display='block';
     const spotsList=$('ins-spots-list');
     if(spotsList){
       const spots=st.spots||[];
-      if(!spots.length){spotsList.innerHTML='<div style="padding:12px;text-align:center;color:var(--text4);font-size:12px;">No spot data available — Production may not have entered spot details.</div>';return;}
-      spotsList.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <thead><tr style="background:var(--blue2);color:#fff;">
-          <th style="padding:6px 10px;font-size:10px;">Spot</th>
-          <th style="padding:6px 10px;font-size:10px;">Range (mm)</th>
-          <th style="padding:6px 10px;font-size:10px;">Welder</th>
-          <th style="padding:6px 10px;font-size:10px;">Thk (mm)</th>
-          <th style="padding:6px 10px;font-size:10px;">Prod. Remarks</th>
-          <th style="padding:6px 10px;font-size:10px;">QC Decision</th>
-        </tr></thead>
+      if(!spots.length){
+        spotsList.innerHTML='<div style="padding:12px;text-align:center;color:var(--text4);font-size:12px;">No spot data available — Production may not have entered spot details.</div>';
+        return;
+      }
+      // Status colour map
+      const statusColors={
+        'Cleared':'#059669','Retake':'#1d4ed8','Reshoot':'#7c3aed',
+        'DRS/MRS':'#0e7490','Repair':'#dc2626'
+      };
+      const statusBg={
+        'Cleared':'#f0fdf4','Retake':'#eff6ff','Reshoot':'#f5f3ff',
+        'DRS/MRS':'#ecfeff','Repair':'#fef2f2'
+      };
+      const today=new Date().toISOString().split('T')[0];
+      spotsList.innerHTML=`
+      <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:var(--blue2);color:#fff;">
+            <th style="padding:6px 8px;font-size:10px;white-space:nowrap;">Spot</th>
+            <th style="padding:6px 8px;font-size:10px;">Range (mm)</th>
+            <th style="padding:6px 8px;font-size:10px;">Welder</th>
+            <th style="padding:6px 8px;font-size:10px;">Thk</th>
+            <th style="padding:6px 8px;font-size:10px;min-width:130px;">NDT Status <span style="color:#bfdbfe;">★ NDT QC</span></th>
+            <th style="padding:6px 8px;font-size:10px;min-width:110px;">RT/UT Date</th>
+            <th style="padding:6px 8px;font-size:10px;min-width:170px;">Repair / Remark</th>
+          </tr>
+        </thead>
         <tbody>
-        ${spots.map((sp,i)=>`
-        <tr style="background:${i%2===0?'#fff':'#f8fafc'};">
-          <td style="padding:5px 10px;font-weight:800;font-family:monospace;color:var(--blue2);">${sp.label}</td>
-          <td style="padding:5px 10px;font-size:10px;color:var(--text3);">${sp.startMm}–${sp.endMm}</td>
-          <td style="padding:5px 10px;font-weight:700;">${sp.welderNo||'—'}</td>
-          <td style="padding:5px 10px;">${sp.thk||'—'}</td>
-          <td style="padding:5px 10px;font-size:10px;color:var(--text3);">${sp.rem||'—'}${sp.isRepair?'<span style="color:#dc2626;font-size:9px;font-weight:700;margin-left:4px;"> [REPAIR]</span>':''}</td>
-          <td style="padding:5px 8px;">
-            <select id="ins-spot-dec-${i}" style="padding:4px 6px;font-size:11px;border:1.5px solid var(--border);border-radius:5px;font-weight:700;">
-              <option value="ok" style="color:#059669;">✓ OK</option>
-              <option value="reject" style="color:#dc2626;">✗ Reject (Repair)</option>
-              <option value="partial" style="color:#D97706;">~ Partial</option>
-            </select>
-          </td>
-        </tr>`).join('')}
+        ${spots.map((sp,i)=>{
+          const prevDec=sp.qcStatus||'Cleared';
+          const rowBg=statusBg[prevDec]||'#fff';
+          return`<tr style="background:${i%2===0?rowBg:'#f8fafc'};border-bottom:1px solid var(--border);">
+            <td style="padding:5px 8px;font-weight:800;font-family:monospace;color:var(--blue2);white-space:nowrap;">${sp.label}</td>
+            <td style="padding:5px 8px;font-size:10px;color:var(--text3);">${sp.startMm||0}–${sp.endMm||'?'}</td>
+            <td style="padding:5px 8px;font-weight:700;">${sp.welderNo||'—'}</td>
+            <td style="padding:5px 8px;">${sp.thk||'—'}</td>
+            <td style="padding:4px 6px;">
+              <select id="ins-spot-status-${i}" onchange="insSpotStatusChange(${i})"
+                style="width:100%;padding:4px 5px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:6px;background:#fff;">
+                <option value="Cleared" style="color:#059669;" ${prevDec==='Cleared'?'selected':''}>✅ Cleared</option>
+                <option value="Retake" style="color:#1d4ed8;" ${prevDec==='Retake'?'selected':''}>🔄 Retake</option>
+                <option value="Reshoot" style="color:#7c3aed;" ${prevDec==='Reshoot'?'selected':''}>📷 Reshoot</option>
+                <option value="DRS/MRS" style="color:#0e7490;" ${prevDec==='DRS/MRS'?'selected':''}>📋 DRS/MRS</option>
+                <option value="Repair" style="color:#dc2626;" ${prevDec==='Repair'?'selected':''}>🔧 Repair</option>
+              </select>
+            </td>
+            <td style="padding:4px 6px;">
+              <input type="date" id="ins-spot-rtdate-${i}" value="${sp.qcRTDate||today}"
+                style="width:100%;padding:4px 6px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;">
+            </td>
+            <td style="padding:4px 6px;" id="ins-spot-repair-td-${i}">
+              <input id="ins-spot-repair-${i}" placeholder="${prevDec==='Repair'?'⚠ Defect reason required':'Optional remark'}"
+                value="${sp.qcRepairReason||''}"
+                style="width:100%;padding:4px 6px;font-size:11px;border:1.5px solid ${prevDec==='Repair'?'#dc2626':'var(--border)'};border-radius:6px;">
+            </td>
+          </tr>`;
+        }).join('')}
         </tbody>
-      </table>`;
+      </table>
+      </div>
+      <div style="margin-top:8px;padding:8px 12px;background:var(--surf2);border-radius:6px;font-size:10px;color:var(--text4);">
+        ✅ Cleared &nbsp;|&nbsp; 🔄 Retake — Film Again &nbsp;|&nbsp; 📷 Reshoot — Repositioning Required &nbsp;|&nbsp; 📋 DRS/MRS — Density/Sensitivity Issue &nbsp;|&nbsp; 🔧 Repair — Weld Defect Found
+      </div>`;
     }
   }
 }
 
-// ── Collect QC spot decisions ──
+// Show/hide repair field for single spot mode
+function insSpotSingleStatusChange(){
+  const st=$('ins-spot-single-status')?.value||'Cleared';
+  const repWrap=$('ins-spot-single-repair-wrap');
+  if(repWrap) repWrap.style.display=st==='Repair'?'block':'none';
+}
+
+// Update repair field border color when status changes in table
+function insSpotStatusChange(i){
+  const st=$(`ins-spot-status-${i}`)?.value||'Cleared';
+  const repInp=$(`ins-spot-repair-${i}`);
+  if(repInp){
+    repInp.style.borderColor=st==='Repair'?'#dc2626':'var(--border)';
+    repInp.placeholder=st==='Repair'?'⚠ Defect reason required':'Optional remark';
+  }
+}
+
+// ── Collect QC spot decisions (5-status with repair reason + RT date) ──
 function _collectQCSpotDecisions(spots){
   return (spots||[]).map((sp,i)=>{
-    const dec=$(`ins-spot-dec-${i}`)?.value||'ok';
-    return{...sp, qcDecision:dec};
+    const status=$(`ins-spot-status-${i}`)?.value||'Cleared';
+    const rtDate=$(`ins-spot-rtdate-${i}`)?.value||'';
+    const repairReason=($(`ins-spot-repair-${i}`)?.value||'').trim();
+    // Map to legacy qcDecision for backward compat
+    const legacyDec=status==='Cleared'?'ok':(status==='Repair'?'reject':'partial');
+    return{...sp, qcStatus:status, qcDecision:legacyDec, qcRTDate:rtDate, qcRepairReason:repairReason};
   });
 }
 
@@ -4646,6 +4807,10 @@ function confirmOffer(){
     st.ndtSubType=$('of-ndt-subtype').value;
     st.ndtIteration=$('of-ndt-iter').value;
     st.weldProcess=$('of-weld-proc').value;
+    // Save RT Type / UT Type classification
+    st.rtType=$('of-rt-type')?.value||'Full RT';
+    st.utType=$('of-ut-type')?.value||'Full UT';
+    st.ndtClassification=(st.ndtType==='UT'?st.utType:st.rtType);
     // New geometry fields
     st.odMm=$('of-od')?.value.trim()||'';
     st.cfMm=$('of-cf')?.value.trim()||'';
@@ -4654,8 +4819,8 @@ function confirmOffer(){
     st.thkReinf=$('of-thk-reinf')?.value.trim()||'';
     st.thkTotal=$('of-thk-total')?.value.trim()||'';
     st.matGrade=$('of-mat-grade')?.value.trim()||'';
-    // Coverage mode
-    const coverageMode=document.querySelector('input[name="of-coverage-mode"]:checked')?.value||'full';
+    // Coverage mode — driven by RT Type dropdown now
+    const coverageMode=$('of-coverage-mode-val')?.value||'full';
     st.coverageMode=coverageMode;
     if(coverageMode==='full'){
       st.spotPitch=$('of-spot-pitch')?.value||'300';
@@ -4814,7 +4979,7 @@ function openInspectModal(seamId,idx){
     ${st.welderNo?`<div class="ir"><span class="ir-k">Welder No.</span><span class="ir-v">${st.welderNo}</span></div>`:''}
     ${st.ndtIteration&&isRTUT(st.name)?`<div class="ir"><span class="ir-k">NDT Iteration</span><span class="ir-v" style="font-weight:700;color:var(--amber);">${st.ndtIteration} — ${st.ndtSubType||''}</span></div>`:''}
     ${st.coverageMode?`<div class="ir"><span class="ir-k">Coverage Mode</span><span class="ir-v" style="font-weight:700;color:${st.coverageMode==='full'?'var(--blue2)':'var(--amber)'};">${st.coverageMode==='full'?'📋 Full RT/UT':'🎯 Spot RT/UT'}</span></div>`:''}
-    ${st.odMm?`<div class="ir"><span class="ir-k">OD (mm)</span><span class="ir-v">${st.odMm} mm</span></div>`:''}
+    ${st.ndtClassification?`<div class="ir"><span class="ir-k">NDT Classification</span><span class="ir-v" style="font-weight:700;color:var(--amber);">🔬 ${st.ndtClassification}</span></div>`:''}
     ${st.cfMm?`<div class="ir"><span class="ir-k">Circumference CF</span><span class="ir-v">${st.cfMm} mm</span></div>`:''}
     ${st.thkBase?`<div class="ir"><span class="ir-k">Base Thickness</span><span class="ir-v">${st.thkBase} mm</span></div>`:''}
     ${st.thkReinf?`<div class="ir"><span class="ir-k">Reinf. Thickness</span><span class="ir-v">${st.thkReinf} mm</span></div>`:''}
@@ -4885,7 +5050,7 @@ function submitInspect(result,ncrNumber){
   const{seamId,idx}=inspTarget;
   const seam=getSeam(seamId);const st=seam.stages[idx];
 
-  // Save QC spot data for Spot RT/UT
+  // Save QC spot data for Spot RT/UT (single spot mode — NDT QC fills status + RT date)
   if(isRTUT(st.name)&&st.coverageMode==='spot'){
     const spotLoc=($('ins-spot-location')?.value||'').trim();
     if(!spotLoc&&result==='accepted'){
@@ -4893,17 +5058,38 @@ function submitInspect(result,ncrNumber){
       $('ins-spot-location')?.focus();
       return;
     }
+    const singleStatus=$('ins-spot-single-status')?.value||'Cleared';
+    const singleRTDate=$('ins-spot-rt-date')?.value||'';
+    const singleRepairReason=($('ins-spot-single-repair-reason')?.value||'').trim();
+    if(singleStatus==='Repair'&&!singleRepairReason){
+      toast('Repair reason is mandatory when status is Repair','err');
+      $('ins-spot-single-repair-reason')?.focus();
+      return;
+    }
     st.qcSpotLocation=spotLoc;
     st.qcSpotFromTo=($('ins-spot-from-to')?.value||'').trim();
     st.qcSpotRemark=($('ins-spot-remark')?.value||'').trim();
+    st.qcSpotStatus=singleStatus;
+    st.qcSpotRTDate=singleRTDate;
+    st.qcSpotRepairReason=singleRepairReason;
   }
 
-  // Save QC decisions for Full RT/UT spots
+  // Save QC decisions for Full RT/UT spots (5-status per spot)
   if(isRTUT(st.name)&&st.coverageMode==='full'&&st.spots&&st.spots.length){
     st.spots=_collectQCSpotDecisions(st.spots);
-    // If any spot rejected, flag them for repair
-    const rejSpots=st.spots.filter(sp=>sp.qcDecision==='reject').map(sp=>sp.label);
+    // Validate: Repair spots need a reason
+    const missingReason=st.spots.filter(sp=>sp.qcStatus==='Repair'&&!sp.qcRepairReason);
+    if(missingReason.length){
+      toast(`Repair reason required for spot(s): ${missingReason.map(s=>s.label).join(', ')}`, 'err');
+      return;
+    }
+    // Flag rejected (Repair) spots for R1 re-offer
+    const rejSpots=st.spots.filter(sp=>sp.qcStatus==='Repair').map(sp=>sp.label);
     if(rejSpots.length) st.rejectedSpots=rejSpots;
+    // If ALL spots are Cleared — auto accept; if any Repair — treat as rejection
+    const repairCount=st.spots.filter(sp=>sp.qcStatus==='Repair').length;
+    const clearedCount=st.spots.filter(sp=>sp.qcStatus==='Cleared').length;
+    // Keep result as passed (NDT QC can accept partial — overall result decided by NDT QC via Accept/Return buttons)
   }
 
   // RT/UT rejection — send to Manager approval for repair + R1/R2 re-offer
@@ -5901,11 +6087,13 @@ function _showSeamConfirmPopup(seamNum, seamDesc, tag, comp, isGroup, count, ski
   skip=skip||0;
   _showActionPopup({
     icon:'✅',
-    title: isGroup ? `${count} Seam${count!==1?'s':''} Submitted!` : 'Seam Submitted for Approval!',
+    title: isGroup
+      ? `Range Sent for Manager Approval`
+      : `Seam Sent for Manager Approval`,
     body: isGroup
-      ? `<strong>${count}</strong> seam${count!==1?'s':''} queued for Manager approval.${skip?`<br><span style="color:#D97706;font-size:12px;">${skip} skipped (already exist)</span>`:''}<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`
-      : `Seam <strong>${seamNum}</strong> — "${seamDesc}"<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`,
-    goingTo:`Approval Request → <strong>${mgrNames}</strong><br>Seam${isGroup&&count>1?'s':''} will appear in the component list <em>after</em> Manager approves. See <strong>Seam Status Panel</strong> below for live status.`,
+      ? `<strong>${count}</strong> seam${count!==1?'s':''} submitted for Manager approval.${skip?`<br><span style="color:#D97706;font-size:12px;">${skip} skipped (already exist).</span>`:''}<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`
+      : `<strong>1</strong> seam submitted for Manager approval.<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`,
+    goingTo:`Manager's Approval Queue — Manager must approve before the seam appears in the system.`,
     actions:[
       {label:'+ Add Another Seam', color:'var(--blue2)', fn: _resetSeamForm},
       {label:'📋 View Status', color:'#059669', fn: ()=>{ document.getElementById('_action-popup')?.remove(); _scrollToSeamStatus(); }},
@@ -7599,7 +7787,7 @@ function printRTUTReport(seamId, idx){
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">MSN / Tag No.</td><td style="font-family:monospace;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${tag}</td>
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Design Code</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${proj?proj.code||'—':'—'}</td></tr>
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">NDT Method</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ndtType||'—'}</td>
-        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Coverage / Spot No.</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.spotNo||'100%'}</td></tr>
+        <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">NDT Classification</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;color:#b45309;">${st.ndtClassification||st.spotNo||'100%'}</td></tr>
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Iteration</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ndtIteration||'R0'} — ${st.ndtSubType||'—'}</td>
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Weld Process</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.weldProcess||'—'}</td></tr>
   </table>
@@ -7631,28 +7819,31 @@ function printRTUTReport(seamId, idx){
   </table>
 
   ${st.spots&&st.spots.length?`
-  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">Spot-wise RT/UT Details (${st.spots.length} Spots × ${st.spotPitch||300}mm)</div>
+  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">Spot-wise RT/UT Details — NDT QC Clearance (${st.spots.length} Spots × ${st.spotPitch||300}mm)</div>
   <table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:10px;">
     <thead><tr style="background:#1d4ed8;color:#fff;">
       <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Spot</th>
       <th style="padding:5px 8px;border:1px solid #93c5fd;">Range (mm)</th>
       <th style="padding:5px 8px;border:1px solid #93c5fd;">Welder No.</th>
       <th style="padding:5px 8px;border:1px solid #93c5fd;">Thk (mm)</th>
-      <th style="padding:5px 8px;border:1px solid #93c5fd;">Repair?</th>
-      <th style="padding:5px 8px;border:1px solid #93c5fd;">QC Decision</th>
-      <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Remarks</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;min-width:80px;">NDT Status</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;">RT/UT Date</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Repair / Defect Reason</th>
     </tr></thead>
     <tbody>
-    ${st.spots.map((sp,i)=>`
-    <tr style="background:${sp.qcDecision==='reject'?'#fef2f2':i%2===0?'#fff':'#f8fafc'};">
+    ${st.spots.map((sp,i)=>{
+      const st5=sp.qcStatus||'Cleared';
+      const stColor={'Cleared':'#059669','Retake':'#1d4ed8','Reshoot':'#7c3aed','DRS/MRS':'#0e7490','Repair':'#dc2626'}[st5]||'#059669';
+      const stIcon={'Cleared':'✅','Retake':'🔄','Reshoot':'📷','DRS/MRS':'📋','Repair':'🔧'}[st5]||'✅';
+      return`<tr style="background:${st5==='Repair'?'#fef2f2':i%2===0?'#fff':'#f8fafc'};">
       <td style="padding:4px 8px;border:1px solid #e5e7eb;font-weight:800;font-family:monospace;color:#1d4ed8;">${sp.label}</td>
-      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;font-size:7.5pt;">${sp.startMm}–${sp.endMm}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;font-size:7.5pt;">${sp.startMm||0}–${sp.endMm||'?'}</td>
       <td style="padding:4px 8px;border:1px solid #e5e7eb;font-weight:700;">${sp.welderNo||'—'}</td>
       <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;">${sp.thk||'—'}</td>
-      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;">${sp.isRepair?'<span style="color:#dc2626;font-weight:700;">Yes</span>':'No'}</td>
-      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;font-weight:700;color:${sp.qcDecision==='reject'?'#dc2626':sp.qcDecision==='partial'?'#d97706':'#059669'};">${sp.qcDecision==='reject'?'✗ Repair':sp.qcDecision==='partial'?'~ Partial':'✓ OK'}</td>
-      <td style="padding:4px 8px;border:1px solid #e5e7eb;font-size:7.5pt;">${sp.rem||'—'}</td>
-    </tr>`).join('')}
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;font-weight:700;color:${stColor};">${stIcon} ${st5}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;text-align:center;font-size:7.5pt;">${sp.qcRTDate||'—'}</td>
+      <td style="padding:4px 8px;border:1px solid #e5e7eb;font-size:7.5pt;color:${st5==='Repair'?'#dc2626':'inherit'};">${sp.qcRepairReason||sp.rem||'—'}</td>
+    </tr>`;}).join('')}
     </tbody>
   </table>`:''}
 
