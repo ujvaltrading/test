@@ -2691,6 +2691,10 @@ const PARALLEL_GROUPS=Object.keys(_pgCounts).filter(pg=>_pgCounts[pg]>1);
 const isParallelPG=pg=>pg&&PARALLEL_GROUPS.includes(pg);
 // ── Central unlock check — single source of truth for all stage locking ──
 function stageUnlocked(seam,i){
+  // ── GATE 0: MIR Material Clearance — ALL parts must be APPROVED before any stage can be offered ──
+  // This is the primary lock — overrides all other unlock logic
+  if(!isMIRClearedForSeam(seam)) return false;
+
   const isDone=s=>s.status==='accepted'||s.status==='na'; // na counts as cleared
   if(i===0) return true;
   const stages=seam.stages;
@@ -4102,8 +4106,35 @@ function renderStageRow(seam, st, i){
     }
   }
 
+  // ── MIR Lock check — determine if MIR is the reason for lock ──
+  const mirCleared = isMIRClearedForSeam(seam);
+  const mirLocked  = !mirCleared; // locked specifically due to MIR not cleared
+
   let chip='', action='';
-  if(locked)                              chip=`<span class="chip ch-lock">🔒 Locked</span>`;
+  if(locked){
+    if(mirLocked && i===0){
+      // First stage but MIR not cleared — show MIR lock banner
+      const uncl=getUnclearedParts(seam);
+      const partRows=uncl.map(p=>{
+        const ms=getMIRStatusForPart(p.no);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:1px solid #fca5a5;">
+          <span style="font-family:monospace;font-size:11px;font-weight:700;color:#7f1d1d;">Part: ${p.no}</span>
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:${ms.bg};color:${ms.color};">${ms.label}</span>
+        </div>`;
+      }).join('');
+      chip=`<span class="chip" style="color:#dc2626;border-color:#fca5a5;background:#fef2f2;">📦 MIR Pending</span>`;
+      // Show inline banner under stage name
+      action=`<div style="margin-top:4px;padding:7px 10px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:7px;font-size:11px;">
+        <div style="font-weight:700;color:#dc2626;margin-bottom:4px;">🔒 Stages locked — MIR not cleared</div>
+        ${partRows}
+        <div style="font-size:10px;color:#7f1d1d;margin-top:4px;">All parts must have <strong>QC Approved MIR</strong> before stages can be offered.</div>
+      </div>`;
+    } else if(mirLocked){
+      chip=`<span class="chip" style="color:#dc2626;border-color:#fca5a5;background:#fef2f2;">📦 MIR Pending</span>`;
+    } else {
+      chip=`<span class="chip ch-lock">🔒 Locked</span>`;
+    }
+  }
   else if(st.status==='na')              chip=`<span class="chip" style="color:#7c3aed;border-color:#a78bfa;background:#ede9fe;">⊘ N/A</span>`;
   else if(st.status==='pending')          chip=`<span class="chip ch-pend">Pending</span>`;
   else if(st.status==='offered'){
@@ -4217,6 +4248,23 @@ function openOfferModal(seamId,idx){
   if(!CU||CU.role!=='production'){toast('Only Production role can offer stages for inspection','err');return;}
   const seam=getSeam(seamId);const st=seam.stages[idx];
   const proj=getProj(seam.pid);
+
+  // ── HARD MIR BLOCK — cannot offer if any part's MIR not APPROVED ──
+  if(!isMIRClearedForSeam(seam)){
+    const uncl=getUnclearedParts(seam);
+    const partList=uncl.map(p=>{
+      const ms=getMIRStatusForPart(p.no);
+      return `Part <strong>${p.no}</strong> — ${ms.label}`;
+    }).join('<br>');
+    toast('MIR not cleared — offering blocked','err');
+    _showActionPopup({
+      icon:'📦',
+      title:'MIR Clearance Required',
+      body:`Stages cannot be offered until all Part Numbers have <strong>QC Approved MIR</strong>.<br><br>${partList}`,
+      goingTo:'Go to MIR page → Offer materials → Wait for QC Approval → Then offer inspection stages.',
+    });
+    return;
+  }
   offerTarget={seamId,idx};
   // Reset all fields — including new NDT fields
   ['of-loc','of-drw','of-drw-rev','of-rem','of-itp-table','of-itp-annex','of-itp-clause',
@@ -4761,16 +4809,46 @@ function _collectQCSpotDecisions(spots){
   });
 }
 
+// Returns true only if ALL parts assigned to this seam have at least one APPROVED MIR
+// Any other status (not offered / pending_qc / returned / rejected / no MIR) = BLOCKED
 function isMIRClearedForSeam(seam){
-  if(!seam.parts||!seam.parts.length) return true;
-  const apNos=new Set((DB.mirs||[]).filter(m=>m.status==='APPROVED').map(m=>m.partNo).filter(Boolean));
-  if(seam.isLongSeam) return seam.parts.some(p=>apNos.has(p.no));
+  if(!seam.parts||!seam.parts.length) return true; // no parts assigned = not blocked
+  const apNos=new Set(
+    (DB.mirs||[])
+      .filter(m=>m.status==='APPROVED')
+      .map(m=>m.partNo)
+      .filter(Boolean)
+  );
+  if(seam.isLongSeam){
+    // Long seam: at least 1 part must be APPROVED
+    return seam.parts.some(p=>apNos.has(p.no));
+  }
+  // Regular joint: ALL parts must be APPROVED
   return seam.parts.every(p=>apNos.has(p.no));
 }
+
+// Returns list of parts that are NOT yet APPROVED (for display in lock banner)
 function getUnclearedParts(seam){
   if(!seam.parts||!seam.parts.length) return [];
-  const apNos=new Set((DB.mirs||[]).filter(m=>m.status==='APPROVED').map(m=>m.partNo).filter(Boolean));
+  const apNos=new Set(
+    (DB.mirs||[])
+      .filter(m=>m.status==='APPROVED')
+      .map(m=>m.partNo)
+      .filter(Boolean)
+  );
   return seam.parts.filter(p=>!apNos.has(p.no));
+}
+
+// Returns the MIR status label for a given part number
+function getMIRStatusForPart(partNo){
+  const mirs=(DB.mirs||[]).filter(m=>m.partNo===partNo);
+  if(!mirs.length) return {label:'No MIR',color:'#dc2626',bg:'#fef2f2'};
+  // Priority: APPROVED > PENDING_QC > REJECTED
+  if(mirs.some(m=>m.status==='APPROVED')) return {label:'✅ Approved',color:'#059669',bg:'#f0fdf4'};
+  if(mirs.some(m=>m.status==='PENDING_QC')) return {label:'⏳ Offered / Pending QC',color:'#b45309',bg:'#fffbeb'};
+  if(mirs.some(m=>m.status==='RETURNED')) return {label:'↩ Returned',color:'#1d4ed8',bg:'#eff6ff'};
+  if(mirs.some(m=>m.status==='REJECTED')) return {label:'❌ Rejected',color:'#dc2626',bg:'#fef2f2'};
+  return {label:'📋 Not Offered',color:'#6b7280',bg:'#f9fafb'};
 }
 
 function confirmOffer(){
@@ -6039,7 +6117,8 @@ function _showActionPopup(opts){
   const popupId='_action-popup';
   const popup=document.createElement('div');
   popup.id=popupId;
-  popup.style.cssText='position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(10,20,70,.55);backdrop-filter:blur(3px);';
+  // Force highest possible z-index — must beat modal-page (z-index:800) and modal-page-box stacking context
+  popup.style.cssText='position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:rgba(10,20,70,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);';
 
   const icon=opts.icon||'✅';
   const goingToHtml=opts.goingTo
@@ -6066,7 +6145,12 @@ function _showActionPopup(opts){
   </div>
   <style>@keyframes _popIn{from{transform:scale(.78) translateY(24px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}</style>`;
 
+  // Always append as LAST child of body so it sits above all stacking contexts
   document.body.appendChild(popup);
+  // Re-append to force DOM order after any modal already in body
+  document.body.removeChild(popup);
+  document.body.appendChild(popup);
+
   popup.addEventListener('click',e=>{
     if(e.target===popup){
       popup.remove();
