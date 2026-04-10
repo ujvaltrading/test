@@ -2049,9 +2049,10 @@ tr:hover td{background:var(--surf2);}
           <div>
             <label class="lbl">Iteration</label>
             <select id="of-ndt-iter" onchange="ofIterChange()">
-              <option value="R0">R0 — First Offer</option>
+              <option value="R0">R0 — Revision 0 (First Offer)</option>
               <option value="R1">R1 — After Repair (1st)</option>
-              <option value="R2">R2 — After Repair (2nd)</option>
+              <option value="R2">R2 — After Repair (2nd) · Manager Approval</option>
+              <option value="R3">R3 — Full Penalty · Manager Approval Required</option>
             </select>
           </div>
           <div>
@@ -2131,29 +2132,22 @@ tr:hover td{background:var(--surf2);}
           <div id="of-spot-table" style="border:1.5px solid var(--border);border-radius:8px;overflow:hidden;"></div>
         </div>
 
-        <!-- Spot RT — QC assigns, production only enters welder + single spot info -->
+        <!-- Spot RT — Multiple Spots Entry (Production can add 1+ spots) -->
         <div id="of-spot-rt-wrap" style="margin-bottom:12px;display:none;">
-          <div style="padding:10px 14px;background:var(--amber-lt);border:1.5px solid #fbbf24;border-radius:8px;font-size:12px;color:var(--amber);margin-bottom:8px;">
-            🎯 <strong>Spot RT/UT:</strong> QC team will assign the specific spot location during inspection. Enter general welder info below.
+          <div id="of-spot-rt-info-banner" style="padding:10px 14px;background:var(--amber-lt);border:1.5px solid #fbbf24;border-radius:8px;font-size:12px;color:var(--amber);margin-bottom:8px;">
+            🎯 <strong>Spot RT/UT:</strong> Add 1 or more spots below. For each spot, enter Welder No. and position. NDT QC will verify exact location during inspection.
           </div>
-          <div class="grid2" style="gap:10px;">
-            <div>
-              <label class="lbl">Welder No. <span style="color:var(--red);">*</span></label>
-              <input id="of-welder-no-spot" placeholder="e.g. W-630">
-            </div>
-            <div>
-              <label class="lbl">General Spot Info <span style="font-weight:400;color:var(--text3);font-size:10px;">(QC will specify exact location)</span></label>
-              <input id="of-spot-no" placeholder="e.g. To be assigned by QC/NDT">
-            </div>
-          </div>
+          <div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">📋 Spot(s) to Offer — Add as per Client / Code Requirement</div>
+          <div id="of-spot-rows-container"></div>
+          <button onclick="ofAddSpotRow()" style="margin-top:6px;padding:7px 14px;background:var(--amber-lt);border:1.5px solid #fbbf24;color:var(--amber);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">+ Add Another Spot</button>
         </div>
 
-        <!-- Repair Section — shown for R1/R2 -->
+        <!-- Repair Section — shown for R1/R2/R3 -->
         <div id="of-repair-section" style="display:none;margin-bottom:12px;background:#fef2f2;border:2px solid #f87171;border-radius:9px;padding:13px 14px;">
-          <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">🔧 Repair Details — Required for R1/R2</div>
+          <div style="font-size:11px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">🔧 Repair Details — Required for R1/R2/R3</div>
           <div class="grid2" style="gap:10px;">
             <div>
-              <label class="lbl">Repair Spot(s) <span style="color:var(--red);">*</span></label>
+              <label class="lbl">Repair Spot(s) <span style="color:var(--red);">*</span> <span style="font-weight:400;font-size:10px;color:var(--text3);">— spots that had repair in previous RT</span></label>
               <input id="of-repair-spots" placeholder="e.g. B-C, C-D (from previous rejection)" style="border-color:#f87171;">
             </div>
             <div>
@@ -2182,7 +2176,41 @@ tr:hover td{background:var(--surf2);}
         <div id="of-r2-warn" style="display:none;margin-bottom:12px;">
           <div style="background:#fef2f2;border:2px solid #f87171;border-radius:8px;padding:10px 14px;">
             <div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:4px;">⚠ R2 — Manager Approval Required</div>
-            <div style="font-size:11px;color:#7f1d1d;line-height:1.6;">This is a 2nd repair offer (R2). It will be submitted to the Manager for approval before QC is notified.</div>
+            <div style="font-size:11px;color:#7f1d1d;line-height:1.6;">This is a 2nd repair offer (R2). It will be submitted to the Manager for approval before QC is notified. Penalty spots will be auto-calculated based on previous repair pattern.</div>
+          </div>
+        </div>
+
+        <!-- R3 Warning + mandatory AI Certificate + Weld Procedure PDF -->
+        <div id="of-r3-warn" style="display:none;margin-bottom:12px;background:#fef2f2;border:2px solid #dc2626;border-radius:9px;padding:14px;">
+          <div style="font-size:12px;font-weight:800;color:#dc2626;margin-bottom:8px;">🚨 R3 — FULL PENALTY STAGE — Manager Approval Mandatory</div>
+          <div style="font-size:11px;color:#7f1d1d;margin-bottom:12px;line-height:1.6;">
+            This joint has reached R3 (3rd repair). <strong>Full joint re-RT</strong> is mandatory. Manager must approve before this offer reaches NDT QC.<br>
+            <strong>The following documents are mandatory for R3:</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <label class="lbl" style="color:#dc2626;">AI Intimation / Clearance Certificate No. <span style="color:var(--red);">*</span></label>
+              <input id="of-r3-ai-cert-no" placeholder="e.g. AI/CERT/2024/001" style="border-color:#dc2626;font-weight:700;">
+            </div>
+            <div>
+              <label class="lbl" style="color:#dc2626;">AI Certificate / Mail PDF <span style="color:var(--red);">*</span></label>
+              <label style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:#fff;border:1.5px solid #dc2626;border-radius:7px;cursor:pointer;font-size:12px;color:#dc2626;font-weight:600;">
+                📎 Upload AI Certificate PDF
+                <input type="file" id="of-r3-ai-cert-file" accept=".pdf,image/*" onchange="ofR3AICertUpload(this)" style="display:none;">
+              </label>
+              <div id="of-r3-ai-cert-preview" style="margin-top:4px;font-size:11px;color:var(--green);"></div>
+            </div>
+            <div class="span2">
+              <label class="lbl" style="color:#dc2626;">Welding Procedure Document — All-in-one merged PDF <span style="color:var(--red);">*</span></label>
+              <div style="font-size:10px;color:#7f1d1d;margin-bottom:6px;line-height:1.6;">
+                Upload single merged PDF containing: Welding process &amp; parameters · Electrode/filler details · Machine calibration cert · Welder change details · Pre-heating · Interpass temp · Post heating · WPS/PQR reference
+              </div>
+              <label style="display:flex;align-items:center;gap:8px;padding:9px 14px;background:#fff;border:2px dashed #dc2626;border-radius:7px;cursor:pointer;font-size:12px;color:#dc2626;font-weight:600;">
+                📄 Upload Welding Procedure Merged PDF
+                <input type="file" id="of-r3-weld-proc-file" accept=".pdf,image/*" onchange="ofR3WeldProcUpload(this)" style="display:none;">
+              </label>
+              <div id="of-r3-weld-proc-preview" style="margin-top:6px;font-size:11px;color:var(--green);"></div>
+            </div>
           </div>
         </div>
 
@@ -2221,6 +2249,24 @@ tr:hover td{background:var(--surf2);}
         <textarea id="ins-overdue-rem" placeholder="e.g. Film processing delay, radiographer unavailable, safety shutdown, client hold..." style="border-color:#f87171;margin-bottom:10px;"></textarea>
         <label class="lbl" style="color:#dc2626;">Expected Attend Date &amp; Time <span style="color:var(--red);">*</span></label>
         <input type="datetime-local" id="ins-expected-attend" style="border-color:#f87171;" />
+      </div>
+
+      <!-- NDT QC — Found Repair / No Repair primary toggle (shown for RT/UT stages) -->
+      <div id="ins-repair-toggle-section" style="display:none;margin-top:12px;">
+        <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">🔬 NDT QC — RT/UT Film Result</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button id="ins-btn-no-repair" onclick="insSetRepairFound(false)"
+            style="padding:14px;border:2px solid #059669;border-radius:10px;background:#f0fdf4;color:#059669;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;">
+            ✅ No Repair Found
+          </button>
+          <button id="ins-btn-found-repair" onclick="insSetRepairFound(true)"
+            style="padding:14px;border:2px solid var(--border);border-radius:10px;background:var(--surf2);color:var(--text3);font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;">
+            🔧 Found Repair
+          </button>
+        </div>
+        <div id="ins-repair-found-banner" style="display:none;margin-top:8px;padding:8px 14px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:8px;font-size:12px;color:#dc2626;font-weight:700;">
+          ⚠ Repair mode active — Cleared/OK option is hidden. Mark each repair spot below with defect details.
+        </div>
       </div>
 
       <!-- QC Spot Assignment — shown only for Spot RT/UT -->
@@ -4191,7 +4237,10 @@ function renderStageRow(seam, st, i){
     detail+=` · ITP: ${itpParts}`;
   } else if(st.itpRef) detail+=` · ITP: ${st.itpRef}`;
   if(st.welderNo)    detail+=` · Welder: ${st.welderNo}`;
-  if(st.ndtIteration&&isRTUT(st.name)) detail+=` · Iteration: ${st.ndtIteration}`;
+  if(st.ndtIteration&&isRTUT(st.name)){
+    const iterLabel={'R0':'R0 — Revision 0','R1':'R1 — After Repair (1st)','R2':'R2 — After Repair (2nd)','R3':'R3 — Full Penalty'}[st.ndtIteration]||st.ndtIteration;
+    detail+=` · Iteration: ${iterLabel}`;
+  }
   if(st.ndtClassification&&isRTUT(st.name)) detail+=` · 🔬 ${st.ndtClassification}`;
   if(st.reportNo)    detail+=` · Rpt: ${st.reportNo}`;
   if(st.inspectedAt) detail+=`\nInspected by ${st.inspectedBy} @ ${st.inspectedAt}`;
@@ -4327,7 +4376,7 @@ function openOfferModal(seamId,idx){
     // Lock iteration select to only the allowed value
     if($('of-ndt-iter')){
       $('of-ndt-iter').innerHTML=[
-        {v:'R0',l:'R0 — First Offer'},
+        {v:'R0',l:'R0 — Revision 0 (First Offer)'},
         {v:'R1',l:'R1 — After Repair (1st)'},
         {v:'R2',l:'R2 — After Repair (2nd) · Manager Approval Required'},
       ].map(o=>`<option value="${o.v}" ${o.v===allowedIter?'':'disabled'} ${o.v===allowedIter?'selected':''}>${o.l}</option>`).join('');
@@ -4459,7 +4508,14 @@ function ofRTTypeChange(){
   if(noRTInfo) noRTInfo.style.display=isNoRT?'block':'none';
   if(fullPanel) fullPanel.style.display=isFullCoverage?'block':'none';
   if(intervalRow) intervalRow.style.display=isFullCoverage?'flex':'none';
-  if(spotRtWrap) spotRtWrap.style.display=(isSpot||isPercent||isNoRT)?'block':'none';
+  if(spotRtWrap){
+    const wasHidden=spotRtWrap.style.display==='none';
+    spotRtWrap.style.display=(isSpot||isPercent||isNoRT)?'block':'none';
+    // Init spot rows when first shown
+    if(wasHidden&&(isSpot||isPercent)){
+      setTimeout(()=>{if(!document.querySelector('[id^="of-srow-loc-"]')) ofInitSpotRows();},10);
+    }
+  }
   if(spotTableWrap&&!isFullCoverage) spotTableWrap.style.display='none';
 
   // Update hidden coverage mode value for data saving
@@ -4473,10 +4529,28 @@ function ofIterChange(){
   const iter=$('of-ndt-iter')?.value||'R0';
   const repSection=$('of-repair-section');
   const r2warn=$('of-r2-warn');
+  const r3warn=$('of-r3-warn');
   const ptmtR0=$('of-ptmt-r0');
-  if(repSection) repSection.style.display=(iter==='R1'||iter==='R2')?'block':'none';
+  if(repSection) repSection.style.display=(iter==='R1'||iter==='R2'||iter==='R3')?'block':'none';
   if(r2warn) r2warn.style.display=iter==='R2'?'block':'none';
+  if(r3warn) r3warn.style.display=iter==='R3'?'block':'none';
   if(ptmtR0) ptmtR0.style.display=iter==='R0'?'block':'none';
+  // For R3: Full RT coverage is forced — disable spot mode selection
+  const coverageWrap=$('of-coverage-mode-wrap');
+  if(iter==='R3'){
+    if(coverageWrap){
+      coverageWrap.style.opacity='0.5';
+      coverageWrap.style.pointerEvents='none';
+    }
+    const cmVal=$('of-coverage-mode-val');
+    if(cmVal) cmVal.value='full';
+    ofCalcSpots();
+  } else {
+    if(coverageWrap){
+      coverageWrap.style.opacity='1';
+      coverageWrap.style.pointerEvents='';
+    }
+  }
 }
 
 function ofSelectCoverageMode(mode){
@@ -4484,6 +4558,82 @@ function ofSelectCoverageMode(mode){
   const cmVal=$('of-coverage-mode-val');
   if(cmVal) cmVal.value=mode;
   ofRTTypeChange();
+}
+
+// ── Multi-spot rows for Spot / % RT offer ──
+let _ofSpotRows=[];
+function ofInitSpotRows(){
+  _ofSpotRows=[];
+  const c=$('of-spot-rows-container');
+  if(c) c.innerHTML='';
+  ofAddSpotRow();
+}
+function ofAddSpotRow(){
+  const idx=_ofSpotRows.length;
+  _ofSpotRows.push({id:idx});
+  const c=$('of-spot-rows-container');
+  if(!c)return;
+  const row=document.createElement('div');
+  row.id=`of-spot-row-${idx}`;
+  row.style.cssText='display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:8px;align-items:center;background:var(--surf);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:6px;';
+  row.innerHTML=`
+    <div style="font-family:monospace;font-size:13px;font-weight:800;color:var(--amber);min-width:28px;text-align:center;">${idx+1}</div>
+    <div>
+      <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:3px;">Spot Location / No.</label>
+      <input id="of-srow-loc-${idx}" placeholder="e.g. A-B or 0–300mm" style="width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;">
+    </div>
+    <div>
+      <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:3px;">Welder No.</label>
+      <input id="of-srow-wno-${idx}" placeholder="e.g. W-630" style="width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:700;">
+    </div>
+    <div>
+      <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:3px;">Thk incl. Reinf. (mm)</label>
+      <input id="of-srow-thk-${idx}" placeholder="mm" style="width:100%;padding:6px 9px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;">
+    </div>
+    <div>
+      ${idx>0?`<button onclick="ofRemoveSpotRow(${idx})" style="padding:5px 9px;background:var(--red-lt);border:1.5px solid var(--red);color:var(--red);border-radius:6px;font-size:12px;cursor:pointer;font-weight:700;">✕</button>`:'<div style="width:28px;"></div>'}
+    </div>`;
+  c.appendChild(row);
+}
+function ofRemoveSpotRow(idx){
+  const el=$(`of-spot-row-${idx}`);
+  if(el) el.remove();
+  _ofSpotRows=_ofSpotRows.filter((_,i)=>i!==idx);
+}
+function _collectSpotRowsData(){
+  const rows=document.querySelectorAll('[id^="of-srow-loc-"]');
+  const data=[];
+  rows.forEach(el=>{
+    const i=el.id.replace('of-srow-loc-','');
+    const loc=(el.value||'').trim();
+    const wno=($(`of-srow-wno-${i}`)?.value||'').trim();
+    const thk=($(`of-srow-thk-${i}`)?.value||'').trim();
+    data.push({label:loc||`Spot ${Number(i)+1}`,welderNo:wno,thk,startMm:0,endMm:0,rem:'',isRepair:false});
+  });
+  return data;
+}
+
+// ── R3 file upload handlers ──
+let _r3AiCertDataUrl='', _r3WeldProcDataUrl='';
+function ofR3AICertUpload(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    _r3AiCertDataUrl=e.target.result;
+    const p=$('of-r3-ai-cert-preview');
+    if(p) p.textContent=`✅ Loaded: ${f.name} (${(f.size/1024).toFixed(0)}KB)`;
+  };
+  r.readAsDataURL(f);
+}
+function ofR3WeldProcUpload(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    _r3WeldProcDataUrl=e.target.result;
+    const p=$('of-r3-weld-proc-preview');
+    if(p) p.textContent=`✅ Loaded: ${f.name} (${(f.size/1024).toFixed(0)}KB)`;
+  };
+  r.readAsDataURL(f);
 }
 
 function ofCalcCircumference(){
@@ -4557,7 +4707,7 @@ function ofCalcSpots(){
   if(tableEl){
     // Check if repair iteration — allow welder change per spot
     const iter=$('of-ndt-iter')?.value||'R0';
-    const isRepair=iter==='R1'||iter==='R2';
+    const isRepair=iter==='R1'||iter==='R2'||iter==='R3'; // R0 = No penalty spots
 
     // Get previously rejected spots from stage data if available
     let rejectedSpots=[];
@@ -4639,16 +4789,28 @@ function _initNdtOfferFields(seam, st){
   if(utTypeEl && st.utType) utTypeEl.value=st.utType;
   // Fire type change to show correct dropdown + coverage panel
   ofNdtTypeChange();
-  // Initialize iter
+  // Initialize iter — R3 allowed if R2 was rejected/returned
   const iterSel=$('of-ndt-iter');
   if(iterSel){
     let allowedIter='R0';
     if(st.ndtIteration==='R0'&&(st.status==='rejected'||st.status==='returned')) allowedIter='R1';
     else if(st.ndtIteration==='R1'&&(st.status==='rejected'||st.status==='returned')) allowedIter='R2';
+    else if(st.ndtIteration==='R2'&&(st.status==='rejected'||st.status==='returned')) allowedIter='R3';
     else if(!st.ndtIteration) allowedIter='R0';
+    // Rebuild options with only allowed + previous
+    iterSel.innerHTML=[
+      {v:'R0',l:'R0 — Revision 0 (First Offer)'},
+      {v:'R1',l:'R1 — After Repair (1st)'},
+      {v:'R2',l:'R2 — After Repair (2nd) · Manager Approval'},
+      {v:'R3',l:'R3 — Full Penalty · Manager Approval Required'},
+    ].map(o=>`<option value="${o.v}" ${o.v===allowedIter?'':'disabled'} ${o.v===allowedIter?'selected':''}>${o.l}</option>`).join('');
     iterSel.value=allowedIter;
   }
   ofIterChange();
+  // Reset R3 upload vars
+  _r3AiCertDataUrl=''; _r3WeldProcDataUrl='';
+  const p1=$('of-r3-ai-cert-preview'),p2=$('of-r3-weld-proc-preview');
+  if(p1) p1.textContent=''; if(p2) p2.textContent='';
   // Pre-fill weld length from seam data if available
   const wlEl=$('of-weld-length');
   if(wlEl&&seam.weldLength&&!wlEl.value) wlEl.value=seam.weldLength;
@@ -4662,6 +4824,14 @@ function _initNdtOfferFields(seam, st){
     if(!isNaN(numThk)) thkBaseEl.value=numThk;
     ofCalcThkTotal();
   }
+  // Init spot rows for spot coverage
+  setTimeout(()=>{
+    const mode=$('of-coverage-mode-val')?.value||'full';
+    if(mode==='spot'){
+      const c=$('of-spot-rows-container');
+      if(c&&!c.querySelector('[id^="of-srow-loc-"]')) ofInitSpotRows();
+    }
+  },80);
 }
 
 // ── Collect spot data from table ──
@@ -4686,96 +4856,93 @@ function _collectSpotData(){
 
 // Patch openInspectModal to show RT/UT spot sections
 const _origOpenInspectModal = typeof openInspectModal==='function' ? openInspectModal : null;
+
+// Track repair-found toggle state
+let _insRepairFound=false;
+function insSetRepairFound(found){
+  _insRepairFound=found;
+  const btnNo=$('ins-btn-no-repair'),btnYes=$('ins-btn-found-repair');
+  const banner=$('ins-repair-found-banner');
+  const acceptBtn=document.querySelector('#m-inspect .btn-green');
+  if(found){
+    if(btnNo){btnNo.style.borderColor='var(--border)';btnNo.style.background='var(--surf2)';btnNo.style.color='var(--text3)';}
+    if(btnYes){btnYes.style.borderColor='#dc2626';btnYes.style.background='#fef2f2';btnYes.style.color='#dc2626';}
+    if(banner) banner.style.display='block';
+    if(acceptBtn) acceptBtn.style.display='none';
+  } else {
+    if(btnNo){btnNo.style.borderColor='#059669';btnNo.style.background='#f0fdf4';btnNo.style.color='#059669';}
+    if(btnYes){btnYes.style.borderColor='var(--border)';btnYes.style.background='var(--surf2)';btnYes.style.color='var(--text3)';}
+    if(banner) banner.style.display='none';
+    if(acceptBtn) acceptBtn.style.display='';
+  }
+  document.querySelectorAll('[id^="ins-spot-status-"]').forEach(sel=>{
+    Array.from(sel.options).forEach(opt=>{if(opt.value==='Cleared') opt.disabled=found;});
+    if(found && sel.value==='Cleared') sel.value='Repair';
+  });
+}
+
 function _showNdtInspectFields(seam, st){
   const isRT=isRTUT(st.name);
+  const toggleSection=$('ins-repair-toggle-section');
   const spotSection=$('ins-spot-assign-section');
   const fullSection=$('ins-full-rt-spots-section');
+  if(toggleSection) toggleSection.style.display='none';
   if(spotSection) spotSection.style.display='none';
   if(fullSection) fullSection.style.display='none';
   if(!isRT) return;
 
+  // Show Found Repair / No Repair toggle first
+  _insRepairFound=false;
+  if(toggleSection) toggleSection.style.display='block';
+  insSetRepairFound(false);
+
   const mode=st.coverageMode||'full';
   if(mode==='spot'){
     if(spotSection) spotSection.style.display='block';
-    // Clear and pre-fill fields
     ['ins-spot-location','ins-spot-from-to','ins-spot-remark'].forEach(id=>{const el=$(id);if(el)el.value='';});
     if(st.qcSpotLocation&&$('ins-spot-location')) $('ins-spot-location').value=st.qcSpotLocation;
-    // Set today's date as default RT date
     const rtDateEl=$('ins-spot-rt-date');
-    if(rtDateEl&&!rtDateEl.value) rtDateEl.value=new Date().toISOString().split('T')[0];
+    if(rtDateEl) rtDateEl.value=new Date().toISOString().split('T')[0];
     const ssStatus=$('ins-spot-single-status');
     if(ssStatus) ssStatus.value='Cleared';
     insSpotSingleStatusChange();
   } else {
-    // Full RT/UT — show spot-wise 5-status NDT QC clearance table
     if(fullSection) fullSection.style.display='block';
     const spotsList=$('ins-spots-list');
     if(spotsList){
       const spots=st.spots||[];
-      if(!spots.length){
-        spotsList.innerHTML='<div style="padding:12px;text-align:center;color:var(--text4);font-size:12px;">No spot data available — Production may not have entered spot details.</div>';
-        return;
-      }
-      // Status colour map
-      const statusColors={
-        'Cleared':'#059669','Retake':'#1d4ed8','Reshoot':'#7c3aed',
-        'DRS/MRS':'#0e7490','Repair':'#dc2626'
-      };
-      const statusBg={
-        'Cleared':'#f0fdf4','Retake':'#eff6ff','Reshoot':'#f5f3ff',
-        'DRS/MRS':'#ecfeff','Repair':'#fef2f2'
-      };
+      if(!spots.length){spotsList.innerHTML='<div style="padding:12px;text-align:center;color:var(--text4);font-size:12px;">No spot data — Production may not have entered spot details.</div>';return;}
+      const statusBg={'Cleared':'#f0fdf4','Retake':'#eff6ff','Reshoot':'#f5f3ff','DRS/MRS':'#ecfeff','Repair':'#fef2f2'};
       const today=new Date().toISOString().split('T')[0];
-      spotsList.innerHTML=`
-      <div style="overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <thead>
-          <tr style="background:var(--blue2);color:#fff;">
-            <th style="padding:6px 8px;font-size:10px;white-space:nowrap;">Spot</th>
-            <th style="padding:6px 8px;font-size:10px;">Range (mm)</th>
-            <th style="padding:6px 8px;font-size:10px;">Welder</th>
-            <th style="padding:6px 8px;font-size:10px;">Thk</th>
-            <th style="padding:6px 8px;font-size:10px;min-width:130px;">NDT Status <span style="color:#bfdbfe;">★ NDT QC</span></th>
-            <th style="padding:6px 8px;font-size:10px;min-width:110px;">RT/UT Date</th>
-            <th style="padding:6px 8px;font-size:10px;min-width:170px;">Repair / Remark</th>
-          </tr>
-        </thead>
-        <tbody>
+      spotsList.innerHTML=`<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr style="background:var(--blue2);color:#fff;">
+          <th style="padding:6px 8px;font-size:10px;">Spot</th>
+          <th style="padding:6px 8px;font-size:10px;">Range</th>
+          <th style="padding:6px 8px;font-size:10px;">Welder</th>
+          <th style="padding:6px 8px;font-size:10px;">Thk</th>
+          <th style="padding:6px 8px;font-size:10px;min-width:130px;">NDT Status</th>
+          <th style="padding:6px 8px;font-size:10px;min-width:108px;">RT/UT Date</th>
+          <th style="padding:6px 8px;font-size:10px;min-width:160px;">Repair / Remark</th>
+        </tr></thead><tbody>
         ${spots.map((sp,i)=>{
-          const prevDec=sp.qcStatus||'Cleared';
-          const rowBg=statusBg[prevDec]||'#fff';
-          return`<tr style="background:${i%2===0?rowBg:'#f8fafc'};border-bottom:1px solid var(--border);">
-            <td style="padding:5px 8px;font-weight:800;font-family:monospace;color:var(--blue2);white-space:nowrap;">${sp.label}</td>
+          const prev=sp.qcStatus||'Cleared';
+          return`<tr style="background:${i%2===0?(statusBg[prev]||'#fff'):'#f8fafc'};border-bottom:1px solid var(--border);">
+            <td style="padding:5px 8px;font-weight:800;font-family:monospace;color:var(--blue2);">${sp.label}</td>
             <td style="padding:5px 8px;font-size:10px;color:var(--text3);">${sp.startMm||0}–${sp.endMm||'?'}</td>
             <td style="padding:5px 8px;font-weight:700;">${sp.welderNo||'—'}</td>
             <td style="padding:5px 8px;">${sp.thk||'—'}</td>
-            <td style="padding:4px 6px;">
-              <select id="ins-spot-status-${i}" onchange="insSpotStatusChange(${i})"
-                style="width:100%;padding:4px 5px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:6px;background:#fff;">
-                <option value="Cleared" style="color:#059669;" ${prevDec==='Cleared'?'selected':''}>✅ Cleared</option>
-                <option value="Retake" style="color:#1d4ed8;" ${prevDec==='Retake'?'selected':''}>🔄 Retake</option>
-                <option value="Reshoot" style="color:#7c3aed;" ${prevDec==='Reshoot'?'selected':''}>📷 Reshoot</option>
-                <option value="DRS/MRS" style="color:#0e7490;" ${prevDec==='DRS/MRS'?'selected':''}>📋 DRS/MRS</option>
-                <option value="Repair" style="color:#dc2626;" ${prevDec==='Repair'?'selected':''}>🔧 Repair</option>
-              </select>
-            </td>
-            <td style="padding:4px 6px;">
-              <input type="date" id="ins-spot-rtdate-${i}" value="${sp.qcRTDate||today}"
-                style="width:100%;padding:4px 6px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;">
-            </td>
-            <td style="padding:4px 6px;" id="ins-spot-repair-td-${i}">
-              <input id="ins-spot-repair-${i}" placeholder="${prevDec==='Repair'?'⚠ Defect reason required':'Optional remark'}"
-                value="${sp.qcRepairReason||''}"
-                style="width:100%;padding:4px 6px;font-size:11px;border:1.5px solid ${prevDec==='Repair'?'#dc2626':'var(--border)'};border-radius:6px;">
-            </td>
-          </tr>`;
-        }).join('')}
-        </tbody>
-      </table>
-      </div>
-      <div style="margin-top:8px;padding:8px 12px;background:var(--surf2);border-radius:6px;font-size:10px;color:var(--text4);">
-        ✅ Cleared &nbsp;|&nbsp; 🔄 Retake — Film Again &nbsp;|&nbsp; 📷 Reshoot — Repositioning Required &nbsp;|&nbsp; 📋 DRS/MRS — Density/Sensitivity Issue &nbsp;|&nbsp; 🔧 Repair — Weld Defect Found
-      </div>`;
+            <td style="padding:4px 6px;"><select id="ins-spot-status-${i}" onchange="insSpotStatusChange(${i})" style="width:100%;padding:4px 5px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:6px;">
+              <option value="Cleared" ${prev==='Cleared'?'selected':''}>✅ Cleared</option>
+              <option value="Retake" ${prev==='Retake'?'selected':''}>🔄 Retake</option>
+              <option value="Reshoot" ${prev==='Reshoot'?'selected':''}>📷 Reshoot</option>
+              <option value="DRS/MRS" ${prev==='DRS/MRS'?'selected':''}>📋 DRS/MRS</option>
+              <option value="Repair" ${prev==='Repair'?'selected':''}>🔧 Repair</option>
+            </select></td>
+            <td style="padding:4px 6px;"><input type="date" id="ins-spot-rtdate-${i}" value="${sp.qcRTDate||today}" style="width:100%;padding:4px 6px;font-size:11px;border:1.5px solid var(--border);border-radius:6px;"></td>
+            <td style="padding:4px 6px;"><input id="ins-spot-repair-${i}" placeholder="${prev==='Repair'?'⚠ Defect reason required':'Optional remark'}" value="${sp.qcRepairReason||''}" style="width:100%;padding:4px 6px;font-size:11px;border:1.5px solid ${prev==='Repair'?'#dc2626':'var(--border)'};border-radius:6px;"></td>
+          </tr>`;}).join('')}
+        </tbody></table></div>
+        <div style="margin-top:6px;padding:6px 10px;background:var(--surf2);border-radius:6px;font-size:10px;color:var(--text4);">✅ Cleared | 🔄 Retake | 📷 Reshoot — Reposition | 📋 DRS/MRS | 🔧 Repair — Defect Found</div>`;
     }
   }
 }
@@ -4907,13 +5074,15 @@ function confirmOffer(){
       st.welderNo=st.spots[0]?.welderNo||$('of-welder-no')?.value.trim()||'';
       st.spotNo=st.spots.map(s=>s.label).join(', ');
     } else {
-      st.welderNo=$('of-welder-no-spot')?.value.trim()||'';
-      st.spotNo=$('of-spot-no')?.value.trim()||'QC to assign';
-      st.spots=[];
+      // Spot / % RT — collect multi-spot rows
+      const spotRows=_collectSpotRowsData();
+      st.spots=spotRows;
+      st.welderNo=spotRows[0]?.welderNo||$('of-welder-no-spot')?.value.trim()||'';
+      st.spotNo=spotRows.map(s=>s.label).filter(Boolean).join(', ')||'QC to assign';
     }
     // Repair data
     const iter=st.ndtIteration;
-    if(iter==='R1'||iter==='R2'){
+    if(iter==='R1'||iter==='R2'||iter==='R3'){
       st.repairSpots=$('of-repair-spots')?.value.trim()||'';
       st.repairWelder=$('of-welder-no')?.value.trim()||st.welderNo;
       const ptR=$('of-pt-done')?.checked||false;
@@ -4924,21 +5093,31 @@ function confirmOffer(){
       const mt=$('of-mt-done-r0')?.checked||false;
       st.ptMtDone=[pt?'PT':'',mt?'MT':''].filter(Boolean).join('+');
     }
+    // R3 — save AI Cert + Weld Procedure docs
+    if(iter==='R3'){
+      const aiCertNo=($('of-r3-ai-cert-no')?.value||'').trim();
+      if(!aiCertNo){toast('AI Certificate No. is mandatory for R3','err');return;}
+      if(!_r3AiCertDataUrl){toast('AI Certificate PDF upload is mandatory for R3','err');return;}
+      if(!_r3WeldProcDataUrl){toast('Welding Procedure PDF upload is mandatory for R3','err');return;}
+      st.r3AiCertNo=aiCertNo;
+      st.r3AiCertFile=_r3AiCertDataUrl;
+      st.r3WeldProcFile=_r3WeldProcDataUrl;
+    }
     st.reportNo=repNo;
   }
-  // R2 requires Manager approval before offering to QC
-  if(isRT && st.ndtIteration==='R2'){
+  // R2 and R3 require Manager approval before offering to QC
+  if(isRT && (st.ndtIteration==='R2'||st.ndtIteration==='R3')){
     st.status='pending'; // revert — not yet offered
     if(!DB.pendingActions) DB.pendingActions=[];
     DB.pendingActions.push({
-      type:'rtut_r2_offer',seamId,idx,
+      type:st.ndtIteration==='R3'?'rtut_r3_offer':'rtut_r2_offer',seamId,idx,
       requestedBy:CU.name,requestedByMob:CU.mob,requestedByCo:CU.co,
       at:now(),
-      desc:`R2 RT/UT offer for ${seam.num} · ${st.name} — requires Manager approval before QC notification`
+      desc:`${st.ndtIteration} RT/UT offer for ${seam.num} · ${st.name} — Manager approval required before NDT QC notification`
     });
-    log(`⏳ R2 OFFER PENDING APPROVAL — ${seam.num} · ${st.name} by ${CU.name}`);
+    log(`⏳ ${st.ndtIteration} OFFER PENDING APPROVAL — ${seam.num} · ${st.name} by ${CU.name}`);
     save();closeModal('m-offer');refreshCurrentView();
-    toast('R2 offer submitted — awaiting Manager approval','ok');
+    toast(`${st.ndtIteration} offer submitted — awaiting Manager approval`,'ok');
     return;
   }
   log(`🔵 OFFERED — ${seam.num} · ${st.name}${isRT?' ['+st.ndtIteration+']':''} by ${CU.name} (${CU.co})${st.location?' 📍'+st.location:''}`);
@@ -5055,7 +5234,7 @@ function openInspectModal(seamId,idx){
     ${st.drawing?`<div class="ir"><span class="ir-k">Drawing Ref.</span><span class="ir-v">${st.drawing}${st.drawingRev?' Rev.'+st.drawingRev:''}</span></div>`:''}
     ${(st.itpTable||st.itpAnnex||st.itpClause)?`<div class="ir"><span class="ir-k">ITP Table</span><span class="ir-v">${st.itpTable||'—'}</span></div><div class="ir"><span class="ir-k">ITP Annexure</span><span class="ir-v">${st.itpAnnex||'—'}</span></div><div class="ir"><span class="ir-k">ITP Clause</span><span class="ir-v">${st.itpClause||'—'}</span></div>`:st.itpRef?`<div class="ir"><span class="ir-k">ITP Ref.</span><span class="ir-v">${st.itpRef}</span></div>`:''}
     ${st.welderNo?`<div class="ir"><span class="ir-k">Welder No.</span><span class="ir-v">${st.welderNo}</span></div>`:''}
-    ${st.ndtIteration&&isRTUT(st.name)?`<div class="ir"><span class="ir-k">NDT Iteration</span><span class="ir-v" style="font-weight:700;color:var(--amber);">${st.ndtIteration} — ${st.ndtSubType||''}</span></div>`:''}
+    ${st.ndtIteration&&isRTUT(st.name)?`<div class="ir"><span class="ir-k">NDT Iteration</span><span class="ir-v" style="font-weight:700;color:var(--amber);">${{'R0':'R0 — Revision 0','R1':'R1 — After Repair (1st)','R2':'R2 — After Repair (2nd)','R3':'R3 — Full Penalty'}[st.ndtIteration]||st.ndtIteration} — ${st.ndtSubType||''}</span></div>`:''}
     ${st.coverageMode?`<div class="ir"><span class="ir-k">Coverage Mode</span><span class="ir-v" style="font-weight:700;color:${st.coverageMode==='full'?'var(--blue2)':'var(--amber)'};">${st.coverageMode==='full'?'📋 Full RT/UT':'🎯 Spot RT/UT'}</span></div>`:''}
     ${st.ndtClassification?`<div class="ir"><span class="ir-k">NDT Classification</span><span class="ir-v" style="font-weight:700;color:var(--amber);">🔬 ${st.ndtClassification}</span></div>`:''}
     ${st.cfMm?`<div class="ir"><span class="ir-k">Circumference CF</span><span class="ir-v">${st.cfMm} mm</span></div>`:''}
@@ -6114,74 +6293,107 @@ window._actionPopupCallbacks = {};
 
 function _showActionPopup(opts){
   const old=document.getElementById('_action-popup');if(old)old.remove();
-  const popupId='_action-popup';
-  const popup=document.createElement('div');
-  popup.id=popupId;
-  // Force highest possible z-index — must beat modal-page (z-index:800) and modal-page-box stacking context
-  popup.style.cssText='position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;background:rgba(10,20,70,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);';
+  const cbKey='popup_'+Date.now();
+  window._actionPopupCallbacks[cbKey]=opts.actions||[];
 
   const icon=opts.icon||'✅';
   const goingToHtml=opts.goingTo
     ?`<div style="margin:12px 0;padding:10px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;font-size:12px;color:#166534;line-height:1.7;text-align:left;">📬 ${opts.goingTo}</div>`
     :'';
-
-  // Store callbacks by index to avoid toString() issues
-  const cbKey='popup_'+Date.now();
-  window._actionPopupCallbacks[cbKey]=opts.actions||[];
-
   const actBtns=(opts.actions||[]).map((a,i)=>
-    `<button onclick="window._actionPopupCallbacks['${cbKey}'][${i}].fn();document.getElementById('_action-popup')?.remove();"
-      style="flex:1;padding:11px 16px;background:${a.color||'var(--blue2)'};color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .15s;"
+    `<button onclick="window._actionPopupCallbacks['${cbKey}'][${i}].fn();document.getElementById('_action-popup')?.remove();_actionPopupCleanup();"
+      style="flex:1;padding:11px 16px;background:${a.color||'var(--blue2)'};color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;min-width:120px;"
       onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${a.label}</button>`
   ).join('');
 
+  // KEY FIX: backdrop-filter on .modal-page creates a stacking context that traps
+  // child z-index. We neutralise it by setting backdrop-filter:none on all open
+  // modal-pages while the popup is visible, then restore on close.
+  const modalPages=document.querySelectorAll('.modal-page.on,.mbg[style*="flex"]');
+  modalPages.forEach(el=>{ el.dataset._savedBdFilter=el.style.backdropFilter||''; el.style.backdropFilter='none'; el.style.webkitBackdropFilter='none'; });
+
+  const popup=document.createElement('div');
+  popup.id='_action-popup';
+  popup.style.cssText='position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:rgba(10,20,70,.6);';
+
   popup.innerHTML=`
-  <div style="background:#fff;border-radius:18px;box-shadow:0 32px 80px rgba(10,20,70,.36);max-width:460px;width:93%;padding:32px 28px 24px;text-align:center;animation:_popIn .25s cubic-bezier(.34,1.56,.64,1);">
+  <div style="background:#fff;border-radius:18px;box-shadow:0 32px 80px rgba(10,20,70,.38);max-width:460px;width:93%;padding:32px 28px 24px;text-align:center;animation:_popIn .25s cubic-bezier(.34,1.56,.64,1);position:relative;z-index:2147483647;">
     <div style="font-size:52px;margin-bottom:12px;line-height:1;">${icon}</div>
     <div style="font-size:19px;font-weight:800;color:#09111F;margin-bottom:8px;letter-spacing:-.3px;">${opts.title||'Action Completed'}</div>
     <div style="font-size:13px;color:#475569;line-height:1.7;margin-bottom:4px;">${opts.body||''}</div>
     ${goingToHtml}
-    <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;">${actBtns||'<button onclick="document.getElementById(\'_action-popup\')?.remove();" style="flex:1;padding:11px;background:var(--blue2);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">✓ OK</button>'}</div>
+    <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;">${actBtns||`<button onclick="document.getElementById('_action-popup')?.remove();_actionPopupCleanup();" style="flex:1;padding:11px;background:var(--blue2);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">✓ OK</button>`}</div>
   </div>
   <style>@keyframes _popIn{from{transform:scale(.78) translateY(24px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}</style>`;
 
-  // Always append as LAST child of body so it sits above all stacking contexts
   document.body.appendChild(popup);
-  // Re-append to force DOM order after any modal already in body
-  document.body.removeChild(popup);
-  document.body.appendChild(popup);
+
+  function _actionPopupCleanup(){
+    // Restore backdrop-filter on all modal-pages
+    document.querySelectorAll('[data-_savedBdFilter]').forEach(el=>{
+      el.style.backdropFilter=el.dataset._savedBdFilter||'';
+      el.style.webkitBackdropFilter=el.dataset._savedBdFilter||'';
+      delete el.dataset._savedBdFilter;
+    });
+    delete window._actionPopupCallbacks[cbKey];
+  }
+  window._actionPopupCleanup=_actionPopupCleanup;
 
   popup.addEventListener('click',e=>{
     if(e.target===popup){
       popup.remove();
-      delete window._actionPopupCallbacks[cbKey];
+      _actionPopupCleanup();
       if(typeof opts.onClose==='function')opts.onClose();
     }
   });
   setTimeout(()=>{
     const p=document.getElementById('_action-popup');
-    if(p){p.remove();delete window._actionPopupCallbacks[cbKey];}
+    if(p){p.remove();_actionPopupCleanup();}
   },60000);
 }
 
 // Seam-specific popup — modal stays open, form resets after user clicks button
+// ── WhatsApp intimation for new seam submission ──
+function sendSeamWA(seamNum, seamDesc, tag, comp){
+  const mgrs=DB.users.filter(u=>u.role==='manager'&&u.approved&&u.mob);
+  const qcList=DB.users.filter(u=>(u.role==='quality'||u.role==='ndt')&&u.approved&&u.mob);
+  const targets=[...mgrs,...qcList];
+  if(!targets.length){toast('No Manager / QC contacts found with mobile numbers','err');return;}
+  const proj=DB.projects.find(p=>p.id===(DB.seams||[]).find(s=>s.num===seamNum)?.pid)||DB.projects[0];
+  const projLabel=proj?`#${proj.number} — ${proj.equipment}`:'—';
+  const msg=encodeURIComponent(
+    `📋 *TQIMS — New Seam Added*\n`+
+    `Project: ${projLabel}\n`+
+    `Tag No.: *${tag}* | Component: *${comp}*\n`+
+    `Seam: *${seamNum}* — ${seamDesc||''}\n`+
+    `Submitted by: ${CU?.name||'Production'} (${CU?.co||''})\n`+
+    `Time: ${new Date().toLocaleString('en-IN')}\n\n`+
+    `⏳ *Awaiting Manager Approval*\nPlease approve in TQIMS to unlock inspection stages.`
+  );
+  const mob=targets[0].mob.replace(/\D/g,'');
+  window.open(`https://wa.me/${mob}?text=${msg}`,'_blank');
+}
+
 function _showSeamConfirmPopup(seamNum, seamDesc, tag, comp, isGroup, count, skip){
-  const mgrs=DB.users.filter(u=>u.role==='manager'&&u.approved);
-  const mgrNames=mgrs.length?mgrs.map(u=>u.name).join(', '):'Manager';
   skip=skip||0;
+  const actions=isGroup
+    ?[
+        {label:'+ Add Another Seam', color:'var(--blue2)', fn:_resetSeamForm},
+        {label:'📋 View Status', color:'#059669', fn:()=>{ document.getElementById('_action-popup')?.remove(); _scrollToSeamStatus(); }},
+      ]
+    :[
+        {label:'+ Add More Seam', color:'var(--blue2)', fn:_resetSeamForm},
+        {label:'📲 WhatsApp Manager', color:'#25D366', fn:()=>{ document.getElementById('_action-popup')?.remove(); sendSeamWA(seamNum,seamDesc,tag,comp); }},
+        {label:'📋 View Status', color:'#059669', fn:()=>{ document.getElementById('_action-popup')?.remove(); _scrollToSeamStatus(); }},
+      ];
   _showActionPopup({
     icon:'✅',
-    title: isGroup
-      ? `Range Sent for Manager Approval`
-      : `Seam Sent for Manager Approval`,
+    title: isGroup ? `Range Sent for Manager Approval` : `Seam Sent for Manager Approval`,
     body: isGroup
       ? `<strong>${count}</strong> seam${count!==1?'s':''} submitted for Manager approval.${skip?`<br><span style="color:#D97706;font-size:12px;">${skip} skipped (already exist).</span>`:''}<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`
       : `<strong>1</strong> seam submitted for Manager approval.<br>Tag: <strong>${tag}</strong> | Component: <strong>${comp}</strong>`,
     goingTo:`Manager's Approval Queue — Manager must approve before the seam appears in the system.`,
-    actions:[
-      {label:'+ Add Another Seam', color:'var(--blue2)', fn: _resetSeamForm},
-      {label:'📋 View Status', color:'#059669', fn: ()=>{ document.getElementById('_action-popup')?.remove(); _scrollToSeamStatus(); }},
-    ]
+    actions,
   });
 }
 
@@ -7872,7 +8084,7 @@ function printRTUTReport(seamId, idx){
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Design Code</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${proj?proj.code||'—':'—'}</td></tr>
     <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">NDT Method</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ndtType||'—'}</td>
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">NDT Classification</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;color:#b45309;">${st.ndtClassification||st.spotNo||'100%'}</td></tr>
-    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Iteration</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${st.ndtIteration||'R0'} — ${st.ndtSubType||'—'}</td>
+    <tr><td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Iteration</td><td style="font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">${{'R0':'R0 — Revision 0','R1':'R1 — After Repair (1st)','R2':'R2 — After Repair (2nd)','R3':'R3 — Full Penalty'}[st.ndtIteration]||st.ndtIteration||'R0'} — ${st.ndtSubType||'—'}</td>
         <td style="background:#f1f5f9;font-weight:700;padding:5px 8px;border:1px solid #d1d5db;">Weld Process</td><td style="padding:5px 8px;border:1px solid #d1d5db;">${st.weldProcess||'—'}</td></tr>
   </table>
 
@@ -7903,7 +8115,7 @@ function printRTUTReport(seamId, idx){
   </table>
 
   ${st.spots&&st.spots.length?`
-  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">Spot-wise RT/UT Details — NDT QC Clearance (${st.spots.length} Spots × ${st.spotPitch||300}mm)</div>
+  <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">Spot-wise RT/UT Details — NDT QC Clearance (${st.spots.length} Spots × ${st.spotPitch||300}mm) | Iteration: ${{ 'R0':'R0 — Revision 0','R1':'R1 — 1st Repair','R2':'R2 — 2nd Repair','R3':'R3 — Full Penalty'}[st.ndtIteration]||st.ndtIteration||'R0'}</div>
   <table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:10px;">
     <thead><tr style="background:#1d4ed8;color:#fff;">
       <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Spot</th>
@@ -7912,7 +8124,7 @@ function printRTUTReport(seamId, idx){
       <th style="padding:5px 8px;border:1px solid #93c5fd;">Thk (mm)</th>
       <th style="padding:5px 8px;border:1px solid #93c5fd;min-width:80px;">NDT Status</th>
       <th style="padding:5px 8px;border:1px solid #93c5fd;">RT/UT Date</th>
-      <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Repair / Defect Reason</th>
+      <th style="padding:5px 8px;border:1px solid #93c5fd;text-align:left;">Repair Defect / Remark</th>
     </tr></thead>
     <tbody>
     ${st.spots.map((sp,i)=>{
@@ -7929,7 +8141,47 @@ function printRTUTReport(seamId, idx){
       <td style="padding:4px 8px;border:1px solid #e5e7eb;font-size:7.5pt;color:${st5==='Repair'?'#dc2626':'inherit'};">${sp.qcRepairReason||sp.rem||'—'}</td>
     </tr>`;}).join('')}
     </tbody>
+  </table>
+
+  ${(()=>{
+    const repSpots=(st.spots||[]).filter(sp=>sp.qcStatus==='Repair');
+    if(!repSpots.length) return '';
+    return `<div style="font-size:8pt;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #fca5a5;padding:4px 0;margin:8px 0 5px;">🔧 Repair Summary — ${repSpots.length} Spot${repSpots.length>1?'s':''} Require Repair</div>
+    <table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:10px;">
+      <thead><tr style="background:#dc2626;color:#fff;">
+        <th style="padding:5px 8px;border:1px solid #fca5a5;">Spot No.</th>
+        <th style="padding:5px 8px;border:1px solid #fca5a5;">Welder No.</th>
+        <th style="padding:5px 8px;border:1px solid #fca5a5;">RT/UT Date</th>
+        <th style="padding:5px 8px;border:1px solid #fca5a5;text-align:left;">Defect Details / Repair Reason</th>
+        <th style="padding:5px 8px;border:1px solid #fca5a5;">Iteration</th>
+        <th style="padding:5px 8px;border:1px solid #fca5a5;">Action Required</th>
+      </tr></thead>
+      <tbody>
+      ${repSpots.map((sp,ri)=>`
+      <tr style="background:${ri%2===0?'#fef2f2':'#fff5f5'};">
+        <td style="padding:5px 8px;border:1px solid #fecaca;font-weight:800;font-family:monospace;color:#dc2626;">${sp.label}</td>
+        <td style="padding:5px 8px;border:1px solid #fecaca;font-weight:700;">${sp.welderNo||'—'}</td>
+        <td style="padding:5px 8px;border:1px solid #fecaca;text-align:center;">${sp.qcRTDate||'—'}</td>
+        <td style="padding:5px 8px;border:1px solid #fecaca;font-weight:600;color:#dc2626;">${sp.qcRepairReason||'—'}</td>
+        <td style="padding:5px 8px;border:1px solid #fecaca;text-align:center;font-weight:700;">${st.ndtIteration||'R0'}</td>
+        <td style="padding:5px 8px;border:1px solid #fecaca;font-weight:700;color:#b45309;">Repair &amp; Re-RT Required</td>
+      </tr>`).join('')}
+      </tbody>
+    </table>
+    ${st.repairSpots?`<div style="padding:5px 10px;background:#fef2f2;border:1px solid #fca5a5;border-radius:4px;font-size:8pt;margin-bottom:6px;"><b>Previous Repair Spot(s):</b> ${st.repairSpots} &nbsp;|&nbsp; <b>Repair Welder:</b> ${st.repairWelder||'—'}</div>`:''}`;
+  })()}
+
+  ${(st.ndtIteration==='R3'&&(st.r3AiCertNo||st.r3AiCertFile))?`
+  <div style="font-size:8pt;font-weight:700;color:#7c3aed;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #a78bfa;padding:4px 0;margin:8px 0 5px;">🚨 R3 — AI Intimation Certificate &amp; Welding Procedure</div>
+  <table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:10px;">
+    <tr style="background:#f5f3ff;"><td style="padding:5px 8px;border:1px solid #ddd8fe;font-weight:700;width:30%;">AI Certificate No.</td>
+      <td style="padding:5px 8px;border:1px solid #ddd8fe;font-weight:800;color:#7c3aed;font-family:monospace;">${st.r3AiCertNo||'—'}</td>
+      <td style="padding:5px 8px;border:1px solid #ddd8fe;font-weight:700;width:30%;">AI Certificate PDF</td>
+      <td style="padding:5px 8px;border:1px solid #ddd8fe;color:${st.r3AiCertFile?'#059669':'#6b7280'};">${st.r3AiCertFile?'✅ Attached':'Not Uploaded'}</td></tr>
+    <tr><td style="padding:5px 8px;border:1px solid #ddd8fe;font-weight:700;">Weld Procedure PDF</td>
+      <td colspan="3" style="padding:5px 8px;border:1px solid #ddd8fe;color:${st.r3WeldProcFile?'#059669':'#6b7280'};">${st.r3WeldProcFile?'✅ Welding Procedure Document Attached (incl. WPS/PQR, electrode, parameters, pre/interpass/post heating, machine calibration, welder details)':'Not Uploaded'}</td></tr>
   </table>`:''}
+  `:''}
 
 
   <div style="font-size:8pt;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.8px;border-bottom:2px solid #93c5fd;padding:4px 0;margin:10px 0 5px;">PT / MT Clearance Before RT/UT</div>
@@ -8671,6 +8923,59 @@ function mirRenderNew(){
         </div>
       </div>
     </div>
+
+    <!-- Step 3: Item-type-specific additional details (optional, per industrial code) -->
+    <div style="background:var(--surf2);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:10px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Step 3 — Additional Details <span style="font-weight:400;color:var(--text3);text-transform:none;font-size:10px;">(Optional — as per Industrial Code & Standard)</span></div>
+      <div style="font-size:10px;color:var(--text4);margin-bottom:12px;">Fields below are based on item type: <strong>${selIT.itemType||'—'}</strong>. Fill whatever is available — none are mandatory.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;">
+        <!-- Universal fields — ALL item types -->
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">Invent. No. / Material Reservation No.</label>
+          <input id="mno-invent" placeholder="e.g. INVENT-2024-001" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">MRR No. (Material Receipt Record)</label>
+          <input id="mno-mrr" placeholder="e.g. MRR-2024-101" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">PO No. (Purchase Order)</label>
+          <input id="mno-po" placeholder="e.g. PO-2024-5521" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <div>
+          <label style="font-size:9px;font-weight:700;color:var(--text4);text-transform:uppercase;display:block;margin-bottom:4px;">PO Serial No.</label>
+          <input id="mno-poser" placeholder="e.g. 001 / Line 3" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;background:var(--surf);">
+        </div>
+        <!-- Item-type specific fields -->
+        ${(()=>{
+          const t=selIT.itemType||'';
+          let extra='';
+          if(t==='Plate'||t==='Other'||!t){
+            extra+=`<div>
+              <label style="font-size:9px;font-weight:700;color:var(--amber);text-transform:uppercase;display:block;margin-bottom:4px;">Mill Plate No. <span style="color:var(--amber);">(Plate)</span></label>
+              <input id="mno-millplate" placeholder="e.g. MP-LD-204560" style="width:100%;padding:8px 10px;border:1.5px solid var(--amber);border-radius:7px;font-size:13px;background:var(--surf);">
+            </div>
+            <div>
+              <label style="font-size:9px;font-weight:700;color:var(--amber);text-transform:uppercase;display:block;margin-bottom:4px;">UT Certificate No. <span style="color:var(--amber);">(Plate)</span></label>
+              <input id="mno-utcert" placeholder="e.g. UTC-2024-001" style="width:100%;padding:8px 10px;border:1.5px solid var(--amber);border-radius:7px;font-size:13px;background:var(--surf);">
+            </div>`;
+          }
+          if(t==='Pipe'||t==='Tube'||t==='Nipple'){
+            extra+=`<div>
+              <label style="font-size:9px;font-weight:700;color:var(--cyan);text-transform:uppercase;display:block;margin-bottom:4px;">Ident. Code <span style="color:var(--cyan);">(Pipe/Tube)</span></label>
+              <input id="mno-identcode" placeholder="e.g. ID-P-2024-001" style="width:100%;padding:8px 10px;border:1.5px solid var(--cyan);border-radius:7px;font-size:13px;background:var(--surf);">
+            </div>`;
+          }
+          if(t==='Forging'||t==='Flange'){
+            extra+=`<div>
+              <label style="font-size:9px;font-weight:700;color:var(--purple);text-transform:uppercase;display:block;margin-bottom:4px;">Forging No. <span style="color:var(--purple);">(Forging/Flange)</span></label>
+              <input id="mno-forgno" placeholder="e.g. FRG-2024-501" style="width:100%;padding:8px 10px;border:1.5px solid var(--purple);border-radius:7px;font-size:13px;background:var(--surf);">
+            </div>`;
+          }
+          return extra;
+        })()}
+      </div>
+    </div>
     <div style="display:flex;justify-content:flex-end;">
       <button onclick="mirSubmitOffer()" style="padding:11px 32px;background:var(--blue2);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(37,99,235,.3);">
         📤 Submit MIR for QC Inspection
@@ -8717,6 +9022,7 @@ function mirSubmitOffer(){
     description:item.description,
     material:item.material,
     thickness:item.thickness,
+    itemType:item.itemType||'',
     offeredQty:qty,
     usedMaterial:get('mno-umat')||item.material,
     usedThickness:get('mno-uthk')||item.thickness,
@@ -8731,6 +9037,16 @@ function mirSubmitOffer(){
     inspBy:get('mno-insp'),
     extraRemarks:get('mno-rem'),
     transferMarks:marks,
+    // Universal additional fields
+    inventNo:get('mno-invent'),
+    mrrNo:get('mno-mrr'),
+    poNo:get('mno-po'),
+    poSerialNo:get('mno-poser'),
+    // Item-type specific
+    millPlateNo:get('mno-millplate'),
+    utCertNo:get('mno-utcert'),
+    identCode:get('mno-identcode'),
+    forgingNo:get('mno-forgno'),
     status:'PENDING_QC',
     offeredBy:CU.name,
     offeredDate:new Date().toISOString().slice(0,10),
@@ -9325,6 +9641,31 @@ function mirPrintReport(id){
   <div class="section-title">Transfer Marks</div>
   <div class="marks">${mir.transferMarks.map(m=>`<span class="mark">${m}</span>`).join('')}</div>
   <br>`:''}
+
+  ${(mir.inventNo||mir.mrrNo||mir.poNo||mir.poSerialNo||mir.millPlateNo||mir.utCertNo||mir.identCode||mir.forgingNo)?`
+  <div class="section-title">Additional Material Identification (Per Industrial Code & Standard)</div>
+  <table>
+    <thead><tr>
+      ${mir.inventNo?'<th>Invent. No.</th>':''}
+      ${mir.mrrNo?'<th>MRR No.</th>':''}
+      ${mir.poNo?'<th>PO No.</th>':''}
+      ${mir.poSerialNo?'<th>PO Serial No.</th>':''}
+      ${mir.millPlateNo?'<th>Mill Plate No.</th>':''}
+      ${mir.utCertNo?'<th>UT Cert. No.</th>':''}
+      ${mir.identCode?'<th>Ident. Code</th>':''}
+      ${mir.forgingNo?'<th>Forging No.</th>':''}
+    </tr></thead>
+    <tbody><tr>
+      ${mir.inventNo?`<td><strong>${mir.inventNo}</strong></td>`:''}
+      ${mir.mrrNo?`<td><strong>${mir.mrrNo}</strong></td>`:''}
+      ${mir.poNo?`<td><strong>${mir.poNo}</strong></td>`:''}
+      ${mir.poSerialNo?`<td>${mir.poSerialNo}</td>`:''}
+      ${mir.millPlateNo?`<td><strong>${mir.millPlateNo}</strong></td>`:''}
+      ${mir.utCertNo?`<td>${mir.utCertNo}</td>`:''}
+      ${mir.identCode?`<td><strong>${mir.identCode}</strong></td>`:''}
+      ${mir.forgingNo?`<td><strong>${mir.forgingNo}</strong></td>`:''}
+    </tr></tbody>
+  </table>`:''}
 
   ${mir.extraRemarks?`<div style="margin-bottom:12px;font-size:9.5px;"><strong>Remarks: </strong>${mir.extraRemarks}</div>`:''}
 
