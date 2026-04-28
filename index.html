@@ -924,7 +924,8 @@ tr:hover td{background:var(--surf2);}
     <div class="sidebar" id="sidebar">
       <div>
         <div class="sg-lbl">Main</div>
-        <div class="nitem on" id="ni-dashboard" onclick="goPage('dashboard')"><span class="ni">🏠</span>Dashboard</div>
+        <div class="nitem" id="ni-dashboard" onclick="goPage('dashboard')"><span class="ni">🏠</span>Dashboard</div>
+        <div class="nitem" id="ni-stats" onclick="goPage('stats')"><span class="ni">📊</span>Statistics<span class="nbadge" id="nb-stats" style="display:none">!</span></div>
         <div class="nitem" id="ni-mir" onclick="goPage('mir')"><span class="ni">📦</span>Material Clearance<span class="nbadge" id="nb-mir" style="display:none">0</span></div>
         <div class="nitem" id="ni-inspection" onclick="goPage('inspection')"><span class="ni">🔬</span>Inspection<span class="nbadge" id="nb" style="display:none">0</span></div>
         <div class="nitem" id="ni-log" onclick="goPage('log')"><span class="ni">📋</span>Activity Log</div>
@@ -965,6 +966,15 @@ tr:hover td{background:var(--surf2);}
         <!-- OVERDUE ALERT PANEL — auto-shown when stages >8h unattended -->
         <div id="dash-overdue-panel" style="display:none;margin-bottom:14px;"></div>
 
+        <!-- GUIDED NEXT STEPS BANNER — role-specific -->
+        <div id="dash-guided-steps" style="display:none;margin-bottom:14px;background:linear-gradient(135deg,var(--blue2),#0891b2);border-radius:12px;padding:14px 16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.85);">🎯 Your Next Steps</span>
+            <button onclick="goPage('stats')" style="padding:4px 10px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:6px;font-size:10px;font-weight:700;color:#fff;cursor:pointer;">📊 Full Stats →</button>
+          </div>
+          <div id="dash-guided-inner" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+
         <!-- NOTICE -->
         <div id="storage-warning" style="display:flex;align-items:center;gap:10px;background:#fffbeb;border:1px solid #f59e0b;border-left:4px solid #d97706;border-radius:8px;padding:10px 16px;margin-bottom:16px;flex-wrap:wrap;">
           <span style="font-size:15px;flex-shrink:0;">⚠️</span>
@@ -991,6 +1001,12 @@ tr:hover td{background:var(--surf2);}
         <div id="dash-lv2" style="display:none;"></div>
         <!-- LEVEL 3: Seams for selected component -->
         <div id="dash-lv3" style="display:none;"></div>
+      </div>
+
+      <!-- ── STATISTICS PAGE ── -->
+      <div class="pg" id="pg-stats">
+        <div class="pgh"><div class="pgt">📊 Statistics & Analytics</div><div class="pgs">Comprehensive project-wide metrics — all roles</div></div>
+        <div id="pg-stats-content"></div>
       </div>
 
       <!-- ── SEAM DETAIL (from dashboard click) ── -->
@@ -3359,6 +3375,7 @@ function goPage(pg){
   if(relAdminBtn) relAdminBtn.style.display=(pg==='release'&&CU&&(CU.role==='admin'||CU.role==='manager'))?'flex':'none';
 
   if(pg==='dashboard')         renderDashboard();
+  else if(pg==='stats')        renderStatsPage();
   else if(pg==='inspection')  {renderInspection();updateBadge();}
   else if(pg==='log')          renderLog();
   else if(pg==='projects')     renderProjectsPage();
@@ -3433,6 +3450,7 @@ function _goPageNoHistory(pg){
   else if(pg==='release')      renderReleasePage();
   else if(pg==='compare')      renderComparePage();
   else if(pg==='faq')          renderFAQPage();
+  else if(pg==='stats')        renderStatsPage();
   else if(pg==='user-approvals') renderUserApprovalsPage();
 }
 
@@ -3442,7 +3460,8 @@ function _getPageLabel(pg){
     'projects':'Projects & Seams','stages':'ITP Stages','users':'Users',
     'summary':'Print Summary','profile':'My Profile','approvals':'Approvals',
     'backup':'Backup & Data','mir':'MIR / Material Clearance','release':'Release Control',
-    'compare':'Compare & Charts','faq':'Help & FAQ','user-approvals':'User Approvals'
+    'compare':'Compare & Charts','faq':'Help & FAQ','user-approvals':'User Approvals',
+    'stats':'Statistics & Analytics'
   };
   return labels[pg]||pg;
 }
@@ -3594,6 +3613,18 @@ function renderDashboard(){
   if(!CU)return;
   _updateGlobalStatsBar();
   _renderOverduePanel();
+  // Guided next steps banner
+  const guidedEl=document.getElementById('dash-guided-steps');
+  if(guidedEl){
+    const steps=_getGuidedSteps();
+    if(steps){
+      guidedEl.style.display='block';
+      const inner=guidedEl.querySelector('#dash-guided-inner');
+      if(inner) inner.innerHTML=steps;
+    } else {
+      guidedEl.style.display='none';
+    }
+  }
   // All roles see all projects on dashboard — production/quality work across projects
   const visibleProjs = DB.projects;
   if(!visibleProjs.length){
@@ -9486,19 +9517,39 @@ function mirAddItem(){
   if(!mat){toast('Enter Required Material','err');return;}
   if(!thk){toast('Enter Size / Thickness (or fill the size fields above)','err');return;}
   if(!DB.mirItems) DB.mirItems=[];
+  // ── DUPLICATE CHECK ──
+  const existing=DB.mirItems.find(it=>
+    String(it.partNo).trim()===String(pno).trim() &&
+    String(it.tagNo).trim()===String(tag).trim() &&
+    String(it.projectCode).trim()===String(projCode).trim()
+  );
+  if(existing){
+    _showActionPopup({
+      icon:'⚠️',
+      title:'Duplicate Part Number',
+      body:`Part <strong>${pno}</strong> already exists in catalog for Tag <strong>${tag}</strong> (Project #${projCode}).<br><br>Each Part No. must be unique per Tag per Project.`,
+      goingTo:'Use a different Part Number, or edit the existing entry from the Catalog tab.',
+      actions:[
+        {label:'✏ Edit Existing',color:'var(--amber)',fn:()=>{mirSetTab('items');setTimeout(()=>mirOpenEditItem(existing.id),200);}},
+        {label:'🔙 Back',color:'var(--text3)',fn:()=>{}},
+      ]
+    });
+    return;
+  }
   const newItem={id:'ITM-'+Date.now(),projectCode:projCode,tagCategory:cat,tagNo:tag,
     partNo:pno,description:desc,itemType:type,material:mat,thickness:thk,maxQty:Number(g('mi-qty'))||1};
   DB.mirItems.push(newItem);
   log(`➕ MIR ITEM ADDED — ${pno}: ${desc} [${type}] Proj ${projCode} Tag ${tag} by ${CU.name}`);
   save();
   _showActionPopup({
-    icon:'➕',
+    icon:'✅',
     title:'Part Added to Catalog!',
-    body:`Part <strong>${pno}</strong> — ${desc}<br>Tag: <strong>${tag}</strong> · Type: ${type} · Mat: ${mat}`,
-    goingTo:'Part is now available in MIR → New MIR for Production to offer.',
+    body:`Part <strong>${pno}</strong> — ${desc}<br>Tag: <strong>${tag}</strong> · Type: ${type} · Mat: ${mat} · Thk: ${thk}`,
+    goingTo:'✅ Next Steps: 1) Add more parts if needed &nbsp; 2) Production team can now go to MIR → New MIR → select this part and offer for QC inspection &nbsp; 3) QC inspects → Manager approves → Seam stages unlock.',
     actions:[
       {label:'+ Add Another Part',color:'var(--blue2)',fn:()=>{mirSetTab('new');}},
-      {label:'View Catalog',color:'var(--green)',fn:()=>{mirSetTab('items');}},
+      {label:'📋 View Catalog',color:'var(--green)',fn:()=>{mirSetTab('items');}},
+      {label:'📤 Go to New MIR',color:'#7c3aed',fn:()=>{mirSetTab('offer');}},
     ]
   });
 }
@@ -9722,6 +9773,348 @@ function mirExportCSV(id){
 let _cmpSelProj=[];
 let _cmpSelTags=[];
 let _cmpMode='project'; // 'project'|'tagcat'|'tag'
+
+// ══════════════════════════════════════════════════════
+// STATISTICS & ANALYTICS PAGE
+// ══════════════════════════════════════════════════════
+function renderStatsPage(){
+  const c=$('pg-stats-content'); if(!c) return;
+  if(!CU){c.innerHTML='<div style="padding:40px;text-align:center;color:var(--text4);">Please log in.</div>';return;}
+
+  // ── Compute all stats ──
+  const allSeams=DB.seams||[];
+  const allMIRs=DB.mirs||[];
+  const allItems=DB.mirItems||[];
+  const allProjs=DB.projects||[];
+  const allUsers=DB.users||[];
+  const pending=DB.pendingActions||[];
+
+  // Project filter
+  const selPid=($('stats-pid-filter')?.value)||'';
+  const seams=selPid?allSeams.filter(s=>s.pid===selPid):allSeams;
+  const mirs=selPid?allMIRs.filter(m=>{
+    const item=allItems.find(i=>i.partNo===m.partNo);
+    const proj=allProjs.find(p=>item&&String(p.number)===String(item.projectCode));
+    return proj&&proj.id===selPid;
+  }):allMIRs;
+
+  // ── 1. Overall project completion ──
+  const totalStages=seams.reduce((t,s)=>(s.stages||[]).length?t+(s.stages||[]).length:t,0);
+  const acceptedStages=seams.reduce((t,s)=>t+(s.stages||[]).filter(st=>st.status==='accepted').length,0);
+  const offeredStages=seams.reduce((t,s)=>t+(s.stages||[]).filter(st=>st.status==='offered').length,0);
+  const pendingStages=seams.reduce((t,s)=>t+(s.stages||[]).filter(st=>!st.status||st.status==='pending').length,0);
+  const rejectedStages=seams.reduce((t,s)=>t+(s.stages||[]).filter(st=>st.status==='rejected'||st.status==='returned').length,0);
+  const overallPct=totalStages?Math.round(acceptedStages/totalStages*100):0;
+
+  // ── 2. RT/UT iteration breakdown ──
+  const rtStages=seams.flatMap(s=>(s.stages||[]).filter(st=>isRTUT(st.name)));
+  const rtR0=rtStages.filter(st=>!st.ndtIteration||st.ndtIteration==='R0').length;
+  const rtR1=rtStages.filter(st=>st.ndtIteration==='R1').length;
+  const rtR2=rtStages.filter(st=>st.ndtIteration==='R2').length;
+  const rtR3=rtStages.filter(st=>st.ndtIteration==='R3').length;
+  const rtTotal=rtStages.length;
+  const rtAccepted=rtStages.filter(st=>st.status==='accepted').length;
+  const rtPending=rtStages.filter(st=>st.status==='offered'||st.status==='pending').length;
+
+  // ── 3. MIR stats ──
+  const mirApproved=mirs.filter(m=>m.status==='APPROVED').length;
+  const mirPendingQC=mirs.filter(m=>m.status==='PENDING_QC').length;
+  const mirRejected=mirs.filter(m=>m.status==='REJECTED').length;
+  const mirReturned=mirs.filter(m=>m.status==='RETURNED').length;
+  const mirTotal=mirs.length;
+
+  // ── 4. Welder repair rate ──
+  const welderMap={};
+  rtStages.forEach(st=>{
+    (st.spots||[]).forEach(sp=>{
+      const wno=(sp.welderNo||'').trim()||'Unknown';
+      if(!welderMap[wno]) welderMap[wno]={total:0,repair:0};
+      welderMap[wno].total++;
+      if(sp.qcStatus==='Repair') welderMap[wno].repair++;
+    });
+    // Also count from stage-level welder
+    if(st.welderNo&&!(st.spots||[]).length){
+      const wno=(st.welderNo||'').trim()||'Unknown';
+      if(!welderMap[wno]) welderMap[wno]={total:0,repair:0};
+      welderMap[wno].total++;
+      if((st.rejectedSpots||[]).length||(st.ndtIteration&&st.ndtIteration!=='R0')) welderMap[wno].repair++;
+    }
+  });
+  const welderRows=Object.entries(welderMap)
+    .map(([wno,d])=>({wno,total:d.total,repair:d.repair,rate:d.total?Math.round(d.repair/d.total*100):0}))
+    .filter(w=>w.total>0)
+    .sort((a,b)=>b.repair-a.repair);
+
+  // ── 5. Pending approvals by role ──
+  const pendManager=pending.filter(p=>['seam_add','rtut_r2_offer','rtut_r3_offer','MIR_OFFER'].includes(p.type)).length;
+  const pendQC=seams.reduce((t,s)=>(s.stages||[]).filter(st=>st.status==='offered'&&!isRTUT(st.name)).length+t,0);
+  const pendNDT=seams.reduce((t,s)=>(s.stages||[]).filter(st=>st.status==='offered'&&isRTUT(st.name)).length+t,0);
+  const pendMIR=mirPendingQC;
+
+  // ── 6. Tag-wise seam completion ──
+  const tagMap={};
+  seams.forEach(s=>{
+    const key=`${s.tagNo||'?'}`;
+    if(!tagMap[key]) tagMap[key]={tagNo:s.tagNo,tagCat:s.tagCategory,total:0,accepted:0,inprog:0,pending:0};
+    const stgs=s.stages||[];
+    tagMap[key].total+=stgs.length;
+    tagMap[key].accepted+=stgs.filter(st=>st.status==='accepted').length;
+    tagMap[key].inprog+=stgs.filter(st=>st.status==='offered').length;
+    tagMap[key].pending+=stgs.filter(st=>!st.status||st.status==='pending').length;
+  });
+  const tagRows=Object.values(tagMap).sort((a,b)=>{
+    const pa=a.total?a.accepted/a.total:0, pb=b.total?b.accepted/b.total:0;
+    return pb-pa;
+  });
+
+  // ── 7. Guided next steps by role ──
+  const guidedSteps=_getGuidedSteps();
+
+  // ── Render HTML ──
+  const projOpts=`<option value="">All Projects</option>`+allProjs.map(p=>`<option value="${p.id}" ${p.id===selPid?'selected':''}>#${p.number} — ${p.equipment}</option>`).join('');
+
+  const kpi=(icon,val,label,color,sub)=>`
+    <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+      <div style="font-size:24px;margin-bottom:4px;">${icon}</div>
+      <div style="font-size:28px;font-weight:800;color:${color};line-height:1;">${val}</div>
+      <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;">${label}</div>
+      ${sub?`<div style="font-size:10px;color:var(--text3);margin-top:3px;">${sub}</div>`:''}
+    </div>`;
+
+  const circ=2*Math.PI*38;
+  const off=circ-(overallPct/100*circ);
+  const ringColor=overallPct===100?'#059669':overallPct>60?'#1d4ed8':overallPct>30?'#d97706':'#dc2626';
+
+  c.innerHTML=`
+  <!-- Filter bar -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+    <label style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;">Filter Project:</label>
+    <select onchange="renderStatsPage()" id="stats-pid-filter" style="padding:7px 12px;border:1.5px solid var(--border2);border-radius:7px;font-size:13px;font-weight:600;min-width:200px;">${projOpts}</select>
+    <button onclick="renderStatsPage()" style="padding:7px 14px;background:var(--blue2);color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">↻ Refresh</button>
+  </div>
+
+  <!-- Guided Next Steps banner -->
+  ${guidedSteps?`<div style="background:linear-gradient(135deg,var(--blue2),#0891b2);border-radius:12px;padding:16px 20px;margin-bottom:18px;color:#fff;">
+    <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;opacity:.85;">🎯 Your Next Steps — ${(CU.role||'').toUpperCase()}</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">${guidedSteps}</div>
+  </div>`:''}
+
+  <!-- Overall progress ring + KPIs -->
+  <div style="background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);">
+    <div style="font-size:11px;font-weight:700;color:var(--text4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;">Overall Project Completion</div>
+    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+      <div style="position:relative;width:92px;height:92px;flex-shrink:0;">
+        <svg width="92" height="92" viewBox="0 0 92 92" style="transform:rotate(-90deg)">
+          <circle cx="46" cy="46" r="38" fill="none" stroke="var(--surf3)" stroke-width="10"/>
+          <circle cx="46" cy="46" r="38" fill="none" stroke="${ringColor}" stroke-width="10"
+            stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span style="font-size:22px;font-weight:800;color:var(--text);">${overallPct}%</span>
+          <span style="font-size:8px;color:var(--text4);text-transform:uppercase;font-weight:700;">Complete</span>
+        </div>
+      </div>
+      <div style="flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;">
+        ${kpi('🔩',seams.length,'Total Seams','var(--text)','')}
+        ${kpi('✅',acceptedStages,'Stages Cleared','#059669',`of ${totalStages} total`)}
+        ${kpi('⏳',offeredStages,'Awaiting QC','#d97706','offered')}
+        ${kpi('🔒',pendingStages,'Locked / Pending','var(--text3)','')}
+        ${kpi('🔴',rejectedStages,'NCR / Returned','#dc2626','')}
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-column: RT/UT + MIR -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+    <!-- RT/UT breakdown -->
+    <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+      <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">🔬 RT / UT Stages</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${[
+          {l:'R0 — Revision 0',v:rtR0,c:'#059669',pct:rtTotal?Math.round(rtR0/rtTotal*100):0},
+          {l:'R1 — 1st Repair',v:rtR1,c:'#d97706',pct:rtTotal?Math.round(rtR1/rtTotal*100):0},
+          {l:'R2 — 2nd Repair',v:rtR2,c:'#dc2626',pct:rtTotal?Math.round(rtR2/rtTotal*100):0},
+          {l:'R3 — Full Penalty',v:rtR3,c:'#7c3aed',pct:rtTotal?Math.round(rtR3/rtTotal*100):0},
+        ].map(r=>`
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:11px;font-weight:600;color:var(--text2);">${r.l}</span>
+            <span style="font-size:11px;font-weight:800;color:${r.c};">${r.v}</span>
+          </div>
+          <div style="background:var(--surf3);border-radius:4px;height:6px;">
+            <div style="background:${r.c};border-radius:4px;height:6px;width:${r.pct}%;transition:width .4s;"></div>
+          </div>
+        </div>`).join('')}
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:var(--text4);">
+          <span>Total RT/UT stages: <strong>${rtTotal}</strong></span>
+          <span>Cleared: <strong style="color:#059669;">${rtAccepted}</strong> &nbsp;|&nbsp; Pending: <strong style="color:#d97706;">${rtPending}</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MIR status -->
+    <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+      <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">📦 MIR Material Status</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${[
+          {l:'Approved',v:mirApproved,c:'#059669',pct:mirTotal?Math.round(mirApproved/mirTotal*100):0},
+          {l:'Pending QC',v:mirPendingQC,c:'#d97706',pct:mirTotal?Math.round(mirPendingQC/mirTotal*100):0},
+          {l:'Returned',v:mirReturned,c:'#1d4ed8',pct:mirTotal?Math.round(mirReturned/mirTotal*100):0},
+          {l:'Rejected',v:mirRejected,c:'#dc2626',pct:mirTotal?Math.round(mirRejected/mirTotal*100):0},
+        ].map(r=>`
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+            <span style="font-size:11px;font-weight:600;color:var(--text2);">${r.l}</span>
+            <span style="font-size:11px;font-weight:800;color:${r.c};">${r.v}</span>
+          </div>
+          <div style="background:var(--surf3);border-radius:4px;height:6px;">
+            <div style="background:${r.c};border-radius:4px;height:6px;width:${r.pct}%;transition:width .4s;"></div>
+          </div>
+        </div>`).join('')}
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text4);text-align:right;">
+          Total MIRs: <strong>${mirTotal}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending approvals by role -->
+  <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">⏳ Pending Actions — By Role</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+      ${[
+        {role:'Manager',icon:'👔',count:pendManager,color:'#7c3aed',action:'Approve',page:'approvals'},
+        {role:'Quality Eng.',icon:'🔍',count:pendQC,color:'#059669',action:'Inspect',page:'inspection'},
+        {role:'NDT QC',icon:'🔬',count:pendNDT,color:'#1d4ed8',action:'RT/UT Clear',page:'inspection'},
+        {role:'Admin',icon:'⚙️',count:(DB.users||[]).filter(u=>!u.approved).length,color:'#d97706',action:'Approve Users',page:'user-approvals'},
+      ].map(r=>`
+      <div onclick="goPage('${r.page}')" style="cursor:pointer;padding:12px;border:1.5px solid ${r.count>0?r.color:'var(--border)'};border-radius:10px;background:${r.count>0?r.color+'18':'var(--surf2)'};transition:all .2s;">
+        <div style="font-size:22px;margin-bottom:4px;">${r.icon}</div>
+        <div style="font-size:24px;font-weight:800;color:${r.color};">${r.count}</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text4);text-transform:uppercase;">${r.role}</div>
+        <div style="font-size:10px;color:${r.color};font-weight:600;margin-top:2px;">${r.count>0?'→ '+r.action:'✓ Clear'}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Tag-wise completion table -->
+  ${tagRows.length?`
+  <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">🏷 Seam Completion — Tag-wise</div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:var(--surf2);">
+        <th style="padding:8px 10px;text-align:left;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;">Tag No.</th>
+        <th style="padding:8px 10px;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;">Category</th>
+        <th style="padding:8px 10px;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;text-align:right;">Total</th>
+        <th style="padding:8px 10px;font-size:10px;color:#059669;font-weight:700;text-transform:uppercase;text-align:right;">Done</th>
+        <th style="padding:8px 10px;font-size:10px;color:#d97706;font-weight:700;text-transform:uppercase;text-align:right;">In Progress</th>
+        <th style="padding:8px 10px;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;text-align:right;">Pending</th>
+        <th style="padding:8px 10px;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;min-width:120px;">Progress</th>
+      </tr></thead>
+      <tbody>
+      ${tagRows.map((t,i)=>{
+        const pct=t.total?Math.round(t.accepted/t.total*100):0;
+        const pc=pct===100?'#059669':pct>60?'#1d4ed8':pct>30?'#d97706':'#dc2626';
+        return`<tr style="border-bottom:1px solid var(--border);background:${i%2===0?'#fff':'#f8fafc'};">
+          <td style="padding:7px 10px;font-family:monospace;font-weight:700;color:var(--blue2);">${t.tagNo||'—'}</td>
+          <td style="padding:7px 10px;font-size:11px;color:var(--text3);">${t.tagCat||'—'}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;">${t.total}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;color:#059669;">${t.accepted}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;color:#d97706;">${t.inprog}</td>
+          <td style="padding:7px 10px;text-align:right;color:var(--text3);">${t.pending}</td>
+          <td style="padding:7px 10px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="flex:1;background:var(--surf3);border-radius:4px;height:8px;">
+                <div style="background:${pc};border-radius:4px;height:8px;width:${pct}%;"></div>
+              </div>
+              <span style="font-size:10px;font-weight:700;color:${pc};min-width:32px;">${pct}%</span>
+            </div>
+          </td>
+        </tr>`;}).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>`:''}
+
+  <!-- Welder repair rate table -->
+  ${welderRows.length?`
+  <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);">
+    <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">👷 Welder-wise Repair Rate</div>
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:var(--surf2);">
+        <th style="padding:8px 10px;text-align:left;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;">Welder No.</th>
+        <th style="padding:8px 10px;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;text-align:right;">Total Spots</th>
+        <th style="padding:8px 10px;font-size:10px;color:#dc2626;font-weight:700;text-transform:uppercase;text-align:right;">Repairs</th>
+        <th style="padding:8px 10px;font-size:10px;color:var(--text4);font-weight:700;text-transform:uppercase;min-width:130px;">Repair Rate</th>
+      </tr></thead>
+      <tbody>
+      ${welderRows.map((w,i)=>{
+        const pc=w.rate===0?'#059669':w.rate<20?'#d97706':'#dc2626';
+        return`<tr style="border-bottom:1px solid var(--border);background:${i%2===0?'#fff':'#f8fafc'};">
+          <td style="padding:7px 10px;font-family:monospace;font-weight:700;color:var(--blue2);">${w.wno}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;">${w.total}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;color:${pc};">${w.repair}</td>
+          <td style="padding:7px 10px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="flex:1;background:var(--surf3);border-radius:4px;height:8px;max-width:100px;">
+                <div style="background:${pc};border-radius:4px;height:8px;width:${w.rate}%;"></div>
+              </div>
+              <span style="font-size:11px;font-weight:800;color:${pc};">${w.rate}%</span>
+            </div>
+          </td>
+        </tr>`;}).join('')}
+      </tbody>
+    </table>
+    </div>
+  </div>`:'<div style="background:var(--surf2);border-radius:8px;padding:14px;font-size:12px;color:var(--text4);margin-bottom:14px;">No welder spot data yet — will populate after RT/UT stages are cleared by NDT QC.</div>'}
+  `;
+}
+
+// ── Role-based guided next steps ──
+function _getGuidedSteps(){
+  if(!CU) return '';
+  const role=CU.role;
+  const steps=[];
+  const pending=DB.pendingActions||[];
+  const seams=DB.seams||[];
+  const mirs=DB.mirs||[];
+  const items=DB.mirItems||[];
+
+  if(role==='production'){
+    // Check if any seams pending offer
+    const locked=seams.filter(s=>(s.stages||[]).some(st=>!st.status||st.status==='pending'));
+    const offerable=seams.filter(s=>isMIRClearedForSeam(s)&&(s.stages||[]).some((st,i)=>!st.status&&stageUnlocked(s,i)));
+    const mirNotOffered=items.filter(it=>!mirs.find(m=>m.partNo===it.partNo&&(m.status==='APPROVED'||m.status==='PENDING_QC')));
+    if(mirNotOffered.length) steps.push(`<div onclick="goPage('mir')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">📦</span><div><div style="font-weight:700;font-size:13px;">${mirNotOffered.length} Part(s) not yet offered for MIR inspection</div><div style="font-size:11px;opacity:.8;">Go to Material Clearance → New MIR → Offer to QC</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+    if(offerable.length) steps.push(`<div onclick="goPage('inspection')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">🔬</span><div><div style="font-weight:700;font-size:13px;">${offerable.length} Seam(s) ready to offer for inspection</div><div style="font-size:11px;opacity:.8;">MIR cleared — go to Inspection → Offer stages</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+    const r1Seams=seams.filter(s=>(s.stages||[]).some(st=>st.status==='returned'&&isRTUT(st.name)));
+    if(r1Seams.length) steps.push(`<div onclick="goPage('inspection')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(220,38,38,.3);border:1.5px solid rgba(255,100,100,.5);border-radius:8px;"><span style="font-size:18px;">🔧</span><div><div style="font-weight:700;font-size:13px;">${r1Seams.length} Seam(s) with repair pending re-offer</div><div style="font-size:11px;opacity:.8;">Repair done? Go to Inspection → Re-offer R1/R2/R3</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+  }
+  else if(role==='quality'){
+    const offered=seams.flatMap(s=>(s.stages||[]).filter(st=>st.status==='offered'&&!isRTUT(st.name)));
+    if(offered.length) steps.push(`<div onclick="goPage('inspection')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">✔</span><div><div style="font-weight:700;font-size:13px;">${offered.length} Stage(s) awaiting your inspection</div><div style="font-size:11px;opacity:.8;">Go to Inspection → Inspect offered stages</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+    const mirPending=(mirs||[]).filter(m=>m.status==='PENDING_QC');
+    if(mirPending.length) steps.push(`<div onclick="goPage('mir')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">📦</span><div><div style="font-weight:700;font-size:13px;">${mirPending.length} MIR(s) pending your QC inspection</div><div style="font-size:11px;opacity:.8;">Go to Material Clearance → Clear pending MIRs</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+  }
+  else if(role==='ndt'){
+    const rtOffered=seams.flatMap(s=>(s.stages||[]).filter(st=>st.status==='offered'&&isRTUT(st.name)));
+    if(rtOffered.length) steps.push(`<div onclick="goPage('inspection')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">🔬</span><div><div style="font-weight:700;font-size:13px;">${rtOffered.length} RT/UT Stage(s) awaiting NDT QC clearance</div><div style="font-size:11px;opacity:.8;">Go to Inspection → Find RT/UT offered stages → NDT Clear</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+  }
+  else if(role==='manager'){
+    const pendAppr=pending.filter(p=>['seam_add','rtut_r2_offer','rtut_r3_offer'].includes(p.type));
+    if(pendAppr.length) steps.push(`<div onclick="goPage('approvals')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">✅</span><div><div style="font-weight:700;font-size:13px;">${pendAppr.length} Item(s) awaiting your approval</div><div style="font-size:11px;opacity:.8;">Seam adds, R2/R3 offers — go to Approvals queue</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+  }
+  else if(role==='admin'){
+    const unapproved=(DB.users||[]).filter(u=>!u.approved);
+    if(unapproved.length) steps.push(`<div onclick="goPage('user-approvals')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">👥</span><div><div style="font-weight:700;font-size:13px;">${unapproved.length} User(s) awaiting approval</div><div style="font-size:11px;opacity:.8;">Go to User Approvals → Approve new registrations</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+    if(!(DB.projects||[]).length) steps.push(`<div onclick="goPage('projects')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;"><span style="font-size:18px;">📁</span><div><div style="font-weight:700;font-size:13px;">No projects yet — start here</div><div style="font-size:11px;opacity:.8;">Go to Projects & Seams → Add first project</div></div><span style="margin-left:auto;font-size:18px;opacity:.7;">→</span></div>`);
+  }
+  if(!steps.length) steps.push(`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.15);border-radius:8px;"><span style="font-size:18px;">🎉</span><div style="font-weight:700;font-size:13px;">All caught up! No pending actions for your role.</div></div>`);
+  return steps.join('');
+}
 
 function renderComparePage(){
   const c=$('compare-content');if(!c)return;
