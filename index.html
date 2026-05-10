@@ -6275,13 +6275,18 @@ function addSeam(){
   DB.pendingActions.push({id:'pa'+Date.now(),type:'add_seam',data:newSeam,requestedBy:CU.name,requestedAt:now(),
     desc:`Add Seam: ${num} [#${proj?proj.number:'?'} / ${tag} / ${comp}]${isLongSeam?' [LONG SEAM]':''}`});
   log(`📋 PENDING APPROVAL — Add Seam ${num} | Tag: ${tag} | Comp: ${comp} | Project #${proj?proj.number:'?'}${isLongSeam?' | Long Seam':''} by ${CU.name}`);
-  save();
+save();
+// Show popup FIRST in small window
+setTimeout(()=>{
+  _showSeamConfirmPopup(num, desc, tag, comp, false, 1);
+},80);
+
+// Then render/update UI
+setTimeout(()=>{
   renderAdminSeams();
   renderSeamStatusPanel();
-  // Show confirmation popup — modal stays open, form resets on button click
-  _showSeamConfirmPopup(num, desc, tag, comp, false, 1);
+},120);
 }
-
 // ── Joint Category selector (radio tiles) ──
 function nsSelectJointCat(cat){
   // Update radio
